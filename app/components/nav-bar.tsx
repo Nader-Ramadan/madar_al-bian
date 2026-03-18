@@ -1,25 +1,64 @@
-import styles from "../page.module.css";
+/* eslint-disable @next/next/no-html-link-for-pages */
+"use client";
 
+import { useState } from 'react';
+import Image from 'next/image';
 
 function navBar() {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [isOpen, setIsOpen] = useState(false);
+
     return (
-        <nav className={styles["nav-bar"]}>
-            <div>
-                <a href="../page.tsx">
-                    LOGO
+        <nav className="nav-bar">
+            <div className="nav-brand">
+                <a href="/">
+                    <Image
+                        src="/images/logo/horizontal-logo/svg-horizontal-main-logo-transparent.svg"
+                        alt="Logo"
+                        width={150}
+                        height={50}
+                    />
                 </a>
             </div>
-            <ul className={styles["nav-links"]}>
-                <a href=""><li>الرئيسية</li></a>
-                <a href=""><li>كل المجلات</li></a>
-                <a href=""><li>اللجنة الاستشارية</li></a>
-                <a href=""><li>طلب نشر دراسة</li></a>
-                <a href=""><li>المؤتمرات</li></a>
-                <a href=""><li>المدونة</li></a>
-                <a href=""><li>من نحن</li></a>
-                <a href=""><li>اتصل بنا</li></a>
+
+            <button
+                className={`nav-toggle ${isOpen ? 'open' : ''}`}
+                onClick={() => setIsOpen((prev) => !prev)}
+                aria-label={isOpen ? 'Close menu' : 'Open menu'}
+                type="button"
+            >
+                <span className="bar" />
+                <span className="bar" />
+                <span className="bar" />
+            </button>
+
+            <ul className={`nav-links ${isOpen ? 'open' : ''}`}>
+                <li>
+                    <a href="#">الرئيسية</a>
+                </li>
+                <li>
+                    <a href="#">كل المجلات</a>
+                </li>
+                <li>
+                    <a href="#">اللجنة الاستشارية</a>
+                </li>
+                <li>
+                    <a href="#">طلب نشر دراسة</a>
+                </li>
+                <li>
+                    <a href="#">المؤتمرات</a>
+                </li>
+                <li>
+                    <a href="#">المدونة</a>
+                </li>
+                <li>
+                    <a href="#">من نحن</a>
+                </li>
+                <li>
+                    <a href="#">اتصل بنا</a>
+                </li>
             </ul>
-            <button>Button</button>
+            <button></button>
         </nav>
     );
 }
