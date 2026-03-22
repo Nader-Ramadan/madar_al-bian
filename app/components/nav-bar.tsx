@@ -34,28 +34,28 @@ function navBar() {
 
             <ul className={`nav-links ${isOpen ? 'open' : ''}`}>
                 <li>
-                    <a href="#">الرئيسية</a>
+                    <a href="/">الرئيسية</a>
                 </li>
                 <li>
                     <a href="/magazines-page">كل المجلات</a>
                 </li>
                 <li>
-                    <a href="#">اللجنة الاستشارية</a>
+                    <a href="/advisory-committee-page">اللجنة الاستشارية</a>
                 </li>
                 <li>
-                    <a href="#">طلب نشر دراسة</a>
+                    <a href="/request-for-publication-of-a-study-page">طلب نشر دراسة</a>
                 </li>
                 <li>
-                    <a href="#">المؤتمرات</a>
+                    <a href="/conferences-page">المؤتمرات</a>
                 </li>
                 <li>
-                    <a href="#">المدونة</a>
+                    <a href="/blog-page">المدونة</a>
                 </li>
                 <li>
-                    <a href="#">من نحن</a>
+                    <a href="/about-us-page">من نحن</a>
                 </li>
                 <li>
-                    <a href="#">اتصل بنا</a>
+                    <a href="/contact-us-page">اتصل بنا</a>
                 </li>
             </ul>
             <button></button>
