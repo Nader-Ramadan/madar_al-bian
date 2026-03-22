@@ -37,7 +37,7 @@ function navBar() {
                     <a href="#">الرئيسية</a>
                 </li>
                 <li>
-                    <a href="#">كل المجلات</a>
+                    <a href="/magazines-page">كل المجلات</a>
                 </li>
                 <li>
                     <a href="#">اللجنة الاستشارية</a>

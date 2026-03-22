@@ -1,8 +1,13 @@
-import Image from "next/image";
 import styles from "./page.module.css";
 import Hero from "./components/hero";
 import NavBar from "./components/nav-bar";
 import Reasons from "./components/reasons";
+import OurExperties from "./components/our-experties";
+import PublishAResearch from "./components/publish-a-research";
+import AboutUs from "./components/about-us";
+import FAQ from "./components/faq";
+import Blog from "./components/blog";
+import Footer from "./components/footer";
 
 function Home() {
   return (
@@ -11,6 +16,12 @@ function Home() {
       <main className={styles.main}>
         <Hero />
         <Reasons />
+        <OurExperties />
+        <PublishAResearch />
+        <Blog />
+        <AboutUs />
+        <FAQ />
+        <Footer />
       </main>
     </div>
   );
