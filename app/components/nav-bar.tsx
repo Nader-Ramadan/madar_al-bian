@@ -4,8 +4,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
-function navBar() {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
+function NavBar() {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -62,4 +61,4 @@ function navBar() {
         </nav>
     );
 }
-export default navBar;
+export default NavBar;
