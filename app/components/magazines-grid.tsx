@@ -82,7 +82,6 @@ export default function MagazinesGrid() {
             </div>
             <div className={styles.content}>
               <h3 className={styles.title}>{magazine.title}</h3>
-              <div className={styles.category}>{magazine.category}</div>
               <p className={styles.description}>{magazine.description}</p>
               <button className={styles.visitBtn}>
                 <span>زيارة المجلة</span>

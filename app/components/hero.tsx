@@ -14,7 +14,7 @@ function hero() {
                         className={styles.emblemLogo}
                     />
                 </div>
-                <button className={styles.button}>استكشف منشوراتنا</button>
+                <button className={styles.button}>من  نحن</button>
             </div>
 
             <div className={styles.content}>

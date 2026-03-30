@@ -4,7 +4,6 @@ import NavBar from "./components/nav-bar";
 import Reasons from "./components/reasons";
 import OurExperties from "./components/our-experties";
 import PublishAResearch from "./components/publish-a-research";
-import AboutUs from "./components/about-us";
 import FAQ from "./components/faq";
 import Blog from "./components/blog";
 import Footer from "./components/footer";
@@ -19,7 +18,6 @@ function Home() {
         <OurExperties />
         <PublishAResearch />
         <Blog />
-        <AboutUs />
         <FAQ />
         <Footer />
       </main>
