@@ -60,7 +60,7 @@ export default function Conferences() {
     <section className={styles.conferencesSection}>
       <div className={styles.conferencesIntro}>
         <h1>المؤتمرات</h1>
-        <p>نظم مؤتمرات علمية دولية متخصّصة توفِّر منصة للباحثين والأكاديميين لتبادل المعرفة والخبرات</p>
+        <p>مؤتمرات علمية دولية رفيعة تجمع نخبة الباحثين لتعزيز المعرفة، ومناقشة أحدث التطورات، ودعم الابتكار العلمي عالميًا.</p>
       </div>
 
       <div className={styles.conferenceStatsGrid}>

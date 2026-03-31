@@ -1,14 +1,6 @@
 import styles from '../page.module.css';
 
 export default function RequestForPublication() {
-  const publicationGuidelines = [
-    'يجب أن يكون البحث أصلياً ولم يسبق نشره',
-    'الالتزام بالمنهجية العلمية في البحث',
-    'التوثيق الصحيح للمراجع والمصادر',
-    'اللغة العربية الفصحى أو الإنجليزية',
-    'يتم التحكيم بواسطة خبراء متخصصين',
-  ];
-
   const publicationProcess = [
     {
       number: '1',
@@ -39,20 +31,8 @@ export default function RequestForPublication() {
         <div className={styles.publicationHeroOverlay}>
           <h1 className={styles.publicationTitle}>طلب نشر دراسة</h1>
           <p className={styles.publicationHeroSubtitle}>
-            ترحب طلبات نشر الدراسات والأبحاث العلمية المتميزة. يرجى ملء النموذج أدناه واستكمال معلومات في أقرب وقت
+            ترحب المؤسسة بنشر الدراسات والأبحاث العلمية المتميزة، ويُرجى من السادة الباحثين تعبئة النموذج أدناه واستكمال جميع البيانات المطلوبة بدقة، لضمان سرعة وكفاءة دراسة الطلب
           </p>
-        </div>
-      </div>
-
-      {/* Guidelines Section */}
-      <div className={styles.publicationGuidelinesSection}>
-        <div className={styles.guidelinesIcon}>ℹ️</div>
-        <div className={styles.guidelinesList}>
-          {publicationGuidelines.map((guideline, index) => (
-            <div key={index} className={styles.guidelineItem}>
-              • {guideline}
-            </div>
-          ))}
         </div>
       </div>
 
@@ -64,28 +44,20 @@ export default function RequestForPublication() {
             <h2>معلومات الباحث</h2>
             <div className={styles.formGrid}>
               <div className={styles.formGroup}>
-                <label>الاسم الأول *</label>
-                <input type="text" placeholder="ادخل الاسم الأول" required />
+                <label>الاسم بالكامل*</label>
+                <input type="text" placeholder="ادخل الاسم بالكامل" required />
               </div>
               <div className={styles.formGroup}>
                 <label>البريد الإلكتروني *</label>
                 <input type="email" placeholder="ادخل البريد الإلكتروني" required />
               </div>
               <div className={styles.formGroup}>
-                <label>الجامعة *</label>
-                <input type="text" placeholder="ادخل الجامعة" required />
-              </div>
-              <div className={styles.formGroup}>
-                <label>اسم الملف/الفئة *</label>
-                <input type="text" placeholder="ادخل اسم الملف" required />
-              </div>
-              <div className={styles.formGroup}>
                 <label>رقم الهاتف *</label>
                 <input type="tel" placeholder="ادخل رقم الهاتف" required />
               </div>
               <div className={styles.formGroup}>
-                <label>القسم / التخصص *</label>
-                <input type="text" placeholder="ادخل القسم / التخصص" required />
+                <label>البلد *</label>
+                <input type="text" placeholder="البلد" required />
               </div>
             </div>
           </div>

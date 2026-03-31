@@ -13,7 +13,7 @@ export default function AdvisoryCommittee() {
   const criteria = [
     {
       title: 'الخبرة البحثية',
-      description: 'خبرة عميقة في الأبحاث المتخصصة في مجالات طبية ودراسات علمية متقدمة',
+      description: 'تمتلك خبرة واسعة ومعمقة في إجراء الأبحاث والدراسات العلمية المتقدمة عبر مختلف المجالات والتخصصات.',
     },
     {
       title: 'المؤهلات العلمية',
@@ -25,7 +25,7 @@ export default function AdvisoryCommittee() {
     },
     {
       title: 'السمعة الأكاديمية',
-      description: 'معروفون واستحقاقون بمستحقيهم في المجتمع الأكاديمي والعلمي الدولي والصراء الأخرى',
+      description: 'معروفون وذو سمعة مرموقة ويحظون بالاعتراف من قبل المجتمع الأكاديمي والعلمي الدولي والمؤسسات العلمية المرموقة الأخرى.',
     },
   ];
 
@@ -38,23 +38,7 @@ export default function AdvisoryCommittee() {
           فريق من الخبراء والأكاديميين المتخصصين في مختلف التخصصات العلمية، يعملون على ضمان جودة وتميز الأبحاث المنشورة
         </p>
 
-        <div className={styles.advisoryStatsGrid}>
-          <div className={styles.advisoryStat}>
-            <div className={styles.advisoryStatIcon}>📚</div>
-            <h3>500+</h3>
-            <p>بحث محكم</p>
-          </div>
-          <div className={styles.advisoryStat}>
-            <div className={styles.advisoryStatIcon}>🎯</div>
-            <h3>15+</h3>
-            <p>تخصص علمي</p>
-          </div>
-          <div className={styles.advisoryStat}>
-            <div className={styles.advisoryStatIcon}>🎓</div>
-            <h3>30+</h3>
-            <p>عضو لجنة استشارية</p>
-          </div>
-        </div>
+        
       </div>
 
       {/* Committee Members Grid */}

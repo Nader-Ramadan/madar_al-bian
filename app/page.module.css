@@ -828,21 +828,114 @@
 }
 
 .aboutUsContent h2 {
-  font-size: 2.4rem;
-  margin-bottom: 0.8rem;
+  font-size: clamp(2.8rem, 5vw, 3.8rem);
+  font-weight: 900;
+  margin-bottom: 1.2rem;
+  background: linear-gradient(
+    135deg,
+    var(--secondary-color),
+    var(--primary-color)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.02em;
+  text-shadow: 0 4px 12px rgba(10, 63, 98, 0.3);
+  position: relative;
+}
+
+.aboutUsContent h2::after {
+  content: "";
+  position: absolute;
+  bottom: -0.8rem;
+  right: 50%;
+  transform: translateX(50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--primary-color),
+    var(--primary-color-dark)
+  );
+  border-radius: 2px;
 }
 
 .aboutUsContent p {
-  margin: 0 auto 2rem;
+  margin: 0 auto 3rem;
   max-width: 780px;
-  color: #36415d;
-  line-height: 1.7;
+  color: var(--about-text);
+  line-height: 1.8;
+  font-size: 1.1rem;
+  font-weight: 400;
 }
 
-.aboutUsCards {
+.aboutUsContent ul {
+  list-style: none;
+  padding: 0;
+  margin: 3rem auto 4rem;
+  max-width: 900px;
   display: grid;
-  grid-template-columns: repeat(3, minmax(220px, 1fr));
   gap: 1rem;
+}
+
+.aboutUsContent li {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(198, 166, 100, 0.2);
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-light);
+  font-size: 1.25rem;
+  line-height: 1.7;
+  color: var(--about-text);
+  font-weight: 500;
+}
+
+.aboutUsContent li::before {
+  content: "▸";
+  position: absolute;
+  right: 1.2rem;
+  top: 1.5rem;
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  font-weight: 900;
+  transition: transform 0.3s ease;
+}
+
+.aboutUsContent li:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(198, 166, 100, 0.15);
+  border-color: var(--primary-color);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.aboutUsContent li:hover::before {
+  transform: scale(1.2);
+}
+
+.aboutUsContent h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--secondary-color);
+  margin: 2rem auto 1rem;
+  max-width: 800px;
+  font-style: italic;
+  position: relative;
+  padding-bottom: 0.8rem;
+}
+
+.aboutUsContent h3::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: var(--primary-color);
+  border-radius: 2px;
 }
 
 .aboutUsCard {
@@ -873,14 +966,30 @@
 }
 
 @media (max-width: 1024px) {
-  .aboutUsCards {
-    grid-template-columns: repeat(2, minmax(220px, 1fr));
+  .aboutUsContent ul {
+    gap: 0.8rem;
+    max-width: 100%;
+  }
+
+  .aboutUsContent li {
+    padding: 1.2rem 1.5rem;
+    font-size: 0.98rem;
   }
 }
 
 @media (max-width: 700px) {
-  .aboutUsCards {
-    grid-template-columns: 1fr;
+  .aboutUsContent h2 {
+    font-size: 2.5rem;
+  }
+
+  .aboutUsContent ul {
+    margin: 2rem auto 3rem;
+    gap: 0.75rem;
+  }
+
+  .aboutUsContent li {
+    padding: 1rem 1.2rem;
+    font-size: 0.95rem;
   }
 }
 
