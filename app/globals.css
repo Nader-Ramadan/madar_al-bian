@@ -105,36 +105,53 @@ a {
 @media (max-width: 768px) {
   .nav-bar {
     padding: 0.75rem 1rem;
+    position: relative;
+    z-index: 1000;
   }
 
   .nav-toggle {
     display: flex;
+    flex-flow: column;
+    z-index: 1001;
   }
 
   .nav-links {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    left: 0;
-    background: rgba(255, 255, 255, 0.97);
+    position: fixed;
+    top: 60px;
+    right: -100%;
+    width: 100%;
+    max-width: 300px;
+    height: calc(100vh - 60px);
+    background: rgba(255, 255, 255, 0.98);
     flex-direction: column;
     gap: 0;
     padding: 1rem 1.25rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
-    display: none;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    transition: right 0.3s ease;
+    z-index: 999;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
   }
 
   .nav-links.open {
-    display: flex;
+    right: 0;
   }
 
   .nav-links li {
     width: 100%;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   }
 
   .nav-links a {
     width: 100%;
-    padding: 0.75rem 0;
+    padding: 1rem 0.5rem;
     justify-content: flex-end;
+    font-size: 1rem;
+    color: var(--text-primary);
+  }
+
+  .nav-links a:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 0.5rem;
   }
 }

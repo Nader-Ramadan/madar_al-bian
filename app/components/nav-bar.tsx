@@ -57,7 +57,6 @@ function NavBar() {
                     <a href="/contact-us-page">اتصل بنا</a>
                 </li>
             </ul>
-            <button></button>
         </nav>
     );
 }

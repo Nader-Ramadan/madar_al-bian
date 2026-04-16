@@ -1,3 +1,5 @@
+"use client";
+
 import styles from '../page.module.css';
 import Image from 'next/image';
 
@@ -14,7 +16,7 @@ function hero() {
                         className={styles.emblemLogo}
                     />
                 </div>
-                <button className={styles.button}>من  نحن</button>
+                <a href="../about-us-page/"><button className={styles.button}>من  نحن</button></a>
             </div>
 
             <div className={styles.content}>
