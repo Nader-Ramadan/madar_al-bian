@@ -47,7 +47,8 @@ a {
   flex-flow: row;
   padding: 1rem 2rem;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 20%;
   background: var(--background);
 }
 
@@ -107,6 +108,7 @@ a {
     padding: 0.75rem 1rem;
     position: relative;
     z-index: 1000;
+    justify-content: space-between;
   }
 
   .nav-toggle {
