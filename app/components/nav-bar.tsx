@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-html-link-for-pages */
 "use client";
 
 import { useState } from 'react';
@@ -36,7 +35,7 @@ function NavBar() {
                     <a href="/">الرئيسية</a>
                 </li>
                 <li>
-                    <a href="/magazines-page">كل المجلات</a>
+                    <a href="/all-fields-page">كل المجلات</a>
                 </li>
                 <li>
                     <a href="/advisory-committee-page">اللجنة الاستشارية</a>

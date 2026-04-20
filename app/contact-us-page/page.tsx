@@ -1,6 +1,11 @@
+import type { Metadata } from "next";
 import styles from "../page.module.css";
 import NavBar from "../components/nav-bar";
 import Footer from "../components/footer";
+
+export const metadata: Metadata = {
+  title: "Contact Us",
+};  
 
 export default function ContactUsPage() {
   return (

@@ -1,32 +1,3 @@
-/* @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-*/
 * {
   box-sizing: border-box;
   padding: 0;
@@ -155,5 +126,103 @@ a {
   .nav-links a:hover {
     background-color: rgba(0, 0, 0, 0.05);
     border-radius: 0.5rem;
+  }
+}
+
+/* Footer Styles */
+.footer {
+  background-color: var(--secondary-color);
+  color: var(--foreground-light);
+  padding: 2.5rem 1.5rem;
+  width: 100%;
+}
+
+.footerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(120px, 1fr));
+  gap: 1.25rem;
+  align-items: start;
+  justify-items: stretch;
+}
+
+.footerBrand {
+  grid-column: 1 / span 2;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.footerBrand .logo {
+  width: 160px;
+  height: auto;
+}
+
+.footerSocials {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.footerSocials a {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-decoration: none;
+}
+
+.footerSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.footerSection h4 {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.footerSection a,
+.footerSection p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.footerSection a:hover {
+  color: var(--primary-color);
+}
+
+.footerCopy {
+  grid-column: 1 / -1;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.9rem;
+}
+
+/* align footer text RTL */
+.footerSection,
+.footerBrand,
+.footerContent,
+.footerSide {
+  direction: rtl;
+  text-align: right;
+}
+
+@media (max-width: 900px) {
+  .footerContent {
+    grid-template-columns: 1fr;
+    text-align: center;
   }
 }

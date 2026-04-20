@@ -1,4 +1,4 @@
-import styles from "./all-fields-header.module.css";
+import styles from "../all-fields-header.module.css";
 
 export default function AllFieldsHeader() {
   return (

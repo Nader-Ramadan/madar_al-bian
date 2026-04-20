@@ -1,4 +1,4 @@
-import styles from "./magazines-grid.module.css";
+import styles from "../magazines-grid.module.css";
 
 interface MagazineCard {
   id: number;

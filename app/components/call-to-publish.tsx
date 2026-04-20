@@ -1,4 +1,4 @@
-import styles from "./call-to-publish.module.css";
+import styles from "../call-to-publish.module.css";
 
 export default function CallToPublish() {
   return (

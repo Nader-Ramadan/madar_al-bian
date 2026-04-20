@@ -92,7 +92,7 @@ export default function RequestForPublication() {
                   <div className={styles.fileUploadIcon}>📎</div>
                   <p>رفع ملف ات هنا أو اضغط للتصفح</p>
                   <small>PDF, DOC, DOCX (الحد الأقصى: 10 ميجابايت)</small>
-                  <input type="file" accept=".pdf,.doc,.docx" required hidden />
+                  <input type="file" accept=".pdf,.doc,.docx" required />
                 </div>
               </div>
             </div>

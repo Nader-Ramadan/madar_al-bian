@@ -1,24 +1,36 @@
+/* ===================================================
+   ROOT STYLES & VARIABLES
+   =================================================== */
 .page {
   direction: rtl;
   text-align: right;
+  background-color: var(--background);
 
+  /* Color Palette */
   --background: #f3f0ec;
   --foreground: #fff;
   --foreground-light: #f1f6ff;
+
+  /* Hero Colors */
   --hero-title: #fff;
   --hero-subtitle: rgba(255, 255, 255, 0.9);
 
+  /* Text Colors */
   --text-primary: #333a42;
   --text-secondary: #000;
   --text-muted: #2d3d50;
   --text-heading: #22304f;
 
+  /* Brand Colors */
   --primary-color: #c6a664;
   --primary-color-dark: #d4b376;
   --secondary-color: #0a3f62;
 
+  /* Component Colors */
   --card-bg: #ffffff;
   --border-light: #ebeef5;
+
+  /* Section Colors */
   --faq-answer: #415373;
   --faq-side-bg: #e9f0ff;
   --faq-side-title: #0a3f62;
@@ -29,12 +41,24 @@
   --about-background: #fff;
   --about-color: #0a3f62;
   --about-text: #36415d;
+
+  /* Shadows */
   --shadow-light: rgba(0, 0, 0, 0.08);
   --shadow-medium: rgba(24, 36, 75, 0.08);
-
-  background-color: var(--background);
 }
 
+/* ===================================================
+   MAIN LAYOUT WRAPPER
+   =================================================== */
+.main {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* ===================================================
+   NAVIGATION STYLES
+   =================================================== */
 .nav-bar {
   width: 100%;
   display: flex;
@@ -96,55 +120,9 @@
   transform: translateY(-7px) rotate(-45deg);
 }
 
-@media (max-width: 768px) {
-  .nav-bar {
-    padding: 0.75rem 1rem;
-  }
-
-  .nav-toggle {
-    display: flex;
-  }
-
-  .nav-links {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    left: 0;
-    background: rgba(255, 255, 255, 0.97);
-    flex-direction: column;
-    gap: 0;
-    padding: 1rem 1.25rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
-    display: none;
-  }
-
-  .nav-links.open {
-    display: flex;
-  }
-
-  .nav-links li {
-    width: 100%;
-  }
-
-  .nav-links a {
-    width: 100%;
-    padding: 0.75rem 0;
-    justify-content: flex-end;
-  }
-}
-
-/* -------------------------------------------------- */
-/* Main layout wrapper */
-/* -------------------------------------------------- */
-.main {
-  display: block;
-  width: 100%;
-  min-height: 100vh;
-}
-
-/* -------------------------------------------------- */
-/* Hero section */
-/* -------------------------------------------------- */
+/* ===================================================
+   HERO SECTION
+   =================================================== */
 .hero {
   position: relative;
   width: 100%;
@@ -295,9 +273,9 @@
   background-color: var(--primary-color);
 }
 
-/* -------------------------------------------------- */
-/* Our Experties section */
-/* -------------------------------------------------- */
+/* ===================================================
+   EXPERTISE SECTION
+   =================================================== */
 .expertiseSection {
   width: 100%;
   padding: 3rem 2rem;
@@ -337,29 +315,9 @@
   font-size: 1rem;
 }
 
-@media (max-width: 768px) {
-  .expertiseGrid {
-    grid-template-columns: repeat(2, minmax(120px, 1fr));
-  }
-
-  .expertiseSection {
-    padding: 2rem 1rem;
-  }
-
-  .expertiseCard {
-    padding: 1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .expertiseGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* -------------------------------------------------- */
-/* Publish a Research section */
-/* -------------------------------------------------- */
+/* ===================================================
+   PUBLISH A RESEARCH SECTION
+   =================================================== */
 .publishResearchSection {
   width: 100%;
   background-color: var(--foreground);
@@ -407,59 +365,9 @@
   transform: translateY(-1px);
 }
 
-@media (max-width: 768px) {
-  .publishResearchContent p {
-    font-size: 1rem;
-  }
-
-  .publishResearchButton {
-    width: 100%;
-    max-width: 320px;
-  }
-}
-
-@media (max-width: 768px) {
-  .hero {
-    flex-direction: column;
-    min-height: 700px;
-    padding: 2rem 1rem;
-  }
-
-  .content {
-    max-width: 100%;
-    margin-bottom: 2rem;
-  }
-
-  .title {
-    font-size: 1.75rem;
-  }
-
-  .subtitle {
-    font-size: 0.9rem;
-  }
-
-  .emblem {
-    max-width: 100%;
-  }
-
-  .emblemCircle {
-    width: 220px;
-    height: 220px;
-  }
-
-  .emblemLogo {
-    width: 70px;
-    height: 70px;
-  }
-
-  .emblemText {
-    font-size: 0.65rem;
-  }
-}
-
-/* -------------------------------------------------- */
-/* Reasons section */
-/* -------------------------------------------------- */
+/* ===================================================
+   REASONS SECTION
+   =================================================== */
 .reasons {
   padding: 4rem 2rem;
   text-align: center;
@@ -527,121 +435,9 @@
   margin: 0;
 }
 
-@media (max-width: 900px) {
-  .reasonsGrid {
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-  }
-
-  .reasons {
-    padding: 3rem 1.5rem;
-  }
-
-  .reasonsCard {
-    padding: 1.75rem 1.5rem;
-  }
-}
-
-/* Footer Styles */
-.footer {
-  background-color: var(--secondary-color);
-  color: var(--foreground-light);
-  padding: 2.5rem 1.5rem;
-  width: 100%;
-}
-
-.footerContent {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(6, minmax(120px, 1fr));
-  gap: 1.25rem;
-  align-items: start;
-  justify-items: stretch;
-}
-
-.footerBrand {
-  grid-column: 1 / span 2;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.footerBrand .logo {
-  width: 160px;
-  height: auto;
-}
-
-.footerSocials {
-  display: flex;
-  gap: 0.8rem;
-}
-
-.footerSocials a {
-  display: inline-flex;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  align-items: center;
-  justify-content: center;
-  color: white;
-  text-decoration: none;
-}
-
-.footerSection {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-}
-
-.footerSection h4 {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.95);
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-.footerSection a,
-.footerSection p {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.8);
-  text-decoration: none;
-  font-size: 0.95rem;
-}
-
-.footerSection a:hover {
-  color: var(--primary-color);
-}
-
-.footerCopy {
-  grid-column: 1 / -1;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  margin-top: 1.25rem;
-  padding-top: 1rem;
-  text-align: center;
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 0.9rem;
-}
-
-/* align footer text RTL */
-.footerSection,
-.footerBrand,
-.footerContent,
-.footerSide {
-  direction: rtl;
-  text-align: right;
-}
-
-@media (max-width: 900px) {
-  .footerContent {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-}
-
-/* -------------------------------------------------- */
-/* FAQ section */
-/* -------------------------------------------------- */
+/* ===================================================
+   FAQ SECTION
+   =================================================== */
 .faqSection {
   width: 100%;
   background: var(--foreground);
@@ -725,6 +521,8 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  direction: rtl;
+  text-align: right;
 }
 
 .faqIcon {
@@ -764,6 +562,7 @@
 .faqInputWrapper {
   display: flex;
   gap: 0.5rem;
+  direction: rtl;
 }
 
 .faqInputWrapper input {
@@ -771,6 +570,7 @@
   padding: 0.75rem 0.9rem;
   border: 1px solid var(--faq-input-border);
   border-radius: 6px;
+  text-align: right;
 }
 
 .faqInputWrapper button {
@@ -782,28 +582,9 @@
   cursor: pointer;
 }
 
-@media (max-width: 1024px) {
-  .faqGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Make form RTL with icon on left in FAQ side */
-.faqInputWrapper {
-  direction: rtl;
-}
-
-.faqInputWrapper input {
-  text-align: right;
-}
-
-.faqSide {
-  text-align: right;
-}
-
-/* -------------------------------------------------- */
-/* Blog section */
-/* -------------------------------------------------- */
+/* ===================================================
+   BLOG SECTION
+   =================================================== */
 .blogSection {
   width: 100%;
   padding: 4rem 2rem;
@@ -811,9 +592,90 @@
   color: var(--blog-color);
 }
 
-/* -------------------------------------------------- */
-/* About Us section */
-/* -------------------------------------------------- */
+.blogTitle {
+  text-align: center;
+  margin: 0 auto 0.8rem;
+  font-size: clamp(2rem, 3vw, 2.5rem);
+  font-weight: 900;
+}
+
+.blogSubtitle {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto 2rem;
+  color: #2a3a57;
+  font-size: 1.05rem;
+}
+
+.blogGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.blogCard {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.blogImageWrapper {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.blogImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.blogCardBody {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.blogCardBody h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #0a3f62;
+}
+
+.blogCardBody p {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.68);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.blogMeta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.blogReadMore {
+  margin-top: auto;
+  color: #0a3f62;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.blogReadMore:hover {
+  color: #c6a664;
+}
+
+/* ===================================================
+   ABOUT US SECTION
+   =================================================== */
 .aboutUsSection {
   width: 100%;
   padding: 4rem 2rem;
@@ -965,127 +827,9 @@
   font-size: 0.95rem;
 }
 
-@media (max-width: 1024px) {
-  .aboutUsContent ul {
-    gap: 0.8rem;
-    max-width: 100%;
-  }
-
-  .aboutUsContent li {
-    padding: 1.2rem 1.5rem;
-    font-size: 0.98rem;
-  }
-}
-
-@media (max-width: 700px) {
-  .aboutUsContent h2 {
-    font-size: 2.5rem;
-  }
-
-  .aboutUsContent ul {
-    margin: 2rem auto 3rem;
-    gap: 0.75rem;
-  }
-
-  .aboutUsContent li {
-    padding: 1rem 1.2rem;
-    font-size: 0.95rem;
-  }
-}
-
-.blogTitle {
-  text-align: center;
-  margin: 0 auto 0.8rem;
-  font-size: clamp(2rem, 3vw, 2.5rem);
-  font-weight: 900;
-}
-
-.blogSubtitle {
-  text-align: center;
-  max-width: 760px;
-  margin: 0 auto 2rem;
-  color: #2a3a57;
-  font-size: 1.05rem;
-}
-
-.blogGrid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(220px, 1fr));
-  gap: 1rem;
-}
-
-.blogCard {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.blogImageWrapper {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-}
-
-.blogImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.blogCardBody {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-
-.blogCardBody h3 {
-  margin: 0;
-  font-size: 1.2rem;
-  color: #0a3f62;
-}
-
-.blogCardBody p {
-  margin: 0;
-  color: rgba(0, 0, 0, 0.68);
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-.blogMeta {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.85rem;
-  color: #777;
-}
-
-.blogReadMore {
-  margin-top: auto;
-  color: #0a3f62;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.blogReadMore:hover {
-  color: #c6a664;
-}
-
-@media (max-width: 1024px) {
-  .blogGrid {
-    grid-template-columns: repeat(2, minmax(220px, 1fr));
-  }
-}
-
-@media (max-width: 700px) {
-  .blogGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
+/* ===================================================
+   FOOTER STYLES
+   =================================================== */
 .footerSection {
   align-items: center;
 }
@@ -1105,63 +849,9 @@
   color: var(--primary-color);
 }
 
-@media (max-width: 768px) {
-  .footerLinks {
-    flex-direction: column;
-    gap: 1rem;
-  }
-}
-
-/* Enable hover only on non-touch devices */
-/* @media (hover: hover) and (pointer: fine) {
-  a.primary:hover {
-    background: var(--button-primary-hover);
-    border-color: transparent;
-  }
-
-  a.secondary:hover {
-    background: var(--button-secondary-hover);
-    border-color: transparent;
-  }
-}
-
-@media (max-width: 600px) {
-  .main {
-    padding: 48px 24px;
-  }
-
-  .intro {
-    gap: 16px;
-  }
-
-  .intro h1 {
-    font-size: 32px;
-    line-height: 40px;
-    letter-spacing: -1.92px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
-  }
-
-  .page {
-    --background: #000;
-    --foreground: #000;
-
-    --text-primary: #ededed;
-    --text-secondary: #999;
-
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-    --button-secondary-border: #1a1a1a;
-  }
-} */
-
-/* -------------------------------------------------- */
-/* Advisory Committee Section */
-/* -------------------------------------------------- */
+/* ===================================================
+   ADVISORY COMMITTEE SECTION
+   =================================================== */
 .advisoryCommitteeSection {
   width: 100%;
   padding: 3rem 2rem;
@@ -1444,9 +1134,9 @@
   }
 }
 
-/* -------------------------------------------------- */
-/* Request For Publication Section */
-/* -------------------------------------------------- */
+/* ===================================================
+   REQUEST FOR PUBLICATION SECTION
+   =================================================== */
 .requestForPublicationSection {
   width: 100%;
   padding: 3rem 2rem;
@@ -1506,10 +1196,9 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* ================================================== */
-/* New Request For Publication Form Design */
-/* ================================================== */
-
+/* ===================================================
+   PUBLICATION SECTION (FORM & PROCESS)
+   =================================================== */
 .publicationSection {
   width: 100%;
   display: flex;
@@ -2033,7 +1722,9 @@
   color: rgba(10, 63, 98, 0.8);
 }
 
-/* Conferences Section */
+/* ===================================================
+   CONFERENCES SECTION
+   =================================================== */
 .conferencesSection {
   width: 100%;
   padding: 2.5rem 1rem 4rem;
@@ -2384,6 +2075,9 @@
   }
 }
 
+/* ===================================================
+   RESPONSIVE DESIGN - MOBILE (480px and below)
+   =================================================== */
 @media (max-width: 480px) {
   .requestTitle {
     font-size: 1.5rem;
