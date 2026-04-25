@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 function NavBar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -9,14 +10,14 @@ function NavBar() {
     return (
         <nav className="nav-bar">
             <div className="nav-brand">
-                <a href="/">
+                <Link href="/">
                     <Image
                         src="/images/logo/horizontal-logo/svg-horizontal-main-logo-transparent.svg"
                         alt="Logo"
                         width={150}
                         height={50}
                     />
-                </a>
+                </Link>
             </div>
 
             <button
@@ -32,28 +33,28 @@ function NavBar() {
 
             <ul className={`nav-links ${isOpen ? 'open' : ''}`}>
                 <li>
-                    <a href="/">الرئيسية</a>
+                    <Link href="/">الرئيسية</Link>
                 </li>
                 <li>
-                    <a href="/all-fields-page">كل المجلات</a>
+                    <Link href="/all-fields-page">كل المجلات</Link>
                 </li>
                 <li>
-                    <a href="/advisory-committee-page">اللجنة الاستشارية</a>
+                    <Link href="/advisory-committee-page">اللجنة الاستشارية</Link>
                 </li>
                 <li>
-                    <a href="/request-for-publication-of-a-study-page">طلب نشر دراسة</a>
+                    <Link href="/request-for-publication-of-a-study-page">طلب نشر دراسة</Link>
                 </li>
                 <li>
-                    <a href="/conferences-page">المؤتمرات</a>
+                    <Link href="/conferences-page">المؤتمرات</Link>
                 </li>
                 <li>
-                    <a href="/blog-page">المدونة</a>
+                    <Link href="/blog-page">المدونة</Link>
                 </li>
                 <li>
-                    <a href="/about-us-page">من نحن</a>
+                    <Link href="/about-us-page">من نحن</Link>
                 </li>
                 <li>
-                    <a href="/contact-us-page">اتصل بنا</a>
+                    <Link href="/contact-us-page">اتصل بنا</Link>
                 </li>
             </ul>
         </nav>

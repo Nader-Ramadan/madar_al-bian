@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Test and utility files
+    "test-*.js",
+    "create-missing-tables.js",
+    "verify-database.js",
   ]),
 ]);
 

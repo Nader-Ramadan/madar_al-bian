@@ -7,7 +7,7 @@ import CallToPublish from "@/app/components/call-to-publish";
 import Footer from "../components/footer";
 
 export const metadata: Metadata = {
-  title: "All Fields",
+  title: "All Magazines",
 };
 
 export default function Magazines() {

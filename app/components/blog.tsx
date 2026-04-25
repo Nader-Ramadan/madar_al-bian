@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import styles from '../page.module.css';
 
 const blogPosts = [
@@ -52,7 +53,7 @@ export default function Blog() {
                 <span>{post.author}</span>
                 <span>{post.date}</span>
               </div>
-              <a href='/blog' className={styles.blogReadMore}>اقرأ المزيد</a>
+              <Link href='/blog' className={styles.blogReadMore}>اقرأ المزيد</Link>
             </div>
           </article>
         ))}

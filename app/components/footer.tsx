@@ -1,6 +1,7 @@
 "use client";
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 function Footer() {
   return (
@@ -18,16 +19,16 @@ function Footer() {
 
         <div className="footerSection">
           <h4>المؤتمرات</h4>
-          <a href="/magazines">مجلاتنا</a>
-          <a href="/conference">المؤتمرات</a>
-          <a href="/submit-research">طلب نشر دراسة</a>
+          <Link href="/magazines">مجلاتنا</Link>
+          <Link href="/conference">المؤتمرات</Link>
+          <Link href="/submit-research">طلب نشر دراسة</Link>
         </div>
 
         <div className="footerSection">
           <h4>مساعدة</h4>
-          <a href="/faq">الأسئلة الشائعة</a>
-          <a href="/terms">الشروط والأحكام</a>
-          <a href="/privacy">سياسة الخصوصية</a>
+          <Link href="/faq">الأسئلة الشائعة</Link>
+          <Link href="/terms">الشروط والأحكام</Link>
+          <Link href="/privacy">سياسة الخصوصية</Link>
         </div>
 
         <div className="footerSection">

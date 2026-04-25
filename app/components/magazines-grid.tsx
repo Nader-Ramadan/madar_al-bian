@@ -1,4 +1,6 @@
 import styles from "../magazines-grid.module.css";
+import Image from 'next/image';
+import Link from 'next/link';
 
 interface MagazineCard {
   id: number;
@@ -74,19 +76,21 @@ export default function MagazinesGrid() {
         {magazines.map((magazine) => (
           <div key={magazine.id} className={styles.card}>
             <div className={styles.imageWrapper}>
-              <img
+              <Image
                 src={magazine.image}
                 alt={magazine.title}
+                width={400}
+                height={300}
                 className={styles.image}
               />
             </div>
             <div className={styles.content}>
               <h3 className={styles.title}>{magazine.title}</h3>
               <p className={styles.description}>{magazine.description}</p>
-              <a className={styles.visitBtn} href="../all-fields-page/magazine-page">
+              <Link className={styles.visitBtn} href="../all-fields-page/magazine-page">
                 <span>زيارة المجلة</span>
                 <span>→</span>
-              </a>
+              </Link>
             </div>
           </div>
         ))}

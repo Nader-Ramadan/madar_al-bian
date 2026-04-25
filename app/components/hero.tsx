@@ -2,6 +2,7 @@
 
 import styles from '../page.module.css';
 import Image from 'next/image';
+import Link from 'next/link';
 
 function hero() {
     return (
@@ -16,7 +17,7 @@ function hero() {
                         className={styles.emblemLogo}
                     />
                 </div>
-                <a href="../about-us-page/"><button className={styles.button}>من  نحن</button></a>
+                <Link href="../about-us-page/" className={styles.button}>من  نحن</Link>
             </div>
 
             <div className={styles.content}>
