@@ -97,6 +97,15 @@
   transition: all 0.2s ease;
 }
 
+.versionsHeader {
+  text-align: center;
+  margin: 2rem;
+  font-size: 3rem;
+  font-style: italic;
+  color: var(--primary-color, #0f3f6e);
+  font-weight: 700;
+}
+
 .visitBtn:hover {
   background: var(--primary-dark, #0a2e52);
   transform: translateX(-2px);

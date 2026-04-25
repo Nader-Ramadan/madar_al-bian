@@ -11,5 +11,66 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+}
+
+model Magazine {
+  id          Int     @id @default(autoincrement())
+  title       String  @db.VarChar(255)
+  description String  @db.Text
+  image       String  @db.VarChar(255)
+  category    String  @db.VarChar(100)
+
+  @@map("magazines")
+}
+
+model BlogPost {
+  id      Int     @id @default(autoincrement())
+  title   String  @db.VarChar(255)
+  summary String  @db.Text
+  date    String  @db.VarChar(50)
+  author  String  @db.VarChar(255)
+  image   String? @db.VarChar(255)
+
+  @@map("blogs")
+}
+
+model Conference {
+  id        Int     @id @default(autoincrement())
+  title     String  @db.VarChar(255)
+  description String  @db.Text
+  date      String  @db.VarChar(50)
+  location  String  @db.VarChar(255)
+  image     String? @db.VarChar(255)
+  attendees String? @db.VarChar(100)
+
+  @@map("conferences")
+}
+
+model AdvisoryMember {
+  id    Int     @id @default(autoincrement())
+  name  String  @db.VarChar(255)
+  title String  @db.VarChar(255)
+  image String  @db.VarChar(255)
+  bio   String  @db.Text
+
+  @@map("advisory_committee_members")
+}
+
+model Field {
+  id          Int     @id @default(autoincrement())
+  name        String  @db.VarChar(255)
+  description String  @db.Text
+
+  @@map("fields")
+}
+
+model Pdf {
+  id        Int       @id @default(autoincrement())
+  filename  String    @db.VarChar(255)
+  filepath  String    @db.VarChar(255)
+  size      Int
+  uploaded_at DateTime @default(now())
+  status    String    @db.VarChar(50) @default("active")
+
+  @@map("pdfs")
 }

@@ -4,6 +4,14 @@
 import "dotenv/config";
 import { defineConfig, env } from "prisma/config";
 
+const host = env("DB_HOST");
+const user = env("DB_USER");
+const password = env("DB_PASSWORD");
+const database = env("DB_NAME");
+const port = process.env.DB_PORT || "3306";
+
+const url = `mysql://${user}:${encodeURIComponent(password)}@${host}:${port}/${database}`;
+
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
@@ -11,6 +19,6 @@ export default defineConfig({
   },
   engine: "classic",
   datasource: {
-    url: env("DATABASE_URL"),
+    url: url,
   },
 });
