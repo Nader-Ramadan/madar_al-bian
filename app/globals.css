@@ -129,12 +129,31 @@ a {
   }
 }
 
-/* Footer Styles */
+/* ===================================================
+   FOOTER STYLES - ENHANCED DESIGN
+   =================================================== */
 .footer {
-  background-color: var(--secondary-color);
+  background: linear-gradient(135deg, var(--secondary-color) 0%, #1a5a84 100%);
   color: var(--foreground-light);
-  padding: 2.5rem 1.5rem;
+  padding: 3rem 1.5rem 2rem;
   width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--primary-color),
+    #d4b376,
+    var(--primary-color)
+  );
 }
 
 .footerContent {
@@ -142,21 +161,28 @@ a {
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(6, minmax(120px, 1fr));
-  gap: 1.25rem;
+  gap: 2rem;
   align-items: start;
   justify-items: stretch;
+  position: relative;
+  z-index: 1;
 }
 
 .footerBrand {
   grid-column: 1 / span 2;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .footerBrand .logo {
   width: 160px;
   height: auto;
+  transition: transform 0.3s ease;
+}
+
+.footerBrand .logo:hover {
+  transform: scale(1.05);
 }
 
 .footerSocials {
@@ -166,27 +192,48 @@ a {
 
 .footerSocials a {
   display: inline-flex;
-  width: 34px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.15);
   align-items: center;
   justify-content: center;
   color: white;
   text-decoration: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.footerSocials a:hover {
+  background: var(--primary-color);
+  color: var(--secondary-color);
+  transform: translateY(-4px);
+  border-color: var(--primary-color);
+  box-shadow: 0 8px 16px rgba(198, 166, 100, 0.3);
 }
 
 .footerSection {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.8rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: background 0.3s ease;
+}
+
+.footerSection:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .footerSection h4 {
   margin: 0;
   color: rgba(255, 255, 255, 0.95);
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
 }
 
 .footerSection a,
@@ -195,20 +242,47 @@ a {
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
   font-size: 0.95rem;
+  line-height: 1.6;
+  transition: all 0.2s ease;
+}
+
+.footerSection a {
+  cursor: pointer;
+  position: relative;
+  padding-left: 0.5rem;
+}
+
+.footerSection a::before {
+  content: "→";
+  position: absolute;
+  left: -0.5rem;
+  opacity: 0;
+  transition: all 0.2s ease;
 }
 
 .footerSection a:hover {
   color: var(--primary-color);
+  transform: translateX(4px);
+}
+
+.footerSection a:hover::before {
+  opacity: 1;
+  left: 0;
+}
+
+.footerSection p {
+  font-size: 0.9rem;
 }
 
 .footerCopy {
   grid-column: 1 / -1;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  margin-top: 1.25rem;
-  padding-top: 1rem;
+  border-top: 2px solid rgba(255, 255, 255, 0.15);
+  margin-top: 2rem;
+  padding-top: 1.5rem;
   text-align: center;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.9rem;
+  letter-spacing: 0.3px;
 }
 
 /* align footer text RTL */
@@ -222,7 +296,306 @@ a {
 
 @media (max-width: 900px) {
   .footerContent {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .footerBrand {
+    grid-column: 1 / -1;
     text-align: center;
+  }
+
+  .footerSocials {
+    justify-content: center;
+  }
+}
+
+/* ===================================================
+   TABLET RESPONSIVE STYLES (768px and below)
+   =================================================== */
+@media (max-width: 768px) {
+  /* Root */
+  html {
+    font-size: 15px;
+  }
+
+  /* Navigation - Mobile Menu Enhancements */
+  .nav-bar {
+    padding: 0.75rem 1rem;
+    gap: 10%;
+  }
+
+  .nav-toggle {
+    width: 32px;
+    height: 32px;
+    padding: 0.25rem;
+  }
+
+  .nav-links {
+    max-width: 100%;
+    width: 100vw;
+    right: -100vw;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 2.5rem 1rem 2rem;
+  }
+
+  .footerContent {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+  }
+
+  .footerBrand {
+    grid-column: 1 / -1;
+    text-align: center;
+    align-items: center;
+  }
+
+  .footerBrand .logo {
+    width: 140px;
+  }
+
+  .footerSocials {
+    justify-content: center;
+    gap: 0.6rem;
+  }
+
+  .footerSocials a {
+    width: 36px;
+    height: 36px;
+    font-size: 0.8rem;
+  }
+
+  .footerSection {
+    padding: 0.8rem;
+    gap: 0.6rem;
+  }
+
+  .footerSection h4 {
+    font-size: 0.95rem;
+  }
+
+  .footerSection a,
+  .footerSection p {
+    font-size: 0.85rem;
+  }
+
+  .footerCopy {
+    font-size: 0.8rem;
+    padding-top: 1rem;
+    margin-top: 1.5rem;
+  }
+}
+
+/* ===================================================
+   MOBILE RESPONSIVE STYLES (480px and below)
+   =================================================== */
+@media (max-width: 480px) {
+  /* Root */
+  html {
+    font-size: 14px;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Navigation */
+  .nav-bar {
+    padding: 0.5rem 0.75rem;
+    gap: 5%;
+  }
+
+  .nav-toggle .bar {
+    width: 20px;
+    height: 1.5px;
+    margin: 4px 0;
+  }
+
+  .nav-links {
+    top: 50px;
+    max-width: 100%;
+    height: calc(100vh - 50px);
+    padding: 0.75rem 1rem;
+    gap: 0;
+  }
+
+  .nav-links li {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .nav-links a {
+    padding: 0.8rem 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 2rem 0.75rem 1.5rem;
+  }
+
+  .footer::before {
+    height: 3px;
+  }
+
+  .footerContent {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .footerBrand {
+    grid-column: auto;
+    text-align: center;
+    align-items: center;
+  }
+
+  .footerBrand .logo {
+    width: 120px;
+    margin: 0 auto;
+  }
+
+  .footerSocials {
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .footerSocials a {
+    width: 34px;
+    height: 34px;
+    font-size: 0.75rem;
+  }
+
+  .footerSection {
+    grid-column: auto;
+    padding: 0.75rem;
+    gap: 0.5rem;
+    border-radius: 6px;
+  }
+
+  .footerSection h4 {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .footerSection a,
+  .footerSection p {
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+
+  .footerSection a::before {
+    display: none;
+  }
+
+  .footerSection a:hover {
+    transform: none;
+    text-decoration: underline;
+  }
+
+  .footerCopy {
+    font-size: 0.75rem;
+    padding-top: 0.75rem;
+    margin-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* ===================================================
+   SMALL MOBILE RESPONSIVE STYLES (360px and below)
+   =================================================== */
+@media (max-width: 360px) {
+  html {
+    font-size: 13px;
+  }
+
+  .nav-bar {
+    padding: 0.5rem 0.5rem;
+  }
+
+  .footer {
+    padding: 1.5rem 0.5rem 1.25rem;
+  }
+
+  .footer::before {
+    height: 2px;
+  }
+
+  .footerContent {
+    gap: 0.75rem;
+  }
+
+  .footerBrand .logo {
+    width: 100px;
+  }
+
+  .footerSocials {
+    gap: 0.4rem;
+  }
+
+  .footerSocials a {
+    width: 32px;
+    height: 32px;
+    font-size: 0.7rem;
+  }
+
+  .footerSection {
+    padding: 0.6rem;
+    gap: 0.4rem;
+    border-radius: 4px;
+  }
+
+  .footerSection h4 {
+    font-size: 0.85rem;
+  }
+
+  .footerSection a,
+  .footerSection p {
+    font-size: 0.75rem;
+  }
+
+  .footerCopy {
+    font-size: 0.7rem;
+    padding-top: 0.5rem;
+    margin-top: 0.75rem;
+  }
+}
+
+/* ===================================================
+   SCROLL AND INPUT OPTIMIZATION FOR MOBILE
+   =================================================== */
+@media (max-width: 768px) {
+  /* Improve touch targets */
+  a,
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Improve readability */
+  body {
+    line-height: 1.6;
+  }
+
+  /* Ensure text doesn't zoom on input focus */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+
+  /* Optimize images */
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Reduce overflow issues */
+  body,
+  html {
+    overflow-x: hidden;
   }
 }

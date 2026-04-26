@@ -54,3 +54,74 @@
   color: #fff;
   border-color: var(--primary-color, #cba96e);
 }
+
+/* ===================================================
+   RESPONSIVE DESIGN FOR ALL FIELDS HEADER
+   =================================================== */
+
+/* Tablet Screens (768px and below) */
+@media (max-width: 768px) {
+  .section {
+    margin: 1rem auto;
+    padding: 1.5rem 1rem;
+    border-radius: 16px;
+  }
+
+  .title {
+    font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+  }
+
+  .subtitle {
+    margin: 0.6rem auto 1.2rem;
+    font-size: 1rem;
+    max-width: 100%;
+  }
+
+  .tags {
+    gap: 0.6rem;
+  }
+
+  .tag {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: 6px;
+  }
+}
+
+/* Mobile Screens (480px and below) */
+@media (max-width: 480px) {
+  .section {
+    margin: 0.75rem 0.75rem;
+    padding: 1.25rem 0.75rem;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  .title {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .subtitle {
+    margin: 0.5rem auto 1rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .tags {
+    gap: 0.5rem;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .tag:active {
+    transform: translateY(0);
+  }
+}

@@ -18,12 +18,20 @@ function MagazineContent() {
             />
           </div>
           <div className={styles.authorInfo}>
+        <div>
+          <div className={styles.subtit}>ISSN</div>
+          <div className={styles.tit}>00/00/0000</div>
+        </div>
             <div className={styles.subtit}>الوظيفة</div>
             <div className={styles.tit}>أسم الناشر</div>
           </div>
         </div>
         <div>
           <div className={styles.subtit}>تاريخ الاصدار</div>
+          <div className={styles.tit}>00/00/0000</div>
+        </div>
+        <div>
+          <div className={styles.subtit}>تاريخ الاصدار القادم</div>
           <div className={styles.tit}>00/00/0000</div>
         </div>
         <div>

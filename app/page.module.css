@@ -2198,6 +2198,1089 @@
     transform 0.2s ease;
 }
 
+/* ===================================================
+   COMPREHENSIVE RESPONSIVE DESIGN FOR ALL SECTIONS
+   =================================================== */
+
+/* ===================================================
+   TABLET SCREENS (768px and below)
+   =================================================== */
+@media (max-width: 768px) {
+  /* Root */
+  .page {
+    font-size: 16px;
+  }
+
+  /* Main Layout */
+  .main {
+    min-height: auto;
+  }
+
+  /* Navigation */
+  .nav-bar {
+    padding: 0.75rem 1rem;
+    gap: 10%;
+  }
+
+  .nav-links {
+    gap: 1rem;
+  }
+
+  .nav-toggle {
+    display: flex;
+  }
+
+  /* Hero Section */
+  .hero {
+    min-height: 400px;
+    padding: 2rem 1rem;
+    gap: 2vw;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .hero .content {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .hero .title {
+    font-size: 2rem;
+    line-height: 1.3;
+  }
+
+  .hero .subtitle {
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero .emblem {
+    max-width: 100%;
+    margin-top: 1rem;
+  }
+
+  .emblemCircle {
+    width: 280px;
+    height: 280px;
+  }
+
+  .lineLeft,
+  .lineRight {
+    opacity: 0.1;
+  }
+
+  .dots {
+    bottom: 1rem;
+  }
+
+  /* Expertise Section */
+  .expertiseSection {
+    padding: 2rem 1rem;
+  }
+
+  .expertiseGrid {
+    grid-template-columns: repeat(2, minmax(100px, 1fr));
+    gap: 1rem;
+  }
+
+  .expertiseCard {
+    min-width: 100px;
+    padding: 1rem 0.75rem;
+  }
+
+  .expertiseCard h3 {
+    font-size: 2rem;
+  }
+
+  .expertiseCard p {
+    font-size: 0.85rem;
+  }
+
+  /* Reasons Section */
+  .reasons {
+    padding: 2rem 1rem;
+  }
+
+  .reasonsTitle {
+    font-size: 1.6rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .reasonsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    max-width: 100%;
+  }
+
+  .reasonsCard {
+    max-width: 100%;
+    padding: 1.5rem 1rem;
+  }
+
+  .reasonsIcon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .reasonsIcon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .reasonsCardTitle {
+    font-size: 1rem;
+  }
+
+  .reasonsCardText {
+    font-size: 0.9rem;
+  }
+
+  /* Publish Research Section */
+  .publishResearchSection {
+    padding: 2rem 1rem;
+  }
+
+  .publishResearchContent h2 {
+    font-size: 1.6rem;
+  }
+
+  .publishResearchContent p {
+    font-size: 1rem;
+  }
+
+  /* Blog Section */
+  .blogSection {
+    padding: 2rem 1rem;
+  }
+
+  .blogTitle {
+    font-size: 1.8rem;
+  }
+
+  .blogSubtitle {
+    font-size: 0.95rem;
+    max-width: 100%;
+  }
+
+  .blogGrid {
+    grid-template-columns: repeat(2, minmax(150px, 1fr));
+    gap: 0.8rem;
+  }
+
+  .blogCard {
+    border-radius: 12px;
+  }
+
+  .blogCardBody {
+    padding: 0.75rem;
+    gap: 0.4rem;
+  }
+
+  .blogCardBody h3 {
+    font-size: 1rem;
+  }
+
+  .blogCardBody p {
+    font-size: 0.85rem;
+  }
+
+  .blogMeta {
+    font-size: 0.8rem;
+  }
+
+  /* FAQ Section */
+  .faqSection {
+    padding: 2rem 1rem;
+  }
+
+  .faqGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .faqList h2 {
+    font-size: 1.6rem;
+  }
+
+  .faqItem {
+    margin-bottom: 0.6rem;
+  }
+
+  .faqQuestion {
+    padding: 0.8rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .faqAnswer {
+    max-height: 200px;
+    font-size: 0.9rem;
+  }
+
+  .faqItem.open .faqAnswer {
+    max-height: 250px;
+    padding: 0 1rem 0.75rem;
+  }
+
+  .faqSide {
+    padding: 1.5rem;
+  }
+
+  .faqIcon {
+    width: 100px;
+    height: 100px;
+    font-size: 2.5rem;
+  }
+
+  .faqSide h3 {
+    font-size: 1.5rem;
+  }
+
+  .faqSide p {
+    font-size: 0.9rem;
+  }
+
+  /* About Us Section */
+  .aboutUsSection {
+    padding: 2rem 1rem;
+  }
+
+  .aboutUsContent h2 {
+    font-size: 2.2rem;
+  }
+
+  .aboutUsContent h2::after {
+    width: 60px;
+    bottom: -0.6rem;
+  }
+
+  .aboutUsContent p {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .aboutUsContent ul {
+    gap: 0.8rem;
+    margin: 1.5rem auto 2rem;
+  }
+
+  .aboutUsContent li {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .aboutUsContent li::before {
+    right: 1rem;
+    top: 1rem;
+    font-size: 1rem;
+  }
+
+  .aboutUsContent h3 {
+    font-size: 1.3rem;
+    margin: 1.5rem auto 0.75rem;
+    padding-bottom: 0.6rem;
+  }
+
+  .aboutUsContent h3::after {
+    width: 50px;
+    height: 2px;
+    bottom: 0;
+  }
+
+  /* Advisory Committee */
+  .advisoryCommitteeTitle {
+    font-size: 1.8rem;
+  }
+
+  .advisoryCommitteeSubtitle {
+    font-size: 0.95rem;
+  }
+
+  .advisoryStatsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .advisoryStat {
+    padding: 1.5rem;
+  }
+
+  .advisoryStat h3 {
+    font-size: 1.5rem;
+  }
+
+  .advisoryStatIcon {
+    font-size: 2rem;
+  }
+
+  .committeeMembersGrid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.8rem;
+  }
+
+  .memberImagePlaceholder {
+    height: 150px;
+  }
+
+  .memberInfo {
+    padding: 0.8rem;
+  }
+
+  .memberTitle {
+    font-size: 0.8rem;
+  }
+
+  .memberSpecialty {
+    font-size: 0.75rem;
+  }
+
+  .selectionCriteriaGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Magazine Content */
+  .magazineContent {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1.5rem 1rem;
+  }
+
+  .author {
+    grid-area: auto;
+  }
+
+  .magSum {
+    grid-area: auto;
+  }
+
+  .magSum h2 {
+    font-size: 1.5rem;
+    margin: 1rem 0;
+  }
+
+  .magSum p {
+    font-size: 1rem;
+    margin: 0.75rem 0;
+  }
+
+  /* Footer */
+  .footerSection {
+    padding: 1.5rem 1rem;
+  }
+
+  .footerCopy {
+    font-size: 0.9rem;
+  }
+
+  .footerLinks a {
+    font-size: 0.85rem;
+  }
+}
+
+/* ===================================================
+   MOBILE SCREENS (480px and below)
+   =================================================== */
+@media (max-width: 480px) {
+  /* Root */
+  .page {
+    font-size: 14px;
+  }
+
+  /* Navigation */
+  .nav-bar {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .nav-links {
+    gap: 0.75rem;
+  }
+
+  .nav-links a {
+    padding: 0.4rem 0.3rem;
+    font-size: 0.9rem;
+  }
+
+  /* Hero Section */
+  .hero {
+    min-height: 300px;
+    padding: 1.5rem 1rem;
+  }
+
+  .hero .title {
+    font-size: 1.5rem;
+  }
+
+  .hero .subtitle {
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .hero .button {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .emblemCircle {
+    width: 200px;
+    height: 200px;
+    padding: 1rem;
+    border-width: 2px;
+  }
+
+  .emblemText {
+    font-size: 0.65rem;
+  }
+
+  .dots {
+    gap: 0.5rem;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  /* Expertise Section */
+  .expertiseSection {
+    padding: 1.5rem 1rem;
+  }
+
+  .expertiseGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .expertiseCard {
+    min-width: 80px;
+    padding: 0.8rem 0.5rem;
+  }
+
+  .expertiseCard h3 {
+    font-size: 1.5rem;
+  }
+
+  .expertiseCard p {
+    font-size: 0.75rem;
+  }
+
+  /* Reasons Section */
+  .reasons {
+    padding: 1.5rem 1rem;
+  }
+
+  .reasonsTitle {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  .reasonsGrid {
+    gap: 0.75rem;
+  }
+
+  .reasonsCard {
+    padding: 1rem 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .reasonsIcon {
+    width: 45px;
+    height: 45px;
+  }
+
+  .reasonsIcon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .reasonsCardTitle {
+    font-size: 0.9rem;
+  }
+
+  .reasonsCardText {
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
+  /* Publish Research Section */
+  .publishResearchSection {
+    padding: 1.5rem 1rem;
+  }
+
+  .publishResearchContent h2 {
+    font-size: 1.3rem;
+  }
+
+  .publishResearchContent p {
+    font-size: 0.9rem;
+  }
+
+  .publishResearchButton {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  /* Blog Section */
+  .blogSection {
+    padding: 1.5rem 1rem;
+  }
+
+  .blogTitle {
+    font-size: 1.4rem;
+  }
+
+  .blogSubtitle {
+    font-size: 0.85rem;
+  }
+
+  .blogGrid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .blogCardBody h3 {
+    font-size: 0.95rem;
+  }
+
+  .blogCardBody p {
+    font-size: 0.8rem;
+  }
+
+  /* FAQ Section */
+  .faqSection {
+    padding: 1.5rem 1rem;
+  }
+
+  .faqGrid {
+    direction: ltr;
+  }
+
+  .faqList h2 {
+    font-size: 1.3rem;
+  }
+
+  .faqQuestion {
+    padding: 0.75rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .faqToggle {
+    width: 20px;
+    height: 20px;
+    font-size: 1.2rem;
+  }
+
+  .faqAnswer {
+    font-size: 0.8rem;
+    padding: 0 0.8rem;
+  }
+
+  .faqItem.open .faqAnswer {
+    max-height: 300px;
+  }
+
+  .faqSide {
+    padding: 1rem;
+  }
+
+  .faqIcon {
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
+  }
+
+  .faqSide h3 {
+    font-size: 1.2rem;
+  }
+
+  .faqSide p {
+    font-size: 0.8rem;
+  }
+
+  .faqInputWrapper input {
+    font-size: 0.85rem;
+    padding: 0.6rem 0.7rem;
+  }
+
+  .faqInputWrapper button {
+    padding: 0.6rem 0.7rem;
+    font-size: 0.85rem;
+  }
+
+  /* About Us Section */
+  .aboutUsSection {
+    padding: 1.5rem 1rem;
+  }
+
+  .aboutUsContent h2 {
+    font-size: 1.6rem;
+  }
+
+  .aboutUsContent p {
+    font-size: 0.9rem;
+  }
+
+  .aboutUsContent ul {
+    gap: 0.6rem;
+  }
+
+  .aboutUsContent li {
+    padding: 0.8rem 1rem;
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .aboutUsContent li::before {
+    right: 0.75rem;
+    top: 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .aboutUsContent li:hover {
+    transform: translateY(-2px);
+  }
+
+  .aboutUsContent h3 {
+    font-size: 1.1rem;
+    margin: 1rem auto 0.5rem;
+  }
+
+  .aboutUsCard {
+    padding: 1rem;
+  }
+
+  .aboutUsIcon {
+    font-size: 1.5rem;
+  }
+
+  .aboutUsCard h3 {
+    font-size: 1.2rem;
+  }
+
+  .aboutUsCard p {
+    font-size: 0.8rem;
+  }
+
+  /* Advisory Committee */
+  .advisoryCommitteeSection {
+    padding: 1.5rem 1rem;
+  }
+
+  .advisoryCommitteeTitle {
+    font-size: 1.4rem;
+  }
+
+  .advisoryCommitteeSubtitle {
+    font-size: 0.85rem;
+  }
+
+  .advisoryStatsGrid {
+    gap: 0.75rem;
+  }
+
+  .advisoryStat {
+    padding: 1rem;
+  }
+
+  .advisoryStat h3 {
+    font-size: 1.2rem;
+  }
+
+  .advisoryStatIcon {
+    font-size: 1.75rem;
+  }
+
+  .advisoryStat p {
+    font-size: 0.8rem;
+  }
+
+  .committeeMembersGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+
+  .memberImagePlaceholder {
+    height: 120px;
+  }
+
+  .memberBadge {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .memberInfo {
+    padding: 0.6rem;
+  }
+
+  .memberTitle {
+    font-size: 0.7rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .memberSpecialty {
+    font-size: 0.65rem;
+  }
+
+  .selectionCriteriaSection {
+    margin: 1.5rem 0;
+    padding: 1rem;
+  }
+
+  .selectionCriteriaSection h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .selectionCriteriaGrid {
+    gap: 0.75rem;
+  }
+
+  .criteriaCard {
+    padding: 1rem;
+  }
+
+  .criteriaCard h3 {
+    font-size: 0.95rem;
+  }
+
+  .criteriaCard p {
+    font-size: 0.8rem;
+  }
+
+  /* Magazine Content */
+  .magazineBanner {
+    padding: 0 1rem;
+    min-height: 60vh;
+  }
+
+  .magazinetitle {
+    padding: 1rem 1rem 1rem 1rem;
+  }
+
+  .magazineBanner h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .magazineBanner h3 {
+    font-size: 1rem;
+  }
+
+  .magazineContent {
+    padding: 1rem;
+  }
+
+  .author,
+  .magSum {
+    grid-column: auto;
+  }
+
+  .authorDetails {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .authorInfo {
+    grid-column: 1 / -1;
+  }
+
+  /* Request for Publication */
+  .requestForPublicationSection {
+    padding: 1.5rem 1rem;
+  }
+
+  .requestTitle {
+    font-size: 1.4rem;
+  }
+
+  .requestSubtitle {
+    font-size: 0.9rem;
+  }
+
+  .requestStatsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .requestStat {
+    padding: 1rem;
+  }
+
+  /* Publication Process */
+  .publicationHero {
+    height: 200px;
+  }
+
+  .publicationTitle {
+    font-size: 1.3rem;
+  }
+
+  .publicationHeroSubtitle {
+    font-size: 0.9rem;
+  }
+
+  .publicationGuidelinesSection {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+
+  .guidelinesIcon {
+    width: 50px;
+    height: 50px;
+    font-size: 2.5rem;
+  }
+
+  .guidelineItem {
+    font-size: 0.85rem;
+  }
+
+  .publicationFormWrapper {
+    padding: 1rem;
+  }
+
+  .publicationForm {
+    padding: 1rem;
+  }
+
+  .formSection h2 {
+    font-size: 1.1rem;
+  }
+
+  .formGrid {
+    gap: 1rem;
+  }
+
+  .formGroup label {
+    font-size: 0.85rem;
+  }
+
+  .formGroup input,
+  .formGroup select,
+  .formGroup textarea {
+    font-size: 0.9rem;
+    padding: 0.6rem;
+  }
+
+  .fileUpload {
+    padding: 1.25rem;
+  }
+
+  .fileUploadIcon {
+    font-size: 1.5rem;
+  }
+
+  .fileUpload p {
+    font-size: 0.85rem;
+  }
+
+  .publicationSubmitButton {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .processTitle {
+    font-size: 1.4rem;
+  }
+
+  .processStepsGrid {
+    gap: 1rem;
+  }
+
+  .processStep {
+    padding: 1rem;
+  }
+
+  .stepNumber {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+
+  .processStep h3 {
+    font-size: 0.95rem;
+  }
+
+  .processStep p {
+    font-size: 0.8rem;
+  }
+
+  .stepArrow {
+    display: none;
+  }
+
+  .requirementsSection {
+    padding: 1.5rem 1rem;
+    margin: 1.5rem 1rem;
+  }
+
+  .requirementsSection h2 {
+    font-size: 1.3rem;
+  }
+
+  .requirementsCriteriaGrid {
+    gap: 1rem;
+  }
+
+  .requirementCard {
+    padding: 1rem;
+  }
+
+  .requirementCard h3 {
+    font-size: 0.95rem;
+  }
+
+  .requirementCard p {
+    font-size: 0.8rem;
+  }
+
+  .callToActionSection {
+    padding: 2rem 1rem;
+    margin: 1.5rem 1rem;
+  }
+
+  .callToActionSection h2 {
+    font-size: 1.4rem;
+  }
+
+  .callToActionSection p {
+    font-size: 0.95rem;
+  }
+
+  /* Conferences */
+  .conferencesSection {
+    padding: 1.5rem 1rem 2rem;
+  }
+
+  .conferencesIntro h1 {
+    font-size: 1.6rem;
+  }
+
+  .conferencesIntro p {
+    font-size: 0.9rem;
+  }
+
+  .conferenceStatsGrid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .conferenceStatCard {
+    padding: 1rem;
+  }
+
+  .conferenceStatCard h3 {
+    font-size: 1.5rem;
+  }
+
+  .conferenceStatCard p {
+    font-size: 0.8rem;
+  }
+
+  .upcomingTitle {
+    font-size: 1.5rem;
+    margin: 1.5rem auto 0.75rem;
+  }
+
+  .conferenceCard {
+    gap: 0.75rem;
+  }
+
+  .conferenceImage {
+    min-height: 150px;
+  }
+
+  .conferenceInfo {
+    padding: 1rem;
+    gap: 0.5rem;
+  }
+
+  .conferenceInfo h3 {
+    font-size: 1rem;
+  }
+
+  .conferenceInfo p {
+    font-size: 0.85rem;
+  }
+
+  .conferenceMeta {
+    gap: 0.4rem;
+    font-size: 0.8rem;
+  }
+
+  .conferenceMeta span {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.75rem;
+  }
+
+  .conferenceActions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .btnPrimary,
+  .btnSecondary {
+    width: 100%;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .conferenceSummaryGrid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .conferenceSummaryCard {
+    padding: 0.75rem;
+  }
+
+  .summaryTitle {
+    font-size: 0.95rem;
+  }
+
+  .summaryMeta {
+    font-size: 0.8rem;
+  }
+
+  .benefitsSection {
+    padding: 1.5rem 1rem;
+    margin: 1.5rem 1rem;
+  }
+
+  .benefitsSection h2 {
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+  }
+
+  .benefitsGrid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .benefitCard {
+    padding: 0.75rem;
+  }
+
+  .benefitCard h3 {
+    font-size: 0.95rem;
+  }
+
+  .benefitCard p {
+    font-size: 0.8rem;
+  }
+
+  /* Footer */
+  .footerSection {
+    padding: 1rem 0.75rem;
+  }
+
+  .footerCopy {
+    font-size: 0.8rem;
+  }
+
+  .footerLinks a {
+    font-size: 0.8rem;
+  }
+}
+
 .ctaButton:hover {
   background-color: rgba(10, 63, 98, 0.9);
   transform: translateY(-2px);
