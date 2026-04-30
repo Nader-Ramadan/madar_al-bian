@@ -22,7 +22,7 @@ export default function AdminMagazinesPage() {
 
   useEffect(() => {
     const load = async () => {
-      const magazinesResponse = await fetch("/api/magazines?limit=100");
+      const magazinesResponse = await fetch("/api/magazines?limit=50");
       const magazinesPayload = await magazinesResponse.json();
       setMagazines(magazinesPayload?.data?.items ?? []);
 

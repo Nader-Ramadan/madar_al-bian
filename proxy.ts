@@ -6,6 +6,9 @@ const adminPathRegex = /^\/(admin|api\/admin)(\/|$)/;
 
 async function hasValidSession(request: NextRequest) {
   const token = request.cookies.get("madar_session")?.value;
+  // #region agent log
+  fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", { method: "POST", headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" }, body: JSON.stringify({ sessionId: "51cdae", runId: "pre-fix", hypothesisId: "H1", location: "proxy.ts:9", message: "Proxy session cookie presence", data: { hasToken: Boolean(token), hasJwtSecret: Boolean(process.env.JWT_SECRET), path: request.nextUrl.pathname }, timestamp: Date.now() }) }).catch(() => {});
+  // #endregion
   if (!token || !process.env.JWT_SECRET) return false;
 
   try {
@@ -13,11 +16,17 @@ async function hasValidSession(request: NextRequest) {
     const payload = verified.payload as { role?: string };
     return payload.role === "ADMIN";
   } catch {
+    // #region agent log
+    fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", { method: "POST", headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" }, body: JSON.stringify({ sessionId: "51cdae", runId: "pre-fix", hypothesisId: "H2", location: "proxy.ts:16", message: "JWT verification failed in proxy", data: { path: request.nextUrl.pathname }, timestamp: Date.now() }) }).catch(() => {});
+    // #endregion
     return false;
   }
 }
 
 export async function proxy(request: NextRequest) {
+  // #region agent log
+  fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", { method: "POST", headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" }, body: JSON.stringify({ sessionId: "51cdae", runId: "pre-fix", hypothesisId: "H3", location: "proxy.ts:23", message: "Proxy route entry", data: { path: request.nextUrl.pathname }, timestamp: Date.now() }) }).catch(() => {});
+  // #endregion
   if (!adminPathRegex.test(request.nextUrl.pathname)) {
     return NextResponse.next();
   }
@@ -27,6 +36,9 @@ export async function proxy(request: NextRequest) {
   }
 
   if (!(await hasValidSession(request))) {
+    // #region agent log
+    fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", { method: "POST", headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" }, body: JSON.stringify({ sessionId: "51cdae", runId: "pre-fix", hypothesisId: "H3", location: "proxy.ts:34", message: "Proxy unauthorized branch", data: { path: request.nextUrl.pathname, isApi: request.nextUrl.pathname.startsWith("/api/") }, timestamp: Date.now() }) }).catch(() => {});
+    // #endregion
     if (request.nextUrl.pathname.startsWith("/api/")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }

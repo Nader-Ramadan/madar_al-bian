@@ -10,7 +10,7 @@ export default function AdminAdvisorsPage() {
 
   useEffect(() => {
     const load = async () => {
-      const response = await fetch("/api/advisory-members?limit=100");
+      const response = await fetch("/api/advisory-members?limit=50");
       const payload = await response.json();
       setItems(payload?.data?.items ?? []);
     };

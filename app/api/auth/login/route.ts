@@ -18,12 +18,18 @@ const loginSchema = z.object({
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for") ?? "local";
+  // #region agent log
+  fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", { method: "POST", headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" }, body: JSON.stringify({ sessionId: "51cdae", runId: "pre-fix", hypothesisId: "H4", location: "app/api/auth/login/route.ts:22", message: "Login request received", data: { hasForwardedFor: Boolean(request.headers.get("x-forwarded-for")) }, timestamp: Date.now() }) }).catch(() => {});
+  // #endregion
   const limit = checkRateLimit(`login:${ip}`);
   if (!limit.allowed) return fail("Too many requests. Try again later.", 429);
 
   try {
     const body = await request.json();
     const parsed = loginSchema.safeParse(body);
+    // #region agent log
+    fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", { method: "POST", headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" }, body: JSON.stringify({ sessionId: "51cdae", runId: "pre-fix", hypothesisId: "H4", location: "app/api/auth/login/route.ts:31", message: "Login payload parsed", data: { parseSuccess: parsed.success }, timestamp: Date.now() }) }).catch(() => {});
+    // #endregion
     if (!parsed.success) return fail("Invalid payload", 400, parsed.error.flatten());
 
     const user = await prisma.user.findUnique({ where: { email: parsed.data.email } });
@@ -36,6 +42,9 @@ export async function POST(request: NextRequest) {
     const token = await createSessionToken({ userId: user.id, role: user.role });
     await createDbSession(user.id, token);
     await setSessionCookie(token);
+    // #region agent log
+    fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", { method: "POST", headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" }, body: JSON.stringify({ sessionId: "51cdae", runId: "pre-fix", hypothesisId: "H5", location: "app/api/auth/login/route.ts:45", message: "Login success and session set", data: { userId: user.id, role: user.role }, timestamp: Date.now() }) }).catch(() => {});
+    // #endregion
 
     return ok({
       id: user.id,
