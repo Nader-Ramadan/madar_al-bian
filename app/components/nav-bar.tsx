@@ -1,11 +1,34 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from "next/navigation";
 
 function NavBar() {
     const [isOpen, setIsOpen] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
+    const router = useRouter();
+
+    useEffect(() => {
+        const loadSession = async () => {
+            try {
+                const response = await fetch("/api/auth/me", { cache: "no-store" });
+                const payload = await response.json();
+                setIsAdmin(Boolean(payload?.success && payload?.data?.role === "ADMIN"));
+            } catch {
+                setIsAdmin(false);
+            }
+        };
+        loadSession();
+    }, []);
+
+    const handleLogout = async () => {
+        await fetch("/api/auth/logout", { method: "POST" });
+        setIsAdmin(false);
+        router.push("/");
+        router.refresh();
+    };
 
     return (
         <nav className="nav-bar">
@@ -36,26 +59,43 @@ function NavBar() {
                     <Link href="/">الرئيسية</Link>
                 </li>
                 <li>
-                    <Link href="/all-fields-page">كل المجلات</Link>
+                    <Link href="/magazines">كل المجلات</Link>
                 </li>
                 <li>
-                    <Link href="/advisory-committee-page">اللجنة الاستشارية</Link>
+                    <Link href="/advisory-committee">اللجنة الاستشارية</Link>
                 </li>
                 <li>
-                    <Link href="/request-for-publication-of-a-study-page">طلب نشر دراسة</Link>
+                    <Link href="/request-for-publication-of-a-study">طلب نشر دراسة</Link>
                 </li>
                 <li>
-                    <Link href="/conferences-page">المؤتمرات</Link>
+                    <Link href="/conferences">المؤتمرات</Link>
                 </li>
                 <li>
-                    <Link href="/blog-page">المدونة</Link>
+                    <Link href="/blog">المدونة</Link>
                 </li>
                 <li>
-                    <Link href="/about-us-page">من نحن</Link>
+                    <Link href="/about-us">من نحن</Link>
                 </li>
                 <li>
-                    <Link href="/contact-us-page">اتصل بنا</Link>
+                    <Link href="/contact-us">اتصل بنا</Link>
                 </li>
+                {isAdmin ? (
+                    <>
+                        <li>
+                            <Link href="/admin">لوحة التحكم</Link>
+                        </li>
+                        <li>
+                            <Link href="/admin/magazines">المجلات والإصدارات</Link>
+                        </li>
+                        <li>
+                            <button type="button" onClick={handleLogout}>تسجيل الخروج</button>
+                        </li>
+                    </>
+                ) : (
+                    <li>
+                        <Link href="/admin/login">دخول المدير</Link>
+                    </li>
+                )}
             </ul>
         </nav>
     );

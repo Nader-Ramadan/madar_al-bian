@@ -1,60 +1,59 @@
-import { NextRequest, NextResponse } from 'next/server';
-import pool from '../../../lib/lib';
-import fs from 'fs/promises';
-import path from 'path';
-import { ResultSetHeader } from 'mysql2/promise';
+import { NextRequest } from "next/server";
+import { z } from "zod";
+import { prisma } from "@/lib/prisma";
+import { ok, fail } from "@/lib/api-response";
+import { requireRole } from "@/lib/rbac";
+import { UserRole } from "@prisma/client";
+import { createUploadUrl } from "@/lib/storage";
 
-// GET → List all PDFs
+const createSchema = z.object({
+  filename: z.string().min(1).max(255),
+  filepath: z.string().url(),
+  size: z.number().int().positive(),
+  mimeType: z.string().max(100).optional(),
+});
+
+const uploadRequestSchema = z.object({
+  filename: z.string().min(1).max(255),
+  contentType: z.string().min(1).max(100),
+  size: z.number().int().positive().max(20 * 1024 * 1024),
+});
+
 export async function GET() {
-try {
-    const [rows] = await pool.execute(
-    'SELECT id, filename, filepath, size, uploaded_at, status FROM pdfs ORDER BY uploaded_at DESC'
-    );
-    return NextResponse.json(rows);
-} catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Failed to fetch PDFs' }, { status: 500 });
-}
+  const items = await prisma.pdf.findMany({ orderBy: { uploaded_at: "desc" } });
+  return ok(items);
 }
 
-// POST → Upload PDF
 export async function POST(request: NextRequest) {
-try {
-    const formData = await request.formData();
-    const file = formData.get('file') as File | null;
+  const auth = await requireRole([UserRole.ADMIN, UserRole.EDITOR]);
+  if (auth.error) return auth.error;
+  const parsed = createSchema.safeParse(await request.json());
+  if (!parsed.success) return fail("Invalid payload", 400, parsed.error.flatten());
 
-    if (!file || file.type !== 'application/pdf') {
-    return NextResponse.json({ error: 'Only PDF files are allowed' }, { status: 400 });
-    }
-
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // Create unique filename
-    const uniqueName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    await fs.mkdir(uploadDir, { recursive: true });
-
-    const filePath = path.join(uploadDir, uniqueName);
-    await fs.writeFile(filePath, buffer);
-
-    // Save to database
-    const dbPath = `/uploads/${uniqueName}`;   // this is the public URL
-    const [result] = await pool.execute(
-    'INSERT INTO pdfs (filename, filepath, size) VALUES (?, ?, ?)',
-    [file.name, dbPath, buffer.length]
-    );
-
-    const insertId = (result as ResultSetHeader).insertId;
-
-    return NextResponse.json({
-    id: insertId,
-    filename: file.name,
-    filepath: dbPath,
-    message: 'PDF uploaded successfully'
-    });
-} catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+  const created = await prisma.pdf.create({
+    data: {
+      ...parsed.data,
+      uploadedById: auth.user?.id,
+    },
+  });
+  return ok(created, { status: 201 });
 }
+
+export async function PUT(request: NextRequest) {
+  const auth = await requireRole([UserRole.ADMIN, UserRole.EDITOR]);
+  if (auth.error) return auth.error;
+  const parsed = uploadRequestSchema.safeParse(await request.json());
+  if (!parsed.success) return fail("Invalid payload", 400, parsed.error.flatten());
+
+  if (!parsed.data.contentType.includes("pdf")) {
+    return fail("Only PDF files are allowed", 400);
+  }
+
+  const key = `pdfs/${Date.now()}-${parsed.data.filename.replace(/\s+/g, "-")}`;
+  const presigned = await createUploadUrl(key, parsed.data.contentType);
+  return ok({
+    key,
+    uploadUrl: presigned.uploadUrl,
+    fileUrl: presigned.fileUrl,
+  });
 }

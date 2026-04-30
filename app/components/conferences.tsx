@@ -1,6 +1,18 @@
+"use client";
 import styles from '../page.module.css';
+import { useEffect, useState } from "react";
 
 export default function Conferences() {
+  const [upcoming, setUpcoming] = useState<Array<{
+    id: number;
+    title: string;
+    description: string;
+    date: string;
+    location: string;
+    attendees?: string | null;
+    image?: string | null;
+  }>>([]);
+
   const stats = [
     { title: '+3000', desc: 'باحث مشارك' },
     { title: '+15', desc: 'دولة مشاركة' },
@@ -8,40 +20,18 @@ export default function Conferences() {
     { title: '+25', desc: 'مؤتمر منظم' },
   ];
 
-  const upcoming = [
-    {
-      title: 'المؤتمر الدولي للعلوم الإنسانية والاجتماعية',
-      description: 'مؤتمر علمي يجمع الباحثين والأكاديميين من مختلف دول العالم لمناقشة أحدث البحوث في العلوم الإنسانية.',
-      date: '10-12 سبتمبر 2026',
-      location: 'القاهرة',
-      attendees: '+180 باحث',
-      image: '/images/conference-1.jpg',
-    },
-    {
-      title: 'المؤتمر الدولي للعلوم الإنسانية والاجتماعية',
-      description: 'مؤتمر علمي يجمع الباحثين والأكاديميين من مختلف دول العالم لمناقشة أحدث البحوث في العلوم الإنسانية.',
-      date: '10-12 سبتمبر 2026',
-      location: 'القاهرة',
-      attendees: '+180 باحث',
-      image: '/images/conference-2.jpg',
-    },
-    {
-      title: 'المؤتمر الدولي للعلوم الإنسانية والاجتماعية',
-      description: 'مؤتمر علمي يجمع الباحثين والأكاديميين من مختلف دول العالم لمناقشة أحدث البحوث في العلوم الإنسانية.',
-      date: '10-12 سبتمبر 2026',
-      location: 'القاهرة',
-      attendees: '+180 باحث',
-      image: '/images/conference-3.jpg',
-    },
-    {
-      title: 'المؤتمر الدولي للعلوم الإنسانية والاجتماعية',
-      description: 'مؤتمر علمي يجمع الباحثين والأكاديميين من مختلف دول العالم لمناقشة أحدث البحوث في العلوم الإنسانية.',
-      date: '10-12 سبتمبر 2026',
-      location: 'القاهرة',
-      attendees: '+180 باحث',
-      image: '/images/conference-4.jpg',
-    },
-  ];
+  useEffect(() => {
+    const fetchConferences = async () => {
+      try {
+        const response = await fetch("/api/conferences?limit=4");
+        const payload = await response.json();
+        setUpcoming(payload?.data?.items ?? []);
+      } catch {
+        setUpcoming([]);
+      }
+    };
+    fetchConferences();
+  }, []);
 
   const cards = [
     { title: 'المؤتمرات الدولية الأول للدراسات الإنسانية', date: 'نوفمبر 2025', location: 'القاهرة', speakers: '+250 باحث' },
@@ -75,8 +65,8 @@ export default function Conferences() {
       <h2 className={styles.upcomingTitle}>المؤتمرات القادمة</h2>
       <div className={styles.upcomingConferencesGrid}>
         {upcoming.map((item, idx) => (
-          <article key={idx} className={styles.conferenceCard}>
-            <div className={styles.conferenceImage} style={{ backgroundImage: `url(${item.image})` }} />
+          <article key={item.id ?? idx} className={styles.conferenceCard}>
+            <div className={styles.conferenceImage} style={{ backgroundImage: `url(${item.image || "/images/conference-1.jpg"})` }} />
             <div className={styles.conferenceInfo}>
               <h3>{item.title}</h3>
               <p>{item.description}</p>

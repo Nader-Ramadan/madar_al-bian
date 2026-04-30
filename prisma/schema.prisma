@@ -5,12 +5,57 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider = "prisma-client-js"
+  engineType = "binary"
 }
 
 datasource db {
   provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum PublicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum EmailStatus {
+  SENT
+  FAILED
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique @db.VarChar(255)
+  name         String    @db.VarChar(255)
+  passwordHash String    @db.VarChar(255)
+  role         UserRole  @default(VIEWER)
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  sessions     Session[]
+  uploadedPdfs Pdf[]
+
+  @@map("users")
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique @db.VarChar(512)
+  userId    Int
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
 }
 
 model Magazine {
@@ -19,8 +64,58 @@ model Magazine {
   description String  @db.Text
   image       String  @db.VarChar(255)
   category    String  @db.VarChar(100)
+  pdfUrl      String? @db.VarChar(500)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  versions    MagazineVersion[]
 
   @@map("magazines")
+}
+
+model MagazineVersion {
+  id          Int      @id @default(autoincrement())
+  magazineId  Int
+  version     String   @db.VarChar(50)
+  title       String   @db.VarChar(255)
+  releaseDate DateTime
+  notes       String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  magazine    Magazine @relation(fields: [magazineId], references: [id], onDelete: Cascade)
+
+  @@index([magazineId])
+  @@map("magazine_versions")
+}
+
+model PublicationRequest {
+  id             Int               @id @default(autoincrement())
+  authorName     String            @db.VarChar(255)
+  authorEmail    String            @db.VarChar(255)
+  title          String            @db.VarChar(255)
+  abstract       String            @db.Text
+  field          String?           @db.VarChar(255)
+  status         PublicationStatus @default(PENDING)
+  reviewNotes    String?           @db.Text
+  reviewedById   Int?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@index([status])
+  @@map("publication_requests")
+}
+
+model EmailLog {
+  id        Int         @id @default(autoincrement())
+  to        String      @db.VarChar(255)
+  subject   String      @db.VarChar(255)
+  body      String      @db.Text
+  status    EmailStatus
+  error     String?     @db.Text
+  sentById  Int?
+  sentAt    DateTime    @default(now())
+
+  @@index([sentAt])
+  @@map("email_logs")
 }
 
 model BlogPost {
@@ -30,6 +125,8 @@ model BlogPost {
   date    String  @db.VarChar(50)
   author  String  @db.VarChar(255)
   image   String? @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("blogs")
 }
@@ -42,6 +139,8 @@ model Conference {
   location  String  @db.VarChar(255)
   image     String? @db.VarChar(255)
   attendees String? @db.VarChar(100)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("conferences")
 }
@@ -52,6 +151,8 @@ model AdvisoryMember {
   title String  @db.VarChar(255)
   image String  @db.VarChar(255)
   bio   String  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("advisory_committee_members")
 }
@@ -60,6 +161,8 @@ model Field {
   id          Int     @id @default(autoincrement())
   name        String  @db.VarChar(255)
   description String  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("fields")
 }
@@ -67,10 +170,27 @@ model Field {
 model Pdf {
   id        Int       @id @default(autoincrement())
   filename  String    @db.VarChar(255)
-  filepath  String    @db.VarChar(255)
+  filepath  String    @db.VarChar(500)
   size      Int
   uploaded_at DateTime @default(now())
   status    String    @db.VarChar(50) @default("active")
+  mimeType  String?   @db.VarChar(100)
+  uploadedById Int?
+  uploadedBy User? @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
 
   @@map("pdfs")
+}
+
+model MagazineTraffic {
+  id          Int      @id @default(autoincrement())
+  magazineId  Int
+  views       Int      @default(0)
+  downloads   Int      @default(0)
+  shares      Int      @default(0)
+  date        DateTime @default(now())
+  userAgent   String?  @db.Text
+  ipAddress   String?  @db.VarChar(45)
+
+  @@map("magazine_traffic")
+  @@index([magazineId])
 }

@@ -2,49 +2,7 @@
    ROOT STYLES & VARIABLES
    =================================================== */
 .page {
-  direction: rtl;
-  text-align: right;
-  background-color: var(--background);
-
-  /* Color Palette */
-  --background: #f3f0ec;
-  --foreground: #fff;
-  --foreground-light: #f1f6ff;
-
-  /* Hero Colors */
-  --hero-title: #fff;
-  --hero-subtitle: rgba(255, 255, 255, 0.9);
-
-  /* Text Colors */
-  --text-primary: #333a42;
-  --text-secondary: #000;
-  --text-muted: #2d3d50;
-  --text-heading: #22304f;
-
-  /* Brand Colors */
-  --primary-color: #c6a664;
-  --primary-color-dark: #d4b376;
-  --secondary-color: #0a3f62;
-
-  /* Component Colors */
-  --card-bg: #ffffff;
-  --border-light: #ebeef5;
-
-  /* Section Colors */
-  --faq-answer: #415373;
-  --faq-side-bg: #e9f0ff;
-  --faq-side-title: #0a3f62;
-  --faq-side-text: #385a88;
-  --faq-input-border: #a3b5d4;
-  --blog-background: #f8f9fb;
-  --blog-color: #0f1f40;
-  --about-background: #fff;
-  --about-color: #0a3f62;
-  --about-text: #36415d;
-
-  /* Shadows */
-  --shadow-light: rgba(0, 0, 0, 0.08);
-  --shadow-medium: rgba(24, 36, 75, 0.08);
+  
 }
 
 /* ===================================================
@@ -54,70 +12,6 @@
   display: block;
   width: 100%;
   min-height: 100vh;
-}
-
-/* ===================================================
-   NAVIGATION STYLES
-   =================================================== */
-.nav-bar {
-  width: 100%;
-  display: flex;
-  flex-flow: row;
-  padding: 1rem 2rem;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--background);
-}
-
-.nav-links {
-  display: flex;
-  flex-flow: row;
-  gap: 1.5rem;
-  list-style: none;
-  color: var(--text-primary);
-  font-weight: 800;
-}
-
-.nav-links a {
-  padding: 0.5rem 0.5rem;
-  border-radius: 0.5rem;
-  transition: background-color 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.nav-toggle {
-  display: none;
-  background: transparent;
-  border: none;
-  padding: 0.5rem;
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-}
-
-.nav-toggle .bar {
-  display: block;
-  width: 24px;
-  height: 2px;
-  margin: 5px 0;
-  background-color: var(--text-primary);
-  transition:
-    transform 0.25s ease,
-    opacity 0.25s ease;
-}
-
-.nav-toggle.open .bar:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
-}
-
-.nav-toggle.open .bar:nth-child(2) {
-  opacity: 0;
-}
-
-.nav-toggle.open .bar:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
 }
 
 /* ===================================================
@@ -2216,20 +2110,7 @@
     min-height: auto;
   }
 
-  /* Navigation */
-  .nav-bar {
-    padding: 0.75rem 1rem;
-    gap: 10%;
-  }
-
-  .nav-links {
-    gap: 1rem;
-  }
-
-  .nav-toggle {
-    display: flex;
-  }
-
+  
   /* Hero Section */
   .hero {
     min-height: 400px;
@@ -2585,20 +2466,6 @@
   /* Root */
   .page {
     font-size: 14px;
-  }
-
-  /* Navigation */
-  .nav-bar {
-    padding: 0.5rem 0.75rem;
-  }
-
-  .nav-links {
-    gap: 0.75rem;
-  }
-
-  .nav-links a {
-    padding: 0.4rem 0.3rem;
-    font-size: 0.9rem;
   }
 
   /* Hero Section */
@@ -3365,5 +3232,713 @@
 
   .requestStat h3 {
     font-size: 1.5rem;
+  }
+}
+
+/* ===================================================
+   MAGAZINE TRAFFIC DASHBOARD
+   =================================================== */
+.trafficPage {
+  min-height: calc(100vh - 120px);
+  padding-top: 0.75rem;
+}
+
+.container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 2.25rem 1rem 3rem;
+}
+
+.trafficHeader {
+  margin-bottom: 1.25rem;
+  padding: 0.5rem 0.25rem;
+}
+
+.trafficTitle {
+  font-size: clamp(1.7rem, 2.8vw, 2.3rem);
+  color: #18253f;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.trafficSubtitle {
+  margin-top: 0.5rem;
+  color: #51607b;
+  font-size: 0.98rem;
+}
+
+.filterCard,
+.tableCard,
+.stateCard,
+.errorStateCard {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 20px;
+  box-shadow:
+    0 24px 40px rgba(27, 38, 66, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.7) inset;
+}
+
+.filterCard {
+  padding: 1.1rem;
+  margin-bottom: 1.15rem;
+}
+
+.filterSection {
+  display: flex;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.filterSection div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filterSection label {
+  font-weight: 600;
+  font-size: 0.86rem;
+  color: #4d5e7d;
+}
+
+.filterSection input {
+  min-width: 180px;
+  padding: 0.72rem 0.8rem;
+  border: 1px solid #d7deea;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  background: rgba(247, 249, 253, 0.88);
+  color: #24324f;
+  transition:
+    border-color 0.22s ease,
+    box-shadow 0.22s ease,
+    transform 0.18s ease;
+}
+
+.filterSection input:focus {
+  outline: none;
+  border-color: #9ab4f8;
+  box-shadow: 0 0 0 4px rgba(76, 122, 255, 0.14);
+  transform: translateY(-1px);
+}
+
+.filterSection button {
+  padding: 0.76rem 1.35rem;
+  background: linear-gradient(180deg, #2682ff 0%, #0e62d8 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease,
+    box-shadow 0.2s ease;
+  box-shadow: 0 10px 18px rgba(20, 86, 187, 0.24);
+}
+
+.filterSection button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+}
+
+.filterSection button:active {
+  transform: translateY(0);
+}
+
+.stateCard,
+.errorStateCard {
+  padding: 0.95rem 1.1rem;
+  margin-bottom: 1.1rem;
+  color: #2f3f62;
+}
+
+.errorStateCard {
+  color: #a12a34;
+  border-color: rgba(220, 56, 77, 0.35);
+  background: rgba(255, 241, 243, 0.9);
+}
+
+.tableCard {
+  padding: 0.5rem;
+}
+
+.tableScroller {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 16px;
+}
+
+.trafficTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  min-width: 640px;
+}
+
+.trafficTable thead {
+  background: linear-gradient(180deg, #1f2738 0%, #141d2e 100%);
+  color: #f4f7ff;
+}
+
+.trafficTable th {
+  padding: 0.95rem 1rem;
+  text-align: right;
+  font-weight: 650;
+  white-space: nowrap;
+  font-size: 0.88rem;
+  letter-spacing: 0.01em;
+}
+
+.trafficTable td {
+  padding: 0.95rem 1rem;
+  border-bottom: 1px solid #edf2fa;
+  color: #20304e;
+  text-align: right;
+  font-size: 0.94rem;
+}
+
+.trafficTable tbody tr {
+  background: rgba(255, 255, 255, 0.72);
+  animation: trafficRowIn 0.38s ease both;
+  transition:
+    background-color 0.22s ease,
+    transform 0.22s ease;
+}
+
+.trafficTable tbody tr:hover {
+  background-color: rgba(244, 249, 255, 0.96);
+  transform: translateY(-1px);
+}
+
+.trafficTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.trafficTable tbody tr td:first-child {
+  font-weight: 600;
+  color: #182740;
+}
+
+.filterCard,
+.tableCard,
+.stateCard,
+.errorStateCard {
+  animation: trafficCardIn 0.45s ease both;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1.4rem 0.8rem 2rem;
+  }
+
+  .trafficHeader {
+    margin-bottom: 0.9rem;
+  }
+
+  .trafficSubtitle {
+    font-size: 0.92rem;
+  }
+
+  .filterCard {
+    border-radius: 16px;
+    padding: 0.9rem;
+  }
+
+  .filterSection {
+    gap: 0.75rem;
+  }
+
+  .filterSection div {
+    flex: 1 1 100%;
+  }
+
+  .filterSection input,
+  .filterSection button {
+    width: 100%;
+  }
+
+  .tableCard {
+    padding: 0.45rem;
+    border-radius: 16px;
+  }
+
+  .trafficTable {
+    min-width: 100%;
+  }
+
+  .trafficTable thead {
+    display: none;
+  }
+
+  .trafficTable,
+  .trafficTable tbody,
+  .trafficTable tr,
+  .trafficTable td {
+    display: block;
+    width: 100%;
+  }
+
+  .trafficTable tr {
+    border: 1px solid #e8eef7;
+    border-radius: 14px;
+    padding: 0.35rem 0.2rem;
+    margin: 0.55rem 0;
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .trafficTable td {
+    border-bottom: 1px solid #eef3fb;
+    text-align: right;
+    padding: 0.7rem 0.8rem;
+    position: relative;
+    padding-right: 8.6rem;
+    min-height: 2.55rem;
+  }
+
+  .trafficTable td::before {
+    content: attr(data-label);
+    position: absolute;
+    right: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #63769b;
+    font-weight: 650;
+    font-size: 0.8rem;
+  }
+
+  .trafficTable tr td:last-child {
+    border-bottom: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .trafficTitle {
+    font-size: 1.45rem;
+  }
+
+  .trafficSubtitle {
+    font-size: 0.86rem;
+  }
+
+  .stateCard,
+  .errorStateCard {
+    font-size: 0.9rem;
+  }
+
+  .trafficTable td {
+    padding-right: 7.35rem;
+    font-size: 0.9rem;
+  }
+
+  .trafficTable td::before {
+    font-size: 0.74rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filterCard,
+  .tableCard,
+  .stateCard,
+  .errorStateCard,
+  .trafficTable tbody tr,
+  .filterSection button,
+  .filterSection input {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+@keyframes trafficCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes trafficRowIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===================================================
+   ADMIN DASHBOARD + LOGIN
+   =================================================== */
+.adminShell {
+  width: 100%;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.adminSidebar {
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 20px;
+  box-shadow:
+    0 18px 36px rgba(27, 38, 66, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.8) inset;
+  padding: 1rem;
+  align-self: start;
+  position: sticky;
+  top: 0.8rem;
+}
+
+.adminSidebarTitle {
+  margin: 0 0 0.25rem;
+  font-size: 1.25rem;
+  color: #1d2b46;
+}
+
+.adminSidebarText {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #637291;
+}
+
+.adminNav {
+  margin-top: 0.95rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.adminNavLink {
+  display: block;
+  padding: 0.7rem 0.75rem;
+  border-radius: 12px;
+  color: #243550;
+  font-weight: 600;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.adminNavLink:hover {
+  background: rgba(227, 237, 255, 0.65);
+  transform: translateY(-1px);
+  box-shadow: 0 7px 14px rgba(52, 88, 150, 0.14);
+}
+
+.adminContent {
+  min-width: 0;
+}
+
+.adminPage {
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 20px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow:
+    0 24px 40px rgba(27, 38, 66, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.72) inset;
+  padding: 1rem;
+}
+
+.adminHeader {
+  margin-bottom: 0.9rem;
+}
+
+.adminTitle {
+  margin: 0;
+  font-size: clamp(1.35rem, 2vw, 2rem);
+  font-weight: 800;
+  color: #182740;
+  letter-spacing: -0.02em;
+}
+
+.adminSubtitle {
+  margin: 0.45rem 0 0;
+  color: #5f6f8f;
+  font-size: 0.94rem;
+}
+
+.adminGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 0.85rem;
+}
+
+.adminCard {
+  display: block;
+  background: rgba(245, 249, 255, 0.95);
+  border: 1px solid #e4ecf8;
+  border-radius: 14px;
+  padding: 0.9rem;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.adminCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 24px rgba(37, 66, 114, 0.12);
+  border-color: #bfd1ee;
+}
+
+.adminCardTitle {
+  margin: 0;
+  color: #193153;
+}
+
+.adminCardText {
+  margin: 0.4rem 0 0;
+  color: #5c6e90;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.adminSection {
+  margin-top: 1rem;
+  background: rgba(251, 253, 255, 0.95);
+  border: 1px solid #e9eef7;
+  border-radius: 14px;
+  padding: 0.9rem;
+}
+
+.adminSectionTitle {
+  margin: 0 0 0.55rem;
+  color: #1b3154;
+  font-size: 1rem;
+}
+
+.adminList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.adminListItem {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  align-items: center;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #ebf1fa;
+  background: white;
+  border-radius: 12px;
+  color: #22344f;
+}
+
+.adminListText {
+  overflow-wrap: anywhere;
+}
+
+.adminActions {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.adminButton {
+  border: 1px solid #d7e2f3;
+  border-radius: 10px;
+  padding: 0.5rem 0.8rem;
+  background: #f6f9ff;
+  color: #1b3660;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.adminButton:hover {
+  transform: translateY(-1px);
+}
+
+.adminButtonPrimary {
+  background: linear-gradient(180deg, #2682ff 0%, #0e62d8 100%);
+  border-color: #0e62d8;
+  color: white;
+}
+
+.adminButtonDanger {
+  background: #fff2f3;
+  border-color: #f3ced1;
+  color: #9a2a3a;
+}
+
+.adminForm {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.adminInput,
+.adminTextarea {
+  width: 100%;
+  border: 1px solid #d6deeb;
+  background: #f8fbff;
+  color: #1f2f4a;
+  border-radius: 12px;
+  padding: 0.72rem 0.8rem;
+  font-size: 0.94rem;
+}
+
+.adminInput:focus,
+.adminTextarea:focus {
+  outline: none;
+  border-color: #95b2f5;
+  box-shadow: 0 0 0 4px rgba(76, 122, 255, 0.12);
+}
+
+.adminTextarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.adminError {
+  margin: 0.5rem 0 0;
+  color: #a12a34;
+  background: #fff3f4;
+  border: 1px solid #f2cfd4;
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+}
+
+.adminEmpty {
+  margin: 0;
+  color: #637292;
+  background: #f7faff;
+  border: 1px dashed #d8e3f4;
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+}
+
+.loginPage {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.loginCard {
+  width: min(460px, 100%);
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 22px;
+  box-shadow:
+    0 28px 40px rgba(27, 38, 66, 0.12),
+    0 1px 0 rgba(255, 255, 255, 0.8) inset;
+  padding: 1.25rem;
+}
+
+.loginTitle {
+  margin: 0;
+  color: #182740;
+}
+
+.loginSubtitle {
+  margin: 0.35rem 0 0.9rem;
+  color: #5f7091;
+  font-size: 0.93rem;
+}
+
+.loginForm {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.loginInput {
+  border: 1px solid #d7deea;
+  border-radius: 12px;
+  padding: 0.75rem 0.8rem;
+  background: #f8fbff;
+  font-size: 0.95rem;
+}
+
+.loginInput:focus {
+  outline: none;
+  border-color: #99b3f4;
+  box-shadow: 0 0 0 4px rgba(76, 122, 255, 0.12);
+}
+
+.loginButton {
+  border: none;
+  border-radius: 12px;
+  padding: 0.78rem 0.95rem;
+  color: white;
+  font-weight: 700;
+  background: linear-gradient(180deg, #2682ff 0%, #0e62d8 100%);
+  cursor: pointer;
+  box-shadow: 0 10px 18px rgba(20, 86, 187, 0.24);
+}
+
+.loginButton:disabled {
+  opacity: 0.62;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1024px) {
+  .adminShell {
+    grid-template-columns: 230px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .adminShell {
+    grid-template-columns: 1fr;
+  }
+
+  .adminSidebar {
+    position: static;
+  }
+
+  .adminNav {
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  }
+
+  .adminListItem {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .adminShell,
+  .loginPage {
+    padding: 0.7rem;
+  }
+
+  .adminPage,
+  .adminSidebar,
+  .loginCard {
+    border-radius: 16px;
+    padding: 0.85rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adminCard,
+  .adminButton,
+  .adminNavLink {
+    transition: none !important;
+    transform: none !important;
   }
 }

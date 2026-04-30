@@ -1,14 +1,15 @@
+"use client";
 import styles from '../page.module.css';
+import { useEffect, useState } from "react";
 
 export default function AdvisoryCommittee() {
-  const committeeMember = {
-    name: 'د. أحمد سميث',
-    title: 'استاذ دكتور في القانون الدولي والقانون العام',
-    specialty: 'الراء والدراسات',
-    image: '/images/committee-member.jpg',
-  };
-
-  const committeeMembers = Array(8).fill(committeeMember);
+  const [committeeMembers, setCommitteeMembers] = useState<Array<{
+    id: number;
+    name: string;
+    title: string;
+    bio: string;
+    image: string;
+  }>>([]);
 
   const criteria = [
     {
@@ -28,6 +29,19 @@ export default function AdvisoryCommittee() {
       description: 'معروفون وذو سمعة مرموقة ويحظون بالاعتراف من قبل المجتمع الأكاديمي والعلمي الدولي والمؤسسات العلمية المرموقة الأخرى.',
     },
   ];
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        const response = await fetch("/api/advisory-members?limit=8");
+        const payload = await response.json();
+        setCommitteeMembers(payload?.data?.items ?? []);
+      } catch {
+        setCommitteeMembers([]);
+      }
+    };
+    fetchMembers();
+  }, []);
 
   return (
     <section className={styles.advisoryCommitteeSection}>
@@ -49,10 +63,10 @@ export default function AdvisoryCommittee() {
               <div className={styles.memberImagePlaceholder}>
                 <div className={styles.memberImageBackground} />
               </div>
-              <div className={styles.memberBadge}>د. أحمد سميث</div>
+              <div className={styles.memberBadge}>{member.name}</div>
               <div className={styles.memberInfo}>
-                <p className={styles.memberTitle}>استاذ دكتور في القانون الدولي والقانون الدولي</p>
-                <p className={styles.memberSpecialty}>الراء والدراسات</p>
+                <p className={styles.memberTitle}>{member.title}</p>
+                <p className={styles.memberSpecialty}>{member.bio}</p>
               </div>
             </div>
           ))}

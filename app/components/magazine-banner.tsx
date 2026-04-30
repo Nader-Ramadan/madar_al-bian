@@ -1,10 +1,24 @@
 "use client";
 
+import { useEffect } from 'react';
 import styles from '../page.module.css';
 import Image from 'next/image';
+import { logMagazineTraffic } from '@/lib/traffic-logger';
 
-function magazineBanner() {
-    return (
+interface MagazineBannerProps {
+  title: string;
+  magazineId?: number;
+}
+
+export default function MagazineBanner({ title, magazineId }: MagazineBannerProps) {
+  useEffect(() => {
+    // Log view when component mounts
+    if (magazineId) {
+      logMagazineTraffic(magazineId, 'view');
+    }
+  }, [magazineId]);
+
+  return (
         <div className={styles.magazineBanner}>
             <div className={styles.magazineCover}>
                 <Image
@@ -15,10 +29,9 @@ function magazineBanner() {
                 />
                 </div>
             <div className={styles.magazinetitle}>
-                <h1>**أسم المجلة**</h1>
-                <h3> لوريم إيبسوم هو ببساطة نص شكلي (بمعنى أن الغاية هي الشكل وليس المحتوى) ويُستخدم في صناعات الطباعة والتنضيد. كان لوريم إيبسوم هو النص الوهمي القياسي منذ القرن الخامس عشر، عندما أخذت مطبعة غير معروفة مجموعة من الأحرف وخلطتها لتكوين كتاب عينة. لقد نجت ليس فقط خمسة قرون، بل أيضًا قفزة إلى التنضيد الإلكتروني، وظلت دون تغيير جوهري.</h3>
+                <h1>{title}</h1>
+                <h3>{"لوريم إيبسوم هو ببساطة نص شكلي (بمعنى أن الغاية هي الشكل وليس المحتوى) ويُستخدم في صناعات الطباعة والتنضيد. كان لوريم إيبسوم هو النص الوهمي القياسي منذ القرن الخامس عشر، عندما أخذت مطبعة غير معروفة مجموعة من الأحرف وخلطتها لتكوين كتاب عينة. لقد نجت ليس فقط خمسة قرون، بل أيضًا قفزة إلى التنضيد الإلكتروني، وظلت دون تغيير جوهري."}</h3>
             </div>
         </div>
     );
 }
-export default magazineBanner;

@@ -7,6 +7,129 @@
   font-style: normal;
 }
 
+:root {
+  text-align: right;
+  background-color: var(--background);
+
+  /* Color Palette */
+  --background: #f3f0ec;
+  --foreground: #fff;
+  --foreground-light: #f1f6ff;
+
+  /* Hero Colors */
+  --hero-title: #fff;
+  --hero-subtitle: rgba(255, 255, 255, 0.9);
+
+  /* Text Colors */
+  --text-primary: #333a42;
+  --text-secondary: #000;
+  --text-muted: #2d3d50;
+  --text-heading: #22304f;
+
+  /* Brand Colors */
+  --primary-color: #c6a664;
+  --primary-color-dark: #d4b376;
+  --secondary-color: #0a3f62;
+
+  /* Component Colors */
+  --card-bg: #ffffff;
+  --border-light: #ebeef5;
+
+  /* Section Colors */
+  --faq-answer: #415373;
+  --faq-side-bg: #e9f0ff;
+  --faq-side-title: #0a3f62;
+  --faq-side-text: #385a88;
+  --faq-input-border: #a3b5d4;
+  --blog-background: #f8f9fb;
+  --blog-color: #0f1f40;
+  --about-background: #fff;
+  --about-color: #0a3f62;
+  --about-text: #36415d;
+
+  /* Shadows */
+  --shadow-light: rgba(0, 0, 0, 0.08);
+  --shadow-medium: rgba(24, 36, 75, 0.08);
+}
+
+body {
+  direction: rtl;
+}
+
+.nav-bar {
+  width: 100%;
+  display: flex;
+  flex-flow: row;
+  padding: 1rem 2rem;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--background);
+}
+
+.nav-links {
+  display: flex;
+  flex-flow: row;
+  gap: 1.5rem;
+  list-style: none;
+  color: var(--text-primary);
+  font-weight: 800;
+}
+
+.nav-links a {
+  padding: 0.5rem 0.5rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-toggle .bar {
+  display: block;
+  width: 24px;
+  height: 2px;
+  margin: 5px 0;
+  background-color: var(--text-primary);
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.nav-toggle.open .bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.nav-toggle.open .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-toggle.open .bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.nav-bar {
+  padding: 0.75rem 1rem;
+  gap: 10%;
+}
+
+.nav-links {
+  gap: 1rem;
+}
+
+.nav-toggle {
+  display: flex;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -76,6 +199,19 @@ a {
 
 @media (max-width: 768px) {
   .nav-bar {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .nav-links {
+    gap: 0.75rem;
+  }
+
+  .nav-links a {
+    padding: 0.4rem 0.3rem;
+    font-size: 0.9rem;
+  }
+
+  .nav-bar {
     padding: 0.75rem 1rem;
     position: relative;
     z-index: 1000;
@@ -129,9 +265,6 @@ a {
   }
 }
 
-/* ===================================================
-   FOOTER STYLES - ENHANCED DESIGN
-   =================================================== */
 .footer {
   background: linear-gradient(135deg, var(--secondary-color) 0%, #1a5a84 100%);
   color: var(--foreground-light);
@@ -310,16 +443,12 @@ a {
   }
 }
 
-/* ===================================================
-   TABLET RESPONSIVE STYLES (768px and below)
-   =================================================== */
 @media (max-width: 768px) {
   /* Root */
   html {
     font-size: 15px;
   }
 
-  /* Navigation - Mobile Menu Enhancements */
   .nav-bar {
     padding: 0.75rem 1rem;
     gap: 10%;
@@ -389,9 +518,6 @@ a {
   }
 }
 
-/* ===================================================
-   MOBILE RESPONSIVE STYLES (480px and below)
-   =================================================== */
 @media (max-width: 480px) {
   /* Root */
   html {
@@ -503,9 +629,6 @@ a {
   }
 }
 
-/* ===================================================
-   SMALL MOBILE RESPONSIVE STYLES (360px and below)
-   =================================================== */
 @media (max-width: 360px) {
   html {
     font-size: 13px;
@@ -563,37 +686,29 @@ a {
   }
 }
 
-/* ===================================================
-   SCROLL AND INPUT OPTIMIZATION FOR MOBILE
-   =================================================== */
 @media (max-width: 768px) {
-  /* Improve touch targets */
   a,
   button {
     min-height: 44px;
     min-width: 44px;
   }
 
-  /* Improve readability */
   body {
     line-height: 1.6;
   }
 
-  /* Ensure text doesn't zoom on input focus */
   input,
   textarea,
   select {
     font-size: 16px;
   }
 
-  /* Optimize images */
   img {
     max-width: 100%;
     height: auto;
     display: block;
   }
 
-  /* Reduce overflow issues */
   body,
   html {
     overflow-x: hidden;

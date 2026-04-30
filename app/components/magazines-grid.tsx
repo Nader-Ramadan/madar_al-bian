@@ -1,6 +1,8 @@
+"use client";
 import styles from "../magazines-grid.module.css";
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from "react";
 
 interface MagazineCard {
   id: number;
@@ -10,66 +12,22 @@ interface MagazineCard {
   category: string;
 }
 
-const magazines: MagazineCard[] = [
-  {
-    id: 1,
-    title: "مجلة الدراسات التربوية والنفسية",
-    description: "مجلة متخصصة في الدراسات التربوية والنفسية",
-    image: "/images/new-scientist.jpg",
-    category: "إنسانيات"
-  },
-  {
-    id: 2,
-    title: "مجلة الدراسات التربوية والنفسية",
-    description: "مجلة متخصصة في الدراسات التربوية والنفسية",
-    image: "/images/new-scientist.jpg",
-    category: "إنسانيات"
-  },
-  {
-    id: 3,
-    title: "مجلة الدراسات التربوية والنفسية",
-    description: "مجلة متخصصة في الدراسات التربوية والنفسية",
-    image: "/images/new-scientist.jpg",
-    category: "إنسانيات"
-  },
-  {
-    id: 4,
-    title: "مجلة الدراسات التربوية والنفسية",
-    description: "مجلة متخصصة في الدراسات التربوية والنفسية",
-    image: "/images/new-scientist.jpg",
-    category: "إنسانيات"
-  },
-  {
-    id: 5,
-    title: "مجلة الدراسات التربوية والنفسية",
-    description: "مجلة متخصصة في الدراسات التربوية والنفسية",
-    image: "/images/new-scientist.jpg",
-    category: "عام"
-  },
-  {
-    id: 6,
-    title: "مجلة الدراسات التربوية والنفسية",
-    description: "مجلة متخصصة في الدراسات التربوية والنفسية",
-    image: "/images/new-scientist.jpg",
-    category: "عام"
-  },
-  {
-    id: 7,
-    title: "مجلة الدراسات التربوية والنفسية",
-    description: "مجلة متخصصة في الدراسات التربوية والنفسية",
-    image: "/images/new-scientist.jpg",
-    category: "عام"
-  },
-  {
-    id: 8,
-    title: "مجلة الدراسات التربوية والنفسية",
-    description: "مجلة متخصصة في الدراسات التربوية والنفسية",
-    image: "/images/new-scientist.jpg",
-    category: "عام"
-  }
-];
-
 export default function MagazinesGrid() {
+  const [magazines, setMagazines] = useState<MagazineCard[]>([]);
+
+  useEffect(() => {
+    const fetchMagazines = async () => {
+      try {
+        const response = await fetch("/api/magazines?limit=12");
+        const payload = await response.json();
+        setMagazines(payload?.data?.items ?? []);
+      } catch {
+        setMagazines([]);
+      }
+    };
+    fetchMagazines();
+  }, []);
+
   return (
     <section className={styles.section}>
       <div className={styles.grid}>
@@ -87,7 +45,7 @@ export default function MagazinesGrid() {
             <div className={styles.content}>
               <h3 className={styles.title}>{magazine.title}</h3>
               <p className={styles.description}>{magazine.description}</p>
-              <Link className={styles.visitBtn} href="../all-fields-page/magazine-page">
+              <Link className={styles.visitBtn} href={`/magazines/${encodeURIComponent(magazine.title)}`}>
                 <span>زيارة المجلة</span>
                 <span>→</span>
               </Link>

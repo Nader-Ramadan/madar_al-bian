@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Madar Al-Bian Magazine Platform
 
-## Getting Started
+Next.js + Prisma/MySQL website for magazine publishing, conferences, blogs, advisory members, and admin content management.
 
-First, run the development server:
+## Setup
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Install dependencies:
+   - `npm install`
+2. Configure environment variables in `.env`:
+   - DB: `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DB_PORT`
+   - Auth: `JWT_SECRET`, `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD`, `BOOTSTRAP_ADMIN_NAME`
+   - Storage: `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_PUBLIC_BASE_URL`
+   - SMTP (Email Center): `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`
+3. Generate Prisma client:
+   - `npx prisma generate`
+4. Run dev server:
+   - `npm run dev`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Core API Endpoints
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Auth
+- `POST /api/auth/bootstrap` create first admin from env vars (one-time)
+- `POST /api/auth/login` admin/editor login
+- `POST /api/auth/logout` logout and clear session
+- `GET /api/auth/me` get current session user
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Public Content Read APIs
+- `GET /api/magazines`
+- `GET /api/magazines/:id`
+- `GET /api/blogs`
+- `GET /api/blogs/:id`
+- `GET /api/conferences`
+- `GET /api/conferences/:id`
+- `GET /api/advisory-members`
+- `GET /api/advisory-members/:id`
+- `GET /api/fields`
+- `GET /api/fields/:id`
+- `GET /api/pdfs`
+- `GET /api/pdfs/:id`
 
-## Learn More
+### Protected Write APIs (RBAC)
+- `POST /api/magazines`, `PUT/DELETE /api/magazines/:id`
+- `POST /api/blogs`, `PUT/DELETE /api/blogs/:id`
+- `POST /api/conferences`, `PUT/DELETE /api/conferences/:id`
+- `POST /api/advisory-members`, `PUT/DELETE /api/advisory-members/:id`
+- `POST /api/fields`, `PUT/DELETE /api/fields/:id`
+- `POST /api/pdfs`, `DELETE /api/pdfs/:id`
 
-To learn more about Next.js, take a look at the following resources:
+### File Upload (Cloud Storage)
+- `PUT /api/pdfs` returns pre-signed upload URL and final file URL
+- Upload the PDF directly to storage with returned `uploadUrl`
+- Persist metadata with `POST /api/pdfs`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Traffic Analytics
+- `POST /api/magazines/traffic` public event logging (`view`/`download`/`share`)
+- `GET /api/magazines/traffic` protected dashboard stats (admin/editor)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Admin Workflow APIs
+- `GET/POST /api/admin/magazine-versions`
+- `PUT/DELETE /api/admin/magazine-versions/:id`
+- `GET /api/admin/publication-requests`
+- `PUT /api/admin/publication-requests/:id`
+- `POST /api/publication-requests` (public submission intake)
+- `GET /api/admin/emails`
+- `POST /api/admin/emails/send`
 
-## Deploy on Vercel
+## Admin Pages
+- `/admin/login` for authentication
+- `/admin` dashboard home
+- `/admin/magazines`
+- `/admin/advisors`
+- `/admin/approvals`
+- `/admin/emails`
+- `/admin/content`
+- `/admin/traffic` for traffic analytics dashboard
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Security Notes
+- Session stored in httpOnly cookie (`madar_session`)
+- Admin login accepts only users with `ADMIN` role
+- Role checks enforced on write/admin routes
+- Login endpoint includes in-memory rate limiting
+- Admin paths protected by proxy guard (`/admin/*` and `/api/admin/*`)

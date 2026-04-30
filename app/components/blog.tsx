@@ -1,45 +1,40 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from '../page.module.css';
+import { prisma } from "@/lib/prisma";
 
-const blogPosts = [
-  {
-    title: 'نصائح بحثية',
-    summary: 'كيف تكتب ملخصاً فعّالاً لبحثك العلمي',
-    date: '5 مارس 2026',
-    author: 'سارة أحمد',
-  },
-  {
-    title: 'نصائح بحثية',
-    summary: 'كيف تكتب ملخصاً فعّالاً لبحثك العلمي',
-    date: '5 مارس 2026',
-    author: 'سارة أحمد',
-  },
-  {
-    title: 'نصائح بحثية',
-    summary: 'كيف تكتب ملخصاً فعّالاً لبحثك العلمي',
-    date: '5 مارس 2026',
-    author: 'سارة أحمد',
-  },
-  {
-    title: 'نصائح بحثية',
-    summary: 'كيف تكتب ملخصاً فعّالاً لبحثك العلمي',
-    date: '5 مارس 2026',
-    author: 'سارة أحمد',
-  },
-];
+type BlogPost = {
+  id: number;
+  title: string;
+  summary: string;
+  date: string;
+  author: string;
+  image?: string | null;
+};
 
-export default function Blog() {
+async function getBlogPosts(): Promise<BlogPost[]> {
+  try {
+    return await prisma.blogPost.findMany({
+      orderBy: { id: "desc" },
+      take: 6,
+    });
+  } catch {
+    return [];
+  }
+}
+
+export default async function Blog() {
+  const blogPosts = await getBlogPosts();
   return (
     <section className={styles.blogSection}>
       <h2 className={styles.blogTitle}>المدونة</h2>
       <p className={styles.blogSubtitle}>مقالات ونصائح قيمة للباحثين والأكاديميين في مجال النشر العلمي والبحث الأكاديمي</p>
       <div className={styles.blogGrid}>
         {blogPosts.map((post, idx) => (
-          <article key={idx} className={styles.blogCard}>
+          <article key={post.id ?? idx} className={styles.blogCard}>
                 <div className={styles.blogImageWrapper}>
                     <Image
-                        src="/images/The-Business-Magazine-Cover-Design.jpg"
+                        src={post.image || "/images/The-Business-Magazine-Cover-Design.jpg"}
                         alt={post.title}
                         width={400}
                         height={250}
