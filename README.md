@@ -80,3 +80,35 @@ Next.js + Prisma/MySQL website for magazine publishing, conferences, blogs, advi
 - Role checks enforced on write/admin routes
 - Login endpoint includes in-memory rate limiting
 - Admin paths protected by proxy guard (`/admin/*` and `/api/admin/*`)
+
+## Deployment (Hostinger-safe path)
+
+### Recommended target
+- Use **Hostinger VPS (Node.js runtime)**, not shared/static hosting.
+- This app requires a Node server (`next start`) and backend APIs/Prisma access.
+
+### Server requirements
+- Node.js 20+ (LTS)
+- MySQL database reachable from the server
+- Process manager (PM2 recommended)
+
+### One-time setup on server
+1. Clone repository and install deps:
+   - `npm ci`
+2. Create `.env` with all required variables (same list from Setup section).
+3. Generate Prisma client and apply schema:
+   - `npx prisma generate`
+   - `npx prisma migrate deploy`
+4. Build and run:
+   - `npm run build`
+   - `npm run start`
+
+### PM2 example
+- `npm i -g pm2`
+- `pm2 start npm --name madar-albian -- start`
+- `pm2 save`
+- `pm2 startup`
+
+### Shared hosting note
+- Hostinger shared hosting commonly fails with memory/runtime limits for `next build` and cannot reliably run this server-rendered Next.js + Prisma stack.
+- If you must stay on shared hosting, you would need a static-only rewrite (no API routes/auth/Prisma runtime).
