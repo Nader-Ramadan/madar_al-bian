@@ -7,6 +7,7 @@
   },
   "scripts": {
     "dev": "next dev",
+    "prebuild": "prisma generate",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -17,24 +18,24 @@
     "@aws-sdk/s3-request-presigner": "^3.922.0",
     "@prisma/adapter-mariadb": "^7.8.0",
     "@prisma/client": "^6.19.3",
+    "@types/node": "^20",
+    "@types/nodemailer": "^8.0.0",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "^19",
     "bcryptjs": "^3.0.3",
     "jose": "^6.1.0",
     "mysql2": "^3.22.1",
     "next": "^16.2.4",
     "nodemailer": "^7.0.9",
+    "prisma": "^6.19.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "typescript": "^5",
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/nodemailer": "^8.0.0",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
-    "eslint-config-next": "16.1.6",
-    "prisma": "^6.19.3",
-    "typescript": "^5"
+    "eslint-config-next": "16.1.6"
   }
 }
