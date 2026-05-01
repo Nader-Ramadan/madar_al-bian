@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { logDebugClient } from "@/app/components/debug-beacon";
 import styles from "@/app/page.module.css";
 
 export default function AdminLoginPage() {
@@ -21,13 +22,30 @@ export default function AdminLoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      const payload = await response.json();
-      if (!payload.success) {
-        setError(payload.error || "Login failed");
+      const payload = await response.json().catch(() => ({ parseError: true }));
+      logDebugClient({
+        location: "app/admin/login/page.tsx",
+        hypothesisId: "H3",
+        message: "admin_login_response",
+        data: {
+          httpStatus: response.status,
+          success: (payload as { success?: boolean }).success,
+          error: (payload as { error?: string }).error,
+          parseError: Boolean((payload as { parseError?: boolean }).parseError),
+        },
+      });
+      if (!(payload as { success?: boolean }).success) {
+        setError((payload as { error?: string }).error || "Login failed");
         return;
       }
       router.push("/admin");
     } catch {
+      logDebugClient({
+        location: "app/admin/login/page.tsx",
+        hypothesisId: "H4",
+        message: "admin_login_network_error",
+        data: {},
+      });
       setError("Login failed");
     } finally {
       setLoading(false);

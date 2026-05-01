@@ -19,7 +19,7 @@ const loginSchema = z.object({
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for") ?? "local";
   // #region agent log
-  fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", { method: "POST", headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" }, body: JSON.stringify({ sessionId: "51cdae", runId: "pre-fix", hypothesisId: "H4", location: "app/api/auth/login/route.ts:22", message: "Login request received", data: { hasForwardedFor: Boolean(request.headers.get("x-forwarded-for")) }, timestamp: Date.now() }) }).catch(() => {});
+  fetch('http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'51cdae'},body:JSON.stringify({sessionId:'51cdae',runId:'pre-fix',location:'app/api/auth/login/route.ts:POST',message:'login_api_entry',data:{hasBody:Boolean(request.headers.get('content-type')),ip:String(ip).slice(0,40)},timestamp:Date.now(),hypothesisId:'H6'})}).catch(()=>{});
   // #endregion
   const limit = checkRateLimit(`login:${ip}`);
   if (!limit.allowed) return fail("Too many requests. Try again later.", 429);
@@ -27,10 +27,12 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const parsed = loginSchema.safeParse(body);
-    // #region agent log
-    fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", { method: "POST", headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" }, body: JSON.stringify({ sessionId: "51cdae", runId: "pre-fix", hypothesisId: "H4", location: "app/api/auth/login/route.ts:31", message: "Login payload parsed", data: { parseSuccess: parsed.success }, timestamp: Date.now() }) }).catch(() => {});
-    // #endregion
-    if (!parsed.success) return fail("Invalid payload", 400, parsed.error.flatten());
+    if (!parsed.success) {
+      // #region agent log
+      fetch('http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'51cdae'},body:JSON.stringify({sessionId:'51cdae',runId:'pre-fix',location:'app/api/auth/login/route.ts:POST',message:'login_api_invalid_payload',data:{issues:parsed.error.issues.length},timestamp:Date.now(),hypothesisId:'H3'})}).catch(()=>{});
+      // #endregion
+      return fail("Invalid payload", 400, parsed.error.flatten());
+    }
 
     const user = await prisma.user.findUnique({ where: { email: parsed.data.email } });
     if (!user || !user.isActive) return fail("Invalid credentials", 401);
@@ -43,7 +45,7 @@ export async function POST(request: NextRequest) {
     await createDbSession(user.id, token);
     await setSessionCookie(token);
     // #region agent log
-    fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", { method: "POST", headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" }, body: JSON.stringify({ sessionId: "51cdae", runId: "pre-fix", hypothesisId: "H5", location: "app/api/auth/login/route.ts:45", message: "Login success and session set", data: { userId: user.id, role: user.role }, timestamp: Date.now() }) }).catch(() => {});
+    fetch('http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'51cdae'},body:JSON.stringify({sessionId:'51cdae',runId:'pre-fix',location:'app/api/auth/login/route.ts:POST',message:'login_api_success',data:{userId:user.id,role:user.role},timestamp:Date.now(),hypothesisId:'H3'})}).catch(()=>{});
     // #endregion
 
     return ok({
@@ -53,6 +55,9 @@ export async function POST(request: NextRequest) {
       role: user.role,
     });
   } catch (error) {
+    // #region agent log
+    fetch('http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'51cdae'},body:JSON.stringify({sessionId:'51cdae',runId:'pre-fix',location:'app/api/auth/login/route.ts:POST',message:'login_api_exception',data:{name:error instanceof Error ? error.name : 'unknown'},timestamp:Date.now(),hypothesisId:'H4'})}).catch(()=>{});
+    // #endregion
     console.error("Login route error:", error);
     return fail("Failed to login", 500);
   }

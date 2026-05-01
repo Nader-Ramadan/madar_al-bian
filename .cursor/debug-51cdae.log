@@ -1,13 +1,6 @@
-{"sessionId":"51cdae","runId":"pre-fix","hypothesisId":"H3","location":"proxy.ts:23","message":"Proxy route entry","data":{"path":"/admin/login"},"timestamp":1777540600007}
-{"sessionId":"51cdae","runId":"pre-fix","hypothesisId":"H3","location":"proxy.ts:23","message":"Proxy route entry","data":{"path":"/admin/login"},"timestamp":1777540607982}
-{"sessionId":"51cdae","runId":"pre-fix","hypothesisId":"H3","location":"proxy.ts:23","message":"Proxy route entry","data":{"path":"/admin/login"},"timestamp":1777540611481}
-{"sessionId":"51cdae","runId":"pre-fix","hypothesisId":"H3","location":"proxy.ts:23","message":"Proxy route entry","data":{"path":"/admin/login"},"timestamp":1777540713793}
-{"sessionId":"51cdae","runId":"pre-fix","hypothesisId":"H3","location":"proxy.ts:23","message":"Proxy route entry","data":{"path":"/admin/login"},"timestamp":1777540713918}
-{"sessionId":"51cdae","runId":"pre-fix","hypothesisId":"H3","location":"proxy.ts:23","message":"Proxy route entry","data":{"path":"/admin/login"},"timestamp":1777540714002}
-{"sessionId":"51cdae","runId":"pre-fix","hypothesisId":"H3","location":"proxy.ts:23","message":"Proxy route entry","data":{"path":"/admin/login"},"timestamp":1777540714005}
-{"sessionId":"51cdae","runId":"pre-fix","hypothesisId":"H3","location":"proxy.ts:23","message":"Proxy route entry","data":{"path":"/admin/login"},"timestamp":1777540714010}
-{"sessionId":"51cdae","runId":"pre-fix","hypothesisId":"H3","location":"proxy.ts:23","message":"Proxy route entry","data":{"path":"/admin/login"},"timestamp":1777540714013}
-{"sessionId":"51cdae","runId":"pre-fix","hypothesisId":"H3","location":"proxy.ts:23","message":"Proxy route entry","data":{"path":"/admin/login"},"timestamp":1777540714113}
-{"sessionId":"51cdae","runId":"pre-fix","hypothesisId":"H3","location":"proxy.ts:23","message":"Proxy route entry","data":{"path":"/admin/login"},"timestamp":1777540714145}
-{"sessionId":"51cdae","runId":"pre-fix","hypothesisId":"H3","location":"proxy.ts:23","message":"Proxy route entry","data":{"path":"/admin/login"},"timestamp":1777540985833}
-{"sessionId":"51cdae","runId":"pre-fix","hypothesisId":"H3","location":"proxy.ts:23","message":"Proxy route entry","data":{"path":"/admin/login"},"timestamp":1777540989699}
+{"sessionId":"51cdae","runId":"pre-fix","location":"app/page.tsx:Home","message":"home_page_render","data":{},"timestamp":1777636132059,"hypothesisId":"H12"}
+{"sessionId":"51cdae","runId":"pre-fix","location":"app/api/auth/login/route.ts:POST","message":"login_api_entry","data":{"hasBody":true,"ip":"::1"},"timestamp":1777636218978,"hypothesisId":"H6"}
+{"sessionId":"51cdae","runId":"pre-fix","location":"app/api/auth/login/route.ts:POST","message":"login_api_success","data":{"userId":1,"role":"ADMIN"},"timestamp":1777636219873,"hypothesisId":"H3"}
+{"sessionId":"51cdae","location":"app/admin/login/page.tsx","message":"admin_login_response","data":{"httpStatus":200,"success":true,"parseError":false},"timestamp":1777636219881,"hypothesisId":"H3"}
+{"sessionId":"51cdae","runId":"pre-fix","location":"proxy.ts:proxy","message":"proxy_admin_check","data":{"path":"/admin","ok":true,"reason":"ok"},"timestamp":1777636219892,"hypothesisId":"H9"}
+{"sessionId":"51cdae","runId":"pre-fix","location":"app/page.tsx:Home","message":"home_page_render","data":{},"timestamp":1777636223358,"hypothesisId":"H12"}

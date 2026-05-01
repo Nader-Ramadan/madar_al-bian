@@ -31,7 +31,7 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className={styles.faqSection}>
+    <section id="faq" className={styles.faqSection}>
       <div className={styles.faqGrid}>
         <div className={styles.faqList}>
           <h2>الأسئلة الشائعة</h2>

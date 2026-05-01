@@ -1,4 +1,5 @@
 import styles from '../page.module.css';
+import Link from 'next/link';
 
 function PublishAResearch() {
   return (
@@ -8,9 +9,9 @@ function PublishAResearch() {
         <p>
           انضم إلى مجتمعنا من الباحثين والأكاديميين المتميزين وابدأ رحلتك في النشر العلمي معنا
         </p>
-        <a className={styles.publishResearchButton} href="/submit-research">
+        <Link className={styles.publishResearchButton} href="/request-for-publication-of-a-study">
           قدم بحثك الآن
-        </a>
+        </Link>
       </div>
     </section>
   );

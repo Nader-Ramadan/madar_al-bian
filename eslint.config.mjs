@@ -16,6 +16,7 @@ const eslintConfig = defineConfig([
     "test-*.js",
     "create-missing-tables.js",
     "verify-database.js",
+    "scripts/test-prisma-adapter.js",
   ]),
 ]);
 

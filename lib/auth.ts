@@ -48,7 +48,12 @@ export async function clearSessionCookie() {
 export async function getSessionFromCookie() {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
-  if (!token) return null;
+  if (!token) {
+    // #region agent log
+    fetch('http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'51cdae'},body:JSON.stringify({sessionId:'51cdae',runId:'pre-fix',location:'lib/auth.ts:getSessionFromCookie',message:'session_lookup_no_cookie',data:{},timestamp:Date.now(),hypothesisId:'H10'})}).catch(()=>{});
+    // #endregion
+    return null;
+  }
 
   try {
     const verified = await jwtVerify(token, getJwtSecret());
@@ -58,9 +63,21 @@ export async function getSessionFromCookie() {
       include: { user: true },
     });
 
-    if (!session || !session.user.isActive || session.expiresAt < new Date()) {
+    if (!session) {
+      // #region agent log
+      fetch('http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'51cdae'},body:JSON.stringify({sessionId:'51cdae',runId:'pre-fix',location:'lib/auth.ts:getSessionFromCookie',message:'session_lookup_db_miss',data:{hasToken:true},timestamp:Date.now(),hypothesisId:'H10'})}).catch(()=>{});
+      // #endregion
       return null;
     }
+    if (!session.user.isActive || session.expiresAt < new Date()) {
+      // #region agent log
+      fetch('http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'51cdae'},body:JSON.stringify({sessionId:'51cdae',runId:'pre-fix',location:'lib/auth.ts:getSessionFromCookie',message:'session_lookup_inactive_or_expired',data:{isActive:session.user.isActive,expired:session.expiresAt < new Date()},timestamp:Date.now(),hypothesisId:'H10'})}).catch(()=>{});
+      // #endregion
+      return null;
+    }
+    // #region agent log
+    fetch('http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'51cdae'},body:JSON.stringify({sessionId:'51cdae',runId:'pre-fix',location:'lib/auth.ts:getSessionFromCookie',message:'session_lookup_ok',data:{userId:session.user.id,role:session.user.role},timestamp:Date.now(),hypothesisId:'H10'})}).catch(()=>{});
+    // #endregion
 
     return {
       token,
@@ -68,6 +85,9 @@ export async function getSessionFromCookie() {
       payload,
     };
   } catch {
+    // #region agent log
+    fetch('http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'51cdae'},body:JSON.stringify({sessionId:'51cdae',runId:'pre-fix',location:'lib/auth.ts:getSessionFromCookie',message:'session_lookup_jwt_invalid',data:{},timestamp:Date.now(),hypothesisId:'H10'})}).catch(()=>{});
+    // #endregion
     return null;
   }
 }
