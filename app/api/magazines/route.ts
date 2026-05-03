@@ -40,7 +40,29 @@ export async function GET(request: NextRequest) {
       items,
       pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
     });
-  } catch {
+  } catch (err) {
+    console.error("[GET /api/magazines]", err);
+    const msg = err instanceof Error ? err.message : String(err);
+
+    if (msg.includes("Database URL is not configured")) {
+      return fail(
+        "Database URL is not configured. Set DATABASE_URL (or DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) in the hosting environment.",
+        503,
+      );
+    }
+
+    if (
+      msg.includes("Can't reach database server") ||
+      msg.includes("P1001") ||
+      msg.includes("ECONNREFUSED") ||
+      msg.includes("ETIMEDOUT")
+    ) {
+      return fail(
+        "Cannot reach the database server. Check DATABASE_URL, firewall rules, and that the database allows connections from your host (e.g. Vercel).",
+        503,
+      );
+    }
+
     return fail("Failed to fetch magazines", 500);
   }
 }
