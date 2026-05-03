@@ -112,6 +112,26 @@ Next.js + Prisma/MySQL website for magazine publishing, conferences, blogs, advi
 - `pm2 save`
 - `pm2 startup`
 
+### hPanel Node.js Application (Hostinger)
+
+Use these settings so installs and runtime match this repo (see root `.nvmrc` and `.npmrc`).
+
+- **Node.js version**: **20.x** (LTS). The app requires Node `>=20.11.0` per `package.json` `engines`.
+- **Application root**: folder where the project files live (e.g. under `domains/yourdomain.com/…`).
+- **Application URL**: your public domain.
+- **Application startup file**: point at Next’s CLI, e.g. `node_modules/next/dist/bin/next`, with arguments like `start -p $PORT` if your panel allows a separate “startup arguments” field. If not, use `npm run start` as the command the panel documents for Node apps (some panels only accept a single entry file—in that case add a small `server.js` that shells `next start` or use Hostinger’s documented Next.js template).
+- **Environment variables**: add everything from **Setup** / `.env.example` in the panel (especially `DATABASE_URL`, `JWT_SECRET`, S3, SMTP, Google OAuth). Optionally set `PRISMA_SKIP_POSTINSTALL_GENERATE=1` for extra safety.
+- **Install**: run **NPM install** from the panel. Prisma client is generated during `npm run build` via the `prebuild` script (`prisma generate`), not during `npm install`—this avoids common “Failed to install dependencies” failures when `postinstall` cannot download Prisma engines under panel limits.
+- **After install**: in the panel terminal (or SSH), run `npx prisma generate`, `npx prisma migrate deploy`, then `npm run build`, then **Restart** the app.
+
+### Fallback: pre-built upload (if panel install still fails)
+
+If **NPM install** still fails (memory, disk, or time limits), build on a machine you control and upload artifacts instead of relying on the panel to install everything.
+
+1. On a **Linux** environment (WSL2 or Docker `node:20-bookworm` recommended so Prisma engines match the server): `npm ci`, `npx prisma generate`, `npm run build`.
+2. Upload to the app directory: `package.json`, `package-lock.json`, `next.config.ts`, `prisma/`, `public/`, `app/`, `lib/`, `proxy.ts`, `tsconfig.json`, `.next/`, and `node_modules/` (including `node_modules/.prisma` and Prisma engine binaries built for **Linux**, not Windows-only paths).
+3. In hPanel, skip a full **NPM install** if everything is already present; **Restart** the Node application.
+
 ### Shared hosting note
 - Hostinger shared hosting commonly fails with memory/runtime limits for `next build` and cannot reliably run this server-rendered Next.js + Prisma stack.
 - If you must stay on shared hosting, you would need a static-only rewrite (no API routes/auth/Prisma runtime).

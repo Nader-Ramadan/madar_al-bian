@@ -10,8 +10,7 @@
     "prebuild": "prisma generate",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "postinstall": "prisma generate"
+    "lint": "eslint"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.922.0",
