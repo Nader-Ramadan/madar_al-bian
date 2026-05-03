@@ -39,11 +39,44 @@ export default function MagazinesGrid() {
       setFetchError(null);
       try {
         const response = await fetch("/api/magazines?limit=100");
-        const payload = await response.json();
+        const raw = await response.text();
+        const contentType = response.headers.get("content-type") ?? "";
+        const trimmed = raw.trimStart();
+        const looksLikeHtml =
+          trimmed.startsWith("<") ||
+          (!contentType.includes("application/json") &&
+            !trimmed.startsWith("{") &&
+            !trimmed.startsWith("["));
 
-        if (!response.ok || payload?.success === false) {
-          const serverMsg =
-            typeof payload?.error === "string" ? payload.error : null;
+        let payload: unknown;
+        try {
+          payload = raw.length === 0 ? null : JSON.parse(raw);
+        } catch {
+          setMagazines([]);
+          setFetchError(
+            looksLikeHtml
+              ? "استلم المتصفح صفحة HTML بدلاً من JSON. على Hostinger يجب تشغيل تطبيق Node (مثلاً ملف server.js أو next start) مع متغير PORT، وأن يمرّر المضيف مسار /api إلى Next وليس إلى استضافة ثابتة فقط. افتح /api/magazines?limit=5 للتحقق: يجب أن يظهر نص JSON."
+              : "تعذّر قراءة رد الخادم. افتح /api/magazines?limit=5 في المتصفح وتحقق من الاستجابة.",
+          );
+          return;
+        }
+
+        if (typeof payload !== "object" || payload === null) {
+          setMagazines([]);
+          setFetchError(
+            "رد الخادم غير متوقع. افتح /api/magazines?limit=5 للتحقق من أن واجهة الـ API تعمل.",
+          );
+          return;
+        }
+
+        const body = payload as {
+          success?: boolean;
+          error?: string;
+          data?: { items?: MagazineCard[] };
+        };
+
+        if (!response.ok || body.success === false) {
+          const serverMsg = typeof body.error === "string" ? body.error : null;
           setMagazines([]);
           setFetchError(
             serverMsg
@@ -53,11 +86,11 @@ export default function MagazinesGrid() {
           return;
         }
 
-        setMagazines(Array.isArray(payload?.data?.items) ? payload.data.items : []);
+        setMagazines(Array.isArray(body.data?.items) ? body.data.items : []);
       } catch {
         setMagazines([]);
         setFetchError(
-          "تعذر الاتصال بالخادم لتحميل المجلات. تأكد أن التطبيق يعمل ثم حدّث الصفحة.",
+          "تعذر الاتصال بالخادم لتحميل المجلات (فشل الشبكة أو انقطع الاتصال). تأكد أن التطبيق يعمل على Hostinger وأن متغير PORT مضبوط ثم حدّث الصفحة.",
         );
       } finally {
         setLoading(false);
