@@ -38,3 +38,20 @@ export function resolveDatabaseUrl(): string {
 
   return applyMysqlUrlDefaults(raw);
 }
+
+/** Used by `prisma.config.ts` so `prisma generate` does not require DB env at build time. */
+const PLACEHOLDER_DATABASE_URL =
+  "mysql://user:password@localhost:3306/database";
+
+/**
+ * Same as `resolveDatabaseUrl()` when env is set; otherwise returns a placeholder URL.
+ * Allows `prisma generate` (no DB connection) during CI/panel builds. Runtime code should
+ * keep using `resolveDatabaseUrl()` so misconfiguration still fails loudly at startup.
+ */
+export function resolveDatabaseUrlOrPlaceholder(): string {
+  try {
+    return resolveDatabaseUrl();
+  } catch {
+    return PLACEHOLDER_DATABASE_URL;
+  }
+}
