@@ -7,15 +7,27 @@ Next.js + Prisma/MySQL website for magazine publishing, conferences, blogs, advi
 1. Install dependencies:
    - `npm install`
 2. Configure environment variables in `.env`:
-   - DB: `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DB_PORT`
+   - DB: either **`DATABASE_URL`** (`mysql://…`) or **`DB_HOST`**, **`DB_USER`**, **`DB_PASSWORD`**, **`DB_NAME`**, **`DB_PORT`** (see [`lib/database-url.ts`](lib/database-url.ts)). The Next.js app and `prisma db seed` must use the **same** database.
    - Auth: `JWT_SECRET`, `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD`, `BOOTSTRAP_ADMIN_NAME`
    - Google sign-in (optional): `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `AUTH_GOOGLE_REDIRECT_URI` (must match the authorized redirect URI in Google Cloud Console, e.g. `https://yourdomain.com/api/auth/google/callback`). Only Google accounts whose email matches an existing active `ADMIN` user in the database receive a session for the workspace.
    - Storage: `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_PUBLIC_BASE_URL`
    - SMTP (Email Center): `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`
-3. Generate Prisma client:
+3. Apply database schema (choose one):
+   - **Migrate (recommended for production):** `npx prisma migrate deploy` (or `npx prisma migrate dev` in development) so migrations such as `add_magazine_metadata` run against your MySQL database.
+   - **Push (dev only):** `npx prisma db push` if you are not using migration history yet.
+4. Generate Prisma client:
    - `npx prisma generate`
-4. Run dev server:
+5. Optional — seed placeholder magazines (3+ rows with ISSN, impact factor, versions, etc.):
+   - `npm run db:seed` or `npx prisma db seed` runs `migrations.seed` from `prisma.config.ts` (`node prisma/seed.mjs`). Idempotent by magazine title; requires a working DB.
+6. Run dev server:
    - `npm run dev`
+
+### Magazines page shows “no magazines” or a load error
+
+- The `/magazines` listing reads **only** from MySQL via `GET /api/magazines`. Placeholders are **not** hardcoded in the UI; they are inserted by the seed script ([`prisma/seed.mjs`](prisma/seed.mjs)).
+- **Empty list (no error):** the `magazines` table has no rows. Run migrations (step 3), then **`npm run db:seed`**, then reload `/magazines`.
+- **Error message on the page:** usually DB unreachable or misconfigured env. Fix `DATABASE_URL` / `DB_*`, restart `npm run dev`, and open **`/api/magazines?limit=5`** — expect `200` and `"success": true` with a non-empty `data.items` after seeding.
+- **`prisma db seed` fails (e.g. P2022 column does not exist):** the database schema is behind the Prisma schema. Run **`npx prisma migrate deploy`** (or **`migrate dev`**) before **`npm run db:seed`**.
 
 ## Core API Endpoints
 

@@ -1,70 +1,52 @@
-import styles from "../magazines-grid.module.css";
-import Image from 'next/image';
-import Link from 'next/link';
+import styles from "../magazine-journal.module.css";
 
-interface MagazineCard {
+export type MagazineVersionItem = {
   id: number;
-  title: string;
-  description: string;
-  image: string;
-  category: string;
   version: string;
-}
+  title: string;
+  releaseDateLabel: string;
+  notes: string | null;
+};
 
-const magazines: MagazineCard[] = [
-  {
-    id: 1,
-    title: "مجلة الدراسات التربوية والنفسية",
-    description: "مجلة متخصصة في الدراسات التربوية والنفسية",
-    image: "/images/new-scientist.jpg",
-    category: "إنسانيات",
-    version: "1.0"
-  },
-  {
-    id: 2,
-    title: "مجلة الدراسات التربوية والنفسية",
-    description: "مجلة متخصصة في الدراسات التربوية والنفسية",
-    image: "/images/new-scientist.jpg",
-    category: "إنسانيات",
-    version: "1.1"
-  },
-  {
-    id: 3,
-    title: "مجلة الدراسات التربوية والنفسية",
-    description: "مجلة متخصصة في الدراسات التربوية والنفسية",
-    image: "/images/new-scientist.jpg",
-    category: "إنسانيات",
-    version: "1.2"
-  }
-];
+type MagazineVersionsProps = {
+  versions: MagazineVersionItem[];
+  pdfUrl: string | null;
+};
 
-export default function MagazinesGrid() {
+export default function MagazineVersions({ versions, pdfUrl }: MagazineVersionsProps) {
   return (
-    <section className={styles.section}>
-      <h1 className={styles.versionsHeader}>إصدارات المجلة</h1>
-      <div className={styles.grid}>
-        {magazines.map((magazine) => (
-          <div key={magazine.id} className={styles.card}>
-            <div className={styles.imageWrapper}>
-              <Image
-                src={magazine.image}
-                alt={magazine.title}
-                width={400}
-                height={300}
-                className={styles.image}
-              />
-            </div>
-            <div className={styles.content}>
-              <h3 className={styles.title}>{magazine.title}</h3>
-              <p className={styles.description}>{magazine.description}</p>
-              <p className={styles.version}>الإصدار: {magazine.version}</p>
-              <Link href="../all-fields-page/magazine-page" className={styles.visitBtn}>
-                <span>زيارة المجلة</span>
-                <span>→</span>
-              </Link>
-            </div>
+    <section className={styles.versionsWrap}>
+      <div className={`${styles.inner} ${styles.versionsSection}`}>
+        <h2 className={styles.versionsTitle}>إصدارات المجلة</h2>
+
+        {pdfUrl ? (
+          <p className={styles.versionPdfNote}>
+            <a href={pdfUrl} target="_blank" rel="noopener noreferrer">
+              تحميل المجلة (PDF)
+            </a>
+          </p>
+        ) : versions.length > 0 ? (
+          <p className={styles.versionNoPdf}>لا يتوفر ملف PDF لهذه المجلة حاليًا.</p>
+        ) : null}
+
+        {versions.length === 0 ? (
+          <div className={styles.emptyVersions}>لا توجد إصدارات مسجّلة لهذه المجلة بعد.</div>
+        ) : (
+          <div className={styles.versionsGrid}>
+            {versions.map((v) => (
+              <article key={v.id} className={styles.versionCard}>
+                <div className={styles.versionCardHeader}>
+                  <span>{v.title}</span>
+                  <span className={styles.versionBadge}>إصدار {v.version}</span>
+                </div>
+                <div className={styles.versionCardBody}>
+                  <div className={styles.versionMeta}>تاريخ الإصدار: {v.releaseDateLabel}</div>
+                  {v.notes?.trim() ? <p className={styles.versionNotes}>{v.notes.trim()}</p> : null}
+                </div>
+              </article>
+            ))}
           </div>
-        ))}
+        )}
       </div>
     </section>
   );

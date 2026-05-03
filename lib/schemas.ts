@@ -12,6 +12,15 @@ export const magazineSchema = z.object({
   image: z.string().min(1).max(255),
   category: z.string().min(2).max(100),
   pdfUrl: z.string().url().optional().nullable(),
+  issn: z.string().max(32).optional().nullable(),
+  impactFactor: z.coerce.number().finite().optional().nullable(),
+  currentVersion: z.string().max(50).optional().nullable(),
+  nextVersionRelease: z.coerce.date().optional().nullable(),
+  publicationPreference: z.string().optional().nullable(),
+  versionMessage: z.string().optional().nullable(),
+  certification: z.string().optional().nullable(),
+  advisorsApproved: z.boolean().optional(),
+  versionCount: z.number().int().min(0).optional(),
 });
 
 export const blogSchema = z.object({

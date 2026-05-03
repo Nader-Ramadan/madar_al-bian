@@ -18,22 +18,51 @@
    HERO SECTION
    =================================================== */
 .hero {
+  --hero-pad-block: 2rem;
+  --hero-pad-inline: 1.5rem;
+  --hero-btn-nudge: 1.35rem;
   position: relative;
   width: 100%;
-  min-height: 600px;
-  background: linear-gradient(
-    135deg,
-    var(--secondary-color) 0%,
-    var(--background) 100%
-  );
-  background-size: cover;
-  background-position: center;
-  background-blend-mode: overlay;
+  min-height: min(70vh, 640px);
+  background-color: var(--secondary-color, #0a3f62);
+  padding: var(--hero-pad-block) var(--hero-pad-inline);
+  overflow: hidden;
+}
+
+.heroBgImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.heroInner {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  right: auto;
+  bottom: calc(var(--hero-pad-block) + var(--hero-btn-nudge));
+  top: auto;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 5vw;
-  padding: 4rem 2rem;
+  justify-content: center;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .decorativeLine {
@@ -2113,36 +2142,22 @@
   
   /* Hero Section */
   .hero {
-    min-height: 400px;
-    padding: 2rem 1rem;
-    gap: 2vw;
-    flex-direction: column;
-    justify-content: center;
+    --hero-pad-block: 1.5rem;
+    --hero-pad-inline: 1rem;
+    --hero-btn-nudge: 1.55rem;
+    width: 100%;
+    min-height: clamp(210px, min(56vw, 48vh), 440px);
+    padding: var(--hero-pad-block) var(--hero-pad-inline);
   }
 
-  .hero .content {
-    max-width: 100%;
-    text-align: center;
+  .hero .button {
+    padding: 0.55rem 1.35rem;
+    font-size: 0.88rem;
   }
 
-  .hero .title {
-    font-size: 2rem;
-    line-height: 1.3;
-  }
-
-  .hero .subtitle {
-    font-size: 0.95rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .hero .emblem {
-    max-width: 100%;
-    margin-top: 1rem;
-  }
-
-  .emblemCircle {
-    width: 280px;
-    height: 280px;
+  .heroBgImage {
+    object-fit: cover;
+    object-position: center 28%;
   }
 
   .lineLeft,
@@ -2470,33 +2485,23 @@
 
   /* Hero Section */
   .hero {
-    min-height: 300px;
-    padding: 1.5rem 1rem;
+    --hero-pad-block: 1.25rem;
+    --hero-pad-inline: 1rem;
+    --hero-btn-nudge: 1.75rem;
+    width: 100%;
+    min-height: clamp(190px, min(62vw, 42vh), 320px);
+    padding: var(--hero-pad-block) var(--hero-pad-inline);
   }
 
-  .hero .title {
-    font-size: 1.5rem;
-  }
-
-  .hero .subtitle {
-    font-size: 0.85rem;
-    margin-bottom: 1rem;
+  .heroBgImage {
+    object-fit: cover;
+    object-position: center 22%;
   }
 
   .hero .button {
-    padding: 0.6rem 1.5rem;
-    font-size: 0.9rem;
-  }
-
-  .emblemCircle {
-    width: 200px;
-    height: 200px;
-    padding: 1rem;
-    border-width: 2px;
-  }
-
-  .emblemText {
-    font-size: 0.65rem;
+    padding: 0.42rem 0.95rem;
+    font-size: 0.78rem;
+    border-radius: 0.4rem;
   }
 
   .dots {
@@ -3145,6 +3150,17 @@
 
   .footerLinks a {
     font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .hero {
+    --hero-btn-nudge: 1.85rem;
+  }
+
+  .hero .button {
+    padding: 0.38rem 0.8rem;
+    font-size: 0.72rem;
   }
 }
 

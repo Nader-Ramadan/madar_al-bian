@@ -59,15 +59,24 @@ model Session {
 }
 
 model Magazine {
-  id          Int     @id @default(autoincrement())
-  title       String  @db.VarChar(255)
-  description String  @db.Text
-  image       String  @db.VarChar(255)
-  category    String  @db.VarChar(100)
-  pdfUrl      String? @db.VarChar(500)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  versions    MagazineVersion[]
+  id                     Int       @id @default(autoincrement())
+  title                  String    @db.VarChar(255)
+  description            String    @db.Text
+  image                  String    @db.VarChar(255)
+  category               String    @db.VarChar(100)
+  pdfUrl                 String?   @db.VarChar(500)
+  issn                   String?   @db.VarChar(32)
+  impactFactor           Decimal?  @db.Decimal(6, 3)
+  currentVersion         String?   @db.VarChar(50)
+  nextVersionRelease     DateTime?
+  publicationPreference  String?   @db.Text
+  versionMessage         String?   @db.Text
+  certification          String?   @db.Text
+  advisorsApproved       Boolean   @default(false)
+  versionCount           Int       @default(0)
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  versions               MagazineVersion[]
 
   @@map("magazines")
 }

@@ -4,6 +4,44 @@
   background: var(--page-bg, #ffffff);
 }
 
+.emptyState {
+  text-align: center;
+  color: var(--text-color, #5a6b77);
+  font-size: 1rem;
+  margin: 2rem auto;
+  max-width: 36rem;
+  direction: rtl;
+}
+
+.errorState {
+  text-align: center;
+  color: #8b2c2c;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1.5rem auto 0.75rem;
+  max-width: 40rem;
+  direction: rtl;
+  line-height: 1.5;
+}
+
+.errorHint {
+  text-align: center;
+  color: var(--text-color, #5a6b77);
+  font-size: 0.9rem;
+  margin: 0 auto 2rem;
+  max-width: 40rem;
+  direction: rtl;
+  line-height: 1.55;
+}
+
+.inlineCode {
+  font-family: ui-monospace, monospace;
+  font-size: 0.85em;
+  background: #f0f4f8;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+}
+
 .grid {
   width: min(100%, 1200px);
   margin: 0 auto;
@@ -23,11 +61,18 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  text-decoration: none;
+  color: inherit;
 }
 
 .card:hover {
   transform: translateY(-8px);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+.card:focus-visible {
+  outline: 3px solid var(--primary-color, #0f3f6e);
+  outline-offset: 2px;
 }
 
 .imageWrapper {
@@ -70,7 +115,15 @@
   color: #c4925e;
   padding: 0.3rem 0.6rem;
   border-radius: 4px;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.5rem;
+  align-self: flex-start;
+}
+
+.metaLine {
+  margin: 0 0 0.6rem 0;
+  font-size: 0.8rem;
+  color: var(--text-color, #5a6b77);
+  line-height: 1.4;
 }
 
 .description {
@@ -95,6 +148,7 @@
   justify-content: center;
   gap: 0.6rem;
   transition: all 0.2s ease;
+  margin-top: auto;
 }
 
 .versionsHeader {

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { ok, fail } from "@/lib/api-response";
 import { requireRole } from "@/lib/rbac";
 import { magazineVersionSchema } from "@/lib/schemas";
+import { syncMagazineVersionStats } from "@/lib/magazine-version-sync";
 
 export async function GET() {
   const auth = await requireRole([UserRole.ADMIN, UserRole.EDITOR]);
@@ -27,5 +28,6 @@ export async function POST(request: NextRequest) {
       releaseDate: new Date(parsed.data.releaseDate),
     },
   });
+  await syncMagazineVersionStats(parsed.data.magazineId);
   return ok(created, { status: 201 });
 }

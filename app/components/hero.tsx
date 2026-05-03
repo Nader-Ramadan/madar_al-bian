@@ -1,38 +1,31 @@
 "use client";
 
-import styles from '../page.module.css';
-import Image from 'next/image';
-import Link from 'next/link';
+import Image from "next/image";
+import Link from "next/link";
+import styles from "../page.module.css";
 
-function hero() {
-    return (
-        <section className={styles.hero}>
-            <div className={styles.emblem}>
-                <div className={styles.emblemCircle}>
-                    <Image 
-                        src="/images/logo/vertical-logo/svg-vertical-main-logo-transparent.svg" 
-                        alt="Logo"
-                        width={100}
-                        height={100}
-                        className={styles.emblemLogo}
-                    />
-                </div>
-                <Link href="../about-us-page/" className={styles.button}>من  نحن</Link>
-            </div>
-
-            <div className={styles.content}>
-                <h1 className={styles.title}>مؤسسة مدار البيان للنشر العلمي</h1>
-                <p className={styles.subtitle}>
-                    مرحباً بكم في مؤسسة مدار البيان للنشر العلمي حيث نرتقي بالبحث العلمي إلى آفاق جديدة من التميز والابتكار
-                </p>
-            </div>
-
-            <div className={styles.dots}>
-                <div className={`${styles.dot} ${styles.active}`}></div>
-                <div className={styles.dot}></div>
-                <div className={styles.dot}></div>
-            </div>
-        </section>
-    );
+function Hero() {
+  return (
+    <section className={styles.hero} aria-labelledby="hero-heading">
+      <Image
+        src="/images/banner.png"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className={styles.heroBgImage}
+        aria-hidden
+      />
+      <h1 id="hero-heading" className={styles.visuallyHidden}>
+        مؤسسة مدار البيان للنشر العلمي
+      </h1>
+      <div className={styles.heroInner}>
+        <Link href="/about-us" className={styles.button}>
+          من نحن
+        </Link>
+      </div>
+    </section>
+  );
 }
-export default hero;
+
+export default Hero;
