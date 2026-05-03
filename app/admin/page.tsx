@@ -9,15 +9,16 @@ export default function AdminDashboardPage() {
     { href: "/admin/advisors", title: "Advisors", desc: "Add, edit, and remove advisory members." },
     { href: "/admin/approvals", title: "Publication Approvals", desc: "Review and approve publication requests." },
     { href: "/admin/emails", title: "Email Center", desc: "Send operational and editorial emails." },
-    { href: "/admin/content", title: "Content CRUD", desc: "Manage blogs, conferences, and fields." },
+    { href: "/admin/content", title: "Content", desc: "Manage blogs, conferences, and fields." },
+    { href: "/admin/traffic", title: "Traffic Analytics", desc: "Review magazine views and engagement." },
   ];
 
   return (
     <div className={styles.adminPage}>
       <header className={styles.adminHeader}>
-        <h1 className={styles.adminTitle}>Admin Dashboard</h1>
+        <h1 className={styles.adminTitle}>Workspace home</h1>
         <p className={styles.adminSubtitle}>
-          Manage publishing workflows, people, and site content from one place.
+          Publishing workflows, people, and site content in one place.
         </p>
       </header>
       <div className={styles.adminGrid}>

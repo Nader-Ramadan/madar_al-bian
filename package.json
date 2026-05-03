@@ -23,6 +23,7 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "^19",
     "bcryptjs": "^3.0.3",
+    "google-auth-library": "^9.15.1",
     "jose": "^6.1.0",
     "mysql2": "^3.22.1",
     "next": "^16.2.4",

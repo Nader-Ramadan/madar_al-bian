@@ -9,6 +9,7 @@ Next.js + Prisma/MySQL website for magazine publishing, conferences, blogs, advi
 2. Configure environment variables in `.env`:
    - DB: `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DB_PORT`
    - Auth: `JWT_SECRET`, `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD`, `BOOTSTRAP_ADMIN_NAME`
+   - Google sign-in (optional): `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `AUTH_GOOGLE_REDIRECT_URI` (must match the authorized redirect URI in Google Cloud Console, e.g. `https://yourdomain.com/api/auth/google/callback`). Only Google accounts whose email matches an existing active `ADMIN` user in the database receive a session for the workspace.
    - Storage: `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_PUBLIC_BASE_URL`
    - SMTP (Email Center): `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`
 3. Generate Prisma client:
@@ -20,7 +21,9 @@ Next.js + Prisma/MySQL website for magazine publishing, conferences, blogs, advi
 
 ### Auth
 - `POST /api/auth/bootstrap` create first admin from env vars (one-time)
-- `POST /api/auth/login` admin/editor login
+- `POST /api/auth/login` password login (session issued only for `ADMIN` users)
+- `GET /api/auth/google` start Google OAuth (redirects to Google)
+- `GET /api/auth/google/callback` OAuth callback; creates session when Google email matches an active `ADMIN` user
 - `POST /api/auth/logout` logout and clear session
 - `GET /api/auth/me` get current session user
 
@@ -64,9 +67,9 @@ Next.js + Prisma/MySQL website for magazine publishing, conferences, blogs, advi
 - `GET /api/admin/emails`
 - `POST /api/admin/emails/send`
 
-## Admin Pages
-- `/admin/login` for authentication
-- `/admin` dashboard home
+## Sign-in and workspace pages
+- `/login` for account sign-in and registration (legacy `/admin/login` redirects here)
+- `/admin` workspace home
 - `/admin/magazines`
 - `/admin/advisors`
 - `/admin/approvals`
@@ -76,7 +79,7 @@ Next.js + Prisma/MySQL website for magazine publishing, conferences, blogs, advi
 
 ## Security Notes
 - Session stored in httpOnly cookie (`madar_session`)
-- Admin login accepts only users with `ADMIN` role
+- Password login issues a session only for users with `ADMIN` role (same error message if not allowed)
 - Role checks enforced on write/admin routes
 - Login endpoint includes in-memory rate limiting
 - Admin paths protected by proxy guard (`/admin/*` and `/api/admin/*`)

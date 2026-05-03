@@ -36,7 +36,7 @@ export async function proxy(request: NextRequest) {
     if (request.nextUrl.pathname.startsWith("/api/")) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
-    return NextResponse.redirect(new URL("/admin/login", request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   const response = NextResponse.next();

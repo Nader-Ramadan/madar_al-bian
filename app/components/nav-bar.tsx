@@ -81,19 +81,27 @@ function NavBar() {
                 </li>
                 {isAdmin ? (
                     <>
-                        <li>
-                            <Link href="/admin">لوحة التحكم</Link>
+                        <li className="nav-links__push">
+                            <Link href="/admin">مساحة العمل</Link>
                         </li>
                         <li>
                             <Link href="/admin/magazines">المجلات والإصدارات</Link>
                         </li>
                         <li>
-                            <button type="button" onClick={handleLogout}>تسجيل الخروج</button>
+                            <button
+                                type="button"
+                                className="nav-logout-button"
+                                onClick={handleLogout}
+                            >
+                                تسجيل الخروج
+                            </button>
                         </li>
                     </>
                 ) : (
-                    <li>
-                        <Link href="/admin/login">دخول المدير</Link>
+                    <li className="nav-links__login">
+                        <Link href="/login" className="nav-login-pill">
+                            تسجيل الدخول
+                        </Link>
                     </li>
                 )}
             </ul>

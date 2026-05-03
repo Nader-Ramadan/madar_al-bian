@@ -34,12 +34,13 @@ export async function POST(request: NextRequest) {
       return fail("Invalid payload", 400, parsed.error.flatten());
     }
 
-    const user = await prisma.user.findUnique({ where: { email: parsed.data.email } });
-    if (!user || !user.isActive) return fail("Invalid credentials", 401);
+    const emailNorm = parsed.data.email.trim().toLowerCase();
+    const user = await prisma.user.findUnique({ where: { email: emailNorm } });
+    if (!user || !user.isActive) return fail("بيانات الدخول غير صحيحة", 401);
 
     const match = await comparePassword(parsed.data.password, user.passwordHash);
-    if (!match) return fail("Invalid credentials", 401);
-    if (user.role !== UserRole.ADMIN) return fail("Admin access required", 403);
+    if (!match) return fail("بيانات الدخول غير صحيحة", 401);
+    if (user.role !== UserRole.ADMIN) return fail("بيانات الدخول غير صحيحة", 401);
 
     const token = await createSessionToken({ userId: user.id, role: user.role });
     await createDbSession(user.id, token);
