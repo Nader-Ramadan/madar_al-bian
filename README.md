@@ -6,8 +6,8 @@ Next.js + Prisma/MySQL website for magazine publishing, conferences, blogs, advi
 
 1. Install dependencies:
    - `npm install`
-2. Configure environment variables in `.env`:
-   - DB: either **`DATABASE_URL`** (`mysql://…`) or **`DB_HOST`**, **`DB_USER`**, **`DB_PASSWORD`**, **`DB_NAME`**, **`DB_PORT`** (see [`lib/database-url.ts`](lib/database-url.ts)). The Next.js app and `prisma db seed` must use the **same** database.
+2. Configure environment variables:
+   - **Database (Hostinger only for production):** set either **`DATABASE_URL`** (`mysql://…`) or **`DB_HOST`**, **`DB_USER`**, **`DB_PASSWORD`**, **`DB_NAME`**, **`DB_PORT`** in **Hostinger hPanel** (Node.js app → Environment variables) or in **`.env.production`** on the server—see [`lib/database-url.ts`](lib/database-url.ts). Do not put production DB credentials in **`.env.local`**. The Next.js app and `prisma db seed` must use the **same** database. For one-off CLI commands from your PC (migrate/seed), use a private untracked `.env` with the same Hostinger values only if Remote MySQL allows your IP, or run commands over SSH on the Hostinger host where env is already set.
    - Auth: `JWT_SECRET`, `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD`, `BOOTSTRAP_ADMIN_NAME`
    - Google sign-in (optional): `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `AUTH_GOOGLE_REDIRECT_URI` (must match the authorized redirect URI in Google Cloud Console, e.g. `https://yourdomain.com/api/auth/google/callback`). Only Google accounts whose email matches an existing active `ADMIN` user in the database receive a session for the workspace.
    - Storage: `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_PUBLIC_BASE_URL`
@@ -110,7 +110,7 @@ Next.js + Prisma/MySQL website for magazine publishing, conferences, blogs, advi
 ### One-time setup on server
 1. Clone repository and install deps:
    - `npm ci`
-2. Create `.env` with all required variables (same list from Setup section).
+2. Set required variables in **hPanel → Environment variables** and/or **`.env.production`** on the server (same keys as `.env.example`). Prefer hPanel for **database** credentials so they are not kept only in a local `.env.local`.
 3. Generate Prisma client and apply schema:
    - `npx prisma generate`
    - `npx prisma migrate deploy`
