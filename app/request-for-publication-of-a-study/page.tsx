@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { logDebugClient } from "@/app/components/debug-beacon";
 import styles from "@/app/page.module.css";
 
 const rtlSection = {
@@ -39,17 +38,6 @@ export default function RequestPublicationPage() {
         body: JSON.stringify(body),
       });
       const payload = await response.json().catch(() => ({ parseError: true }));
-      logDebugClient({
-        location: "app/request-for-publication-of-a-study/page.tsx",
-        hypothesisId: "H5",
-        message: "publication_request_response",
-        data: {
-          httpStatus: response.status,
-          success: (payload as { success?: boolean }).success,
-          error: (payload as { error?: string }).error,
-          parseError: Boolean((payload as { parseError?: boolean }).parseError),
-        },
-      });
       if (!(payload as { success?: boolean }).success) {
         setMessage({
           type: "err",

@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { logDebugClient } from "./debug-beacon";
 
 function Footer() {
   return (
@@ -28,32 +27,8 @@ function Footer() {
         <div className="footerSection">
           <h4>مساعدة</h4>
           <Link href="/#faq">الأسئلة الشائعة</Link>
-          <Link
-            href="/terms"
-            onClick={() =>
-              logDebugClient({
-                location: "app/components/footer.tsx",
-                hypothesisId: "H1",
-                message: "footer_link_click",
-                data: { href: "/terms" },
-              })
-            }
-          >
-            الشروط والأحكام
-          </Link>
-          <Link
-            href="/privacy"
-            onClick={() =>
-              logDebugClient({
-                location: "app/components/footer.tsx",
-                hypothesisId: "H1",
-                message: "footer_link_click",
-                data: { href: "/privacy" },
-              })
-            }
-          >
-            سياسة الخصوصية
-          </Link>
+          <Link href="/terms">الشروط والأحكام</Link>
+          <Link href="/privacy">سياسة الخصوصية</Link>
         </div>
 
         <div className="footerSection">

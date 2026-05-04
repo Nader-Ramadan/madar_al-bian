@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { DebugBeacon } from "../components/debug-beacon";
 import styles from "../page.module.css";
 
 export const metadata: Metadata = {
@@ -10,12 +9,6 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <div className={styles.page}>
-      <DebugBeacon
-        location="app/privacy/page.tsx"
-        hypothesisId="H2"
-        message="legal_page_mount"
-        data={{ route: "privacy" }}
-      />
       <main className={styles.main}>
         <section
           style={{

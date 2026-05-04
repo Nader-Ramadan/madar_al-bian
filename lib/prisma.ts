@@ -3,18 +3,30 @@ import { resolveDatabaseUrl } from "@/lib/database-url";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
+  /** Last datasource URL used to build `prisma` (dev-only invalidation). */
+  prismaResolvedUrl?: string;
 };
 
-function createPrismaClient(): PrismaClient {
+function createPrismaClient(url: string): PrismaClient {
   return new PrismaClient({
-    datasources: { db: { url: resolveDatabaseUrl() } },
+    datasources: { db: { url } },
     log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
   });
 }
 
 function getPrisma(): PrismaClient {
+  const url = resolveDatabaseUrl();
+  if (
+    process.env.NODE_ENV === "development" &&
+    globalForPrisma.prisma != null &&
+    globalForPrisma.prismaResolvedUrl !== url
+  ) {
+    void globalForPrisma.prisma.$disconnect().catch(() => {});
+    globalForPrisma.prisma = undefined;
+  }
   if (!globalForPrisma.prisma) {
-    globalForPrisma.prisma = createPrismaClient();
+    globalForPrisma.prisma = createPrismaClient(url);
+    globalForPrisma.prismaResolvedUrl = url;
   }
   return globalForPrisma.prisma;
 }

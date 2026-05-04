@@ -26,16 +26,38 @@ function toCard(m: Magazine): MagazineCard {
   };
 }
 
+function prismaErrorCode(err: unknown): string | null {
+  if (typeof err !== "object" || err === null) return null;
+  if (
+    "code" in err &&
+    typeof (err as { code: unknown }).code === "string"
+  ) {
+    return (err as { code: string }).code;
+  }
+  return null;
+}
+
 function magazinesLoadErrorMessage(err: unknown): string {
   const msg = err instanceof Error ? err.message : String(err);
+  const code = prismaErrorCode(err);
 
   if (msg.includes("Database URL is not configured")) {
     return `تعذر تحميل المجلات: Database URL is not configured. Set DATABASE_URL (or DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) in the hosting environment. تحقق من إعدادات Hostinger (hPanel) ثم أعد تشغيل التطبيق.`;
   }
 
   if (
+    code === "P1000" ||
+    msg.includes("P1000") ||
+    /authentication failed against database server/i.test(msg) ||
+    /access denied for user/i.test(msg)
+  ) {
+    return `تعذر تحميل المجلات: Database authentication failed (wrong user/password, or user not allowed from this host). Check DB_USER and DB_PASSWORD; if you use DATABASE_URL, percent-encode special characters in the password. راجع بيانات الدخول في hPanel وملف .env.`;
+  }
+
+  if (
     msg.includes("Can't reach database server") ||
     msg.includes("P1001") ||
+    code === "P1001" ||
     msg.includes("ECONNREFUSED") ||
     msg.includes("ETIMEDOUT")
   ) {
