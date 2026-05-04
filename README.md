@@ -136,10 +136,11 @@ This is **different** from “Database URL is not configured”: the app reached
 
 1. **Precedence** — If **`DATABASE_URL`** and **`DB_*`** are both set in hPanel, **`DATABASE_URL` wins** (no auto-encoding of the password inside the URL). A stale or wrong `DATABASE_URL` causes auth errors even when `DB_*` is correct. **Fix:** remove the wrong variable set, or keep only **`DB_HOST`**, **`DB_USER`**, **`DB_PASSWORD`**, **`DB_NAME`** (and **`DB_PORT`**) so the URL is built with `encodeURIComponent` on the password. The app and **`npm run check:db-env`** log a **one-time warning** when both styles are present.
 2. **Password in `DATABASE_URL`** — Special characters (`@`, `:`, `/`, `#`, `?`, `%`, etc.) must be **percent-encoded** in the URL, or use **`DB_*`** only instead.
-3. **hPanel** — Reset the MySQL user password if unsure; copy host/user/database from **Databases → MySQL** (use the panel hostname, often `*.hstgr.io`, not `localhost`, unless Hostinger documents otherwise).
-4. **Remote MySQL** — If the error mentions the user not being allowed **from this host**, open **hPanel → Databases → Remote MySQL** (or manage user hosts) and allow the **IP of the machine running Node** (your VPS or app server).
-5. **Restart** the Node app after any env change.
-6. **Verify from SSH** (same `.env` / `.env.production` as production): **`npm run verify:db-prisma`** runs `check:db-env` then **`npx prisma migrate status`** (real DB handshake). Then open **`/api/magazines?limit=5`** in the browser or **`SITE_URL=https://your-domain.com npm run verify:magazines-api`**.
+3. **Only `DATABASE_URL` (no `DB_*`)** — The app uses the URL **as-is** ([`lib/database-url.ts`](lib/database-url.ts)); nothing re-reads `DB_PASSWORD` from elsewhere. The substring between `mysql://USER:` and the `@HOST` must be the **real** password for `USER`, with special characters encoded (e.g. `;` → `%3B`). Prefer copying Hostinger’s **official connection string** after a password reset, or use **`DB_*` only** so the app calls `encodeURIComponent` on `DB_PASSWORD`. After changing the URL, **restart** the Node app in hPanel, then run **`npm run check:db-env`** on SSH (it warns about common URL password mistakes).
+4. **hPanel** — Reset the MySQL user password if unsure; copy host/user/database from **Databases → MySQL** (use the panel hostname, often `*.hstgr.io`, not `localhost`, unless Hostinger documents otherwise).
+5. **Remote MySQL** — If the error mentions the user not being allowed **from this host**, open **hPanel → Databases → Remote MySQL** (or manage user hosts) and allow the **IP of the machine running Node** (your VPS or app server).
+6. **Restart** the Node app after any env change.
+7. **Verify from SSH** (same `.env` / `.env.production` as production): **`npm run verify:db-prisma`** runs `check:db-env` then **`npx prisma migrate status`** (real DB handshake). Then open **`/api/magazines?limit=5`** in the browser or **`SITE_URL=https://your-domain.com npm run verify:magazines-api`**.
 
 ### After you SSH (Hostinger)
 
