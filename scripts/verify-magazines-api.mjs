@@ -6,15 +6,10 @@
  */
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadProjectEnv } from "./load-project-env.mjs";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
-try {
-  const { config } = await import("dotenv");
-  config({ path: path.join(root, ".env") });
-  config({ path: path.join(root, ".env.local"), override: true });
-} catch {
-  /* optional */
-}
+await loadProjectEnv(root);
 
 const base = (process.env.SITE_URL || "http://localhost:3000").replace(/\/$/, "");
 const url = `${base}/api/magazines?limit=5`;

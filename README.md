@@ -128,7 +128,18 @@ Next.js + Prisma/MySQL website for magazine publishing, conferences, blogs, advi
 
 1. In **hPanel → Websites → Manage → Node.js** (or your panel’s **Environment variables**), add **`DATABASE_URL`** *or* **`DB_HOST`**, **`DB_USER`**, **`DB_PASSWORD`**, **`DB_NAME`** (same rules as [`.env.example`](.env.example) and [`lib/database-url.ts`](lib/database-url.ts)).
 2. **Restart** the Node application.
-3. On **SSH** or the panel terminal (with the same env the app uses), run **`npm run check:db-env`** — it should print `OK`. If the table is empty, run **`npx prisma migrate deploy`** then **`npm run db:seed`** against that same database.
+3. On **SSH** or the panel terminal, run **`npm run check:db-env`** — it should print `OK`. The script loads **`.env`**, **`.env.production`**, then **`.env.local`** (see [`scripts/load-project-env.mjs`](scripts/load-project-env.mjs)); Prisma CLI uses the same file order via [`prisma.config.ts`](prisma.config.ts). If the table is empty, run **`npx prisma migrate deploy`** then **`npm run db:seed`** against that same database.
+
+### After you SSH (Hostinger)
+
+1. **App root** — `cd` to the same directory Hostinger uses as **Application root** (must contain `package.json` and `server.js`). Confirm with `test -f package.json && echo OK` (Linux) or check that `package.json` is listed in that folder.
+2. **Database env in this shell** — hPanel environment variables are often **not** exported into an interactive SSH session. Use one of:
+   - A **`.env`** or **`.env.production`** file in the app directory with `DATABASE_URL` (or `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`), matching [`.env.example`](.env.example) — do not commit these files; restrict permissions on the server (`chmod 600 .env*`).
+   - Or, for one session only: `export DATABASE_URL='mysql://…'`.
+3. Run **`npm run check:db-env`** — expect `OK: DATABASE_URL is set` or `OK: DB_* are set`.
+4. Run **`npx prisma generate`**, then **`npx prisma migrate deploy`**. If the `magazines` table is empty, run **`npm run db:seed`**.
+5. Run **`npm run build`**, then **Restart** the Node app in hPanel (or restart PM2 if you use it).
+6. Verify: open **`https://your-domain/api/magazines?limit=5`** in a browser, or from SSH: **`SITE_URL=https://your-domain.com npm run verify:magazines-api`**. If you get HTML instead of JSON, fix Node routing/port/startup file before debugging the database (see below).
 
 ### hPanel Node.js Application (Hostinger)
 

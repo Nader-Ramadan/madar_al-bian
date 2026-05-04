@@ -1,19 +1,15 @@
 /**
  * Validates the same DB env contract as lib/database-url.ts (no TS import).
- * Run on Hostinger SSH after setting hPanel env: node scripts/check-db-env.mjs
+ * Loads .env, .env.production, .env.local (see scripts/load-project-env.mjs).
+ * Run on Hostinger SSH: node scripts/check-db-env.mjs
  * or: npm run check:db-env
  */
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadProjectEnv } from "./load-project-env.mjs";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
-try {
-  const { config } = await import("dotenv");
-  config({ path: path.join(root, ".env") });
-  config({ path: path.join(root, ".env.local"), override: true });
-} catch {
-  /* dotenv optional; hPanel/CI may inject env only */
-}
+await loadProjectEnv(root);
 
 function main() {
   const explicit = process.env.DATABASE_URL?.trim();
