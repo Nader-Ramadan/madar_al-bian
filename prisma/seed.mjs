@@ -31,18 +31,40 @@ const seedMagazines = [
     versionMessage: "الإصدار ١.١ يتضمن ملحقًا خاصًا بالبحث الميداني.",
     certification: "معتمدة من الهيئة الوطنية للنشر (وهمية للعرض).",
     advisorsApproved: true,
+    publishingAdvisors: [
+      {
+        photoUrl: "/images/new-scientist.jpg",
+        name: "دكتورة رنا فتحي محمد العالول",
+        jobTitle: "عميد كلية التربية، جامعة غزة، فلسطين",
+      },
+      {
+        photoUrl: "/images/web.png",
+        name: "أ.د. سعاد هادي حسن أرحيم الطائي",
+        jobTitle: "أستاذة التاريخ الإسلامي، قسم التاريخ، كلية التربية، جامعة بغداد، العراق",
+      },
+      {
+        photoUrl: "/images/The-Business-Magazine-Cover-Design.jpg",
+        name: "أ.م.د. نيللي حسين كامل العمروسي",
+        jobTitle:
+          "أستاذ مشارك الصحة النفسية والإرشاد والعلاج النفسي، كلية التربية للبنات بأبها، جامعة الملك خالد",
+      },
+    ],
     versions: [
       {
         version: "1.0",
         title: "العدد الافتتاحي — نموذج ١",
         releaseDate: new Date("2025-03-01T00:00:00.000Z"),
         notes: "إصدار تجريبي.",
+        pageCount: 24,
+        pdfUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
       },
       {
         version: "1.1",
         title: "تحديث الربيع — نموذج ١",
         releaseDate: new Date("2025-06-10T00:00:00.000Z"),
         notes: "إضافة مقالات مراجعة الأقران.",
+        pageCount: 32,
+        pdfUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
       },
     ],
   },
@@ -106,7 +128,7 @@ async function main() {
       continue;
     }
 
-    const { versions, ...magazineData } = row;
+    const { versions, publishingAdvisors, ...magazineData } = row;
     const magazine = await prisma.magazine.create({
       data: {
         ...magazineData,
@@ -114,6 +136,20 @@ async function main() {
         currentVersion: null,
       },
     });
+
+    const advisors = publishingAdvisors ?? [];
+    for (let i = 0; i < advisors.length; i++) {
+      const pa = advisors[i];
+      await prisma.magazineAdvisor.create({
+        data: {
+          magazineId: magazine.id,
+          photoUrl: pa.photoUrl,
+          name: pa.name,
+          jobTitle: pa.jobTitle,
+          sortOrder: i,
+        },
+      });
+    }
 
     for (const v of versions) {
       await prisma.magazineVersion.create({
@@ -123,6 +159,8 @@ async function main() {
           title: v.title,
           releaseDate: v.releaseDate,
           notes: v.notes ?? null,
+          pageCount: v.pageCount ?? null,
+          pdfUrl: v.pdfUrl ?? null,
         },
       });
     }

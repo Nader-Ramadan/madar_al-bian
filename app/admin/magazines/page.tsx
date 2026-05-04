@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import styles from "@/app/page.module.css";
 
@@ -52,6 +53,14 @@ export default function AdminMagazinesPage() {
               <li key={item.id} className={styles.adminListItem}>
                 <span className={styles.adminListText}>{item.title}</span>
                 <span className={styles.adminListText}>{item.category}</span>
+                <div className={styles.adminActions}>
+                  <Link
+                    href={`/admin/magazines/${item.id}`}
+                    className={`${styles.adminButton} ${styles.adminButtonPrimary}`}
+                  >
+                    Manage advisors
+                  </Link>
+                </div>
               </li>
             ))}
           </ul>

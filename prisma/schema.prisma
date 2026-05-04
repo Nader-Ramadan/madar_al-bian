@@ -77,8 +77,24 @@ model Magazine {
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
   versions               MagazineVersion[]
+  advisors               MagazineAdvisor[]
 
   @@map("magazines")
+}
+
+model MagazineAdvisor {
+  id          Int      @id @default(autoincrement())
+  magazineId Int
+  photoUrl   String   @db.VarChar(500)
+  name       String   @db.VarChar(255)
+  jobTitle   String   @db.Text
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  magazine   Magazine @relation(fields: [magazineId], references: [id], onDelete: Cascade)
+
+  @@index([magazineId])
+  @@map("magazine_advisors")
 }
 
 model MagazineVersion {
@@ -88,6 +104,8 @@ model MagazineVersion {
   title       String   @db.VarChar(255)
   releaseDate DateTime
   notes       String?  @db.Text
+  pageCount   Int?
+  pdfUrl      String?  @db.VarChar(500)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   magazine    Magazine @relation(fields: [magazineId], references: [id], onDelete: Cascade)

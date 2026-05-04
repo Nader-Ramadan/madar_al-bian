@@ -5,11 +5,7 @@ import MagazineBanner from "../../components/magazine-banner";
 import MagazineContent from "../../components/magazine-content";
 import MagazineVersions from "../../components/magazines-versions";
 import { prisma } from "@/lib/prisma";
-
-function parseMagazineId(raw: string): number | null {
-  const id = Number(raw);
-  return Number.isInteger(id) && id > 0 ? id : null;
-}
+import { parseMagazineId } from "@/lib/magazine-id";
 
 export async function generateMetadata({
   params,
@@ -77,7 +73,11 @@ export default async function MagazinePage({ params }: { params: Promise<{ id: s
         certification={magazineRecord.certification}
         versionCount={magazineRecord.versionCount}
       />
-      <MagazineVersions versions={versionItems} pdfUrl={magazineRecord.pdfUrl} />
+      <MagazineVersions
+        magazineId={magazineRecord.id}
+        versions={versionItems}
+        pdfUrl={magazineRecord.pdfUrl}
+      />
     </div>
   );
 }

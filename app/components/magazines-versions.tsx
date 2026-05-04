@@ -1,3 +1,4 @@
+import Link from "next/link";
 import styles from "../magazine-journal.module.css";
 
 export type MagazineVersionItem = {
@@ -9,15 +10,21 @@ export type MagazineVersionItem = {
 };
 
 type MagazineVersionsProps = {
+  magazineId: number;
   versions: MagazineVersionItem[];
   pdfUrl: string | null;
 };
 
-export default function MagazineVersions({ versions, pdfUrl }: MagazineVersionsProps) {
+export default function MagazineVersions({ magazineId, versions, pdfUrl }: MagazineVersionsProps) {
   return (
     <section className={styles.versionsWrap}>
       <div className={`${styles.inner} ${styles.versionsSection}`}>
-        <h2 className={styles.versionsTitle}>إصدارات المجلة</h2>
+        <div className={styles.versionsHeadRow}>
+          <h2 className={styles.versionsTitle}>إصدارات المجلة</h2>
+          <Link href={`/magazines/${magazineId}/versions`} className={styles.versionsArchiveLink}>
+            عرض سجل الإصدارات كاملاً
+          </Link>
+        </div>
 
         {pdfUrl ? (
           <p className={styles.versionPdfNote}>

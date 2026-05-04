@@ -58,6 +58,23 @@ export const magazineVersionSchema = z.object({
   title: z.string().min(2).max(255),
   releaseDate: z.string().datetime(),
   notes: z.string().optional().nullable(),
+  pageCount: z.union([z.number().int().positive().max(500000), z.null()]).optional(),
+  pdfUrl: z.union([z.string().url().max(500), z.null()]).optional(),
+});
+
+const imageContentTypes = ["image/jpeg", "image/png", "image/webp"] as const;
+
+export const magazineAdvisorCreateSchema = z.object({
+  name: z.string().min(2).max(255),
+  jobTitle: z.string().min(1).max(4000),
+  photoUrl: z.string().min(1).max(500),
+});
+
+export const magazineAdvisorUploadPresignSchema = z.object({
+  magazineId: z.number().int().positive(),
+  filename: z.string().min(1).max(255),
+  contentType: z.enum(imageContentTypes),
+  size: z.number().int().positive().max(5 * 1024 * 1024),
 });
 
 export const publicationRequestSchema = z.object({
