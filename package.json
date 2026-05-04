@@ -11,7 +11,9 @@
     "prebuild": "prisma generate",
     "build": "next build",
     "start": "node server.js",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check:db-env": "node scripts/check-db-env.mjs",
+    "verify:magazines-api": "node scripts/verify-magazines-api.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.922.0",

@@ -124,6 +124,12 @@ Next.js + Prisma/MySQL website for magazine publishing, conferences, blogs, advi
 - `pm2 save`
 - `pm2 startup`
 
+### If production shows “Database URL is not configured”
+
+1. In **hPanel → Websites → Manage → Node.js** (or your panel’s **Environment variables**), add **`DATABASE_URL`** *or* **`DB_HOST`**, **`DB_USER`**, **`DB_PASSWORD`**, **`DB_NAME`** (same rules as [`.env.example`](.env.example) and [`lib/database-url.ts`](lib/database-url.ts)).
+2. **Restart** the Node application.
+3. On **SSH** or the panel terminal (with the same env the app uses), run **`npm run check:db-env`** — it should print `OK`. If the table is empty, run **`npx prisma migrate deploy`** then **`npm run db:seed`** against that same database.
+
 ### hPanel Node.js Application (Hostinger)
 
 Use these settings so installs and runtime match this repo (see root `.nvmrc` and `.npmrc`).
@@ -132,7 +138,7 @@ Use these settings so installs and runtime match this repo (see root `.nvmrc` an
 - **Application root**: folder where the project files live (e.g. under `domains/yourdomain.com/…`).
 - **Application URL**: your public domain.
 - **Application startup file**: use the repo’s [`server.js`](server.js) as the entry (or `npm run start`), which runs `next start` bound to **`PORT`** from the panel. If your panel only accepts a path to one file, set it to **`server.js`** in the application root. Alternatively point at `node_modules/next/dist/bin/next` with arguments `start -p $PORT`.
-- **Verify API reaches Next (not static HTML):** open `https://your-domain/api/magazines?limit=5` in a browser. You should see **JSON** (`"success": true` or an `"error"` field). If you see an HTML page or a generic hosting page, `/api/*` is not routed to the Node process—fix the Node app URL, port, or proxy before debugging the database.
+- **Verify API reaches Next (not static HTML):** open `https://your-domain/api/magazines?limit=5` in a browser. You should see **JSON** (`"success": true` or an `"error"` field). If you see an HTML page or a generic hosting page, `/api/*` is not routed to the Node process—fix the Node app URL, port, or proxy before debugging the database. From SSH you can run **`SITE_URL=https://your-domain.com npm run verify:magazines-api`** (same check as a script).
 - **Environment variables**: add everything from **Setup** / `.env.example` in the panel (especially `DATABASE_URL`, `JWT_SECRET`, S3, SMTP, Google OAuth). Optionally set `PRISMA_SKIP_POSTINSTALL_GENERATE=1` for extra safety. After changing **`DATABASE_URL`** or **`DB_*`**, restart the Node application so the process picks up new values.
 - **Build vs runtime DB env**: `prisma generate` (run by `prebuild` before `next build`) does **not** need a real database URL—`prisma.config.ts` uses a placeholder when env is missing so panel build stages (e.g. under `.builds/source/repository`) do not fail. For **`prisma migrate deploy`** and for the **running app**, you still **must** set `DATABASE_URL` or `DB_HOST` + `DB_USER` + `DB_PASSWORD` + `DB_NAME` in hPanel; many panels only inject env at process start, not during build, so the code path above keeps builds working either way.
 - **Install**: run **NPM install** from the panel. Prisma client is generated during `npm run build` via the `prebuild` script (`prisma generate`), not during `npm install`—this avoids common “Failed to install dependencies” failures when `postinstall` cannot download Prisma engines under panel limits.
