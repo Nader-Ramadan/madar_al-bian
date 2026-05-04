@@ -67,7 +67,7 @@ function tipDatabaseUrlOnlyMode() {
   if (hasFullDbVars) return;
   console.warn(
     "[check-db-env] Only DATABASE_URL is set (no DB_*). The password inside the URL must be exactly the MySQL user password (with special chars percent-encoded). " +
-      "If auth still fails, copy the connection string from hPanel → MySQL or switch to DB_* only.",
+    "If auth still fails, copy the connection string from hPanel → MySQL or switch to DB_* only.",
   );
 }
 
@@ -85,8 +85,8 @@ function warnIfBothDatabaseUrlStyles() {
   if (explicit && hasDbVars) {
     console.warn(
       "[check-db-env] DATABASE_URL and DB_* are both set. At runtime DATABASE_URL wins (lib/database-url.ts). " +
-        "If you get authentication errors, remove the wrong DATABASE_URL from hPanel or fix the URL; " +
-        "or remove DATABASE_URL and use only DB_* so the password is URL-encoded automatically.",
+      "If you get authentication errors, remove the wrong DATABASE_URL from hPanel or fix the URL; " +
+      "or remove DATABASE_URL and use only DB_* so the password is URL-encoded automatically.",
     );
   }
 }
@@ -109,9 +109,9 @@ function main() {
   if (!host || !user || password === undefined || !database) {
     console.error(
       "[check-db-env] Missing database configuration.\n" +
-        "Set DATABASE_URL in hPanel (Node.js → Environment variables), or set all of:\n" +
-        "  DB_HOST, DB_USER, DB_PASSWORD, DB_NAME (optional DB_PORT, default 3306)\n" +
-        "Then restart the Node application.",
+      "Set DATABASE_URL in hPanel (Node.js → Environment variables), or set all of:\n" +
+      "  DB_HOST, DB_USER, DB_PASSWORD, DB_NAME (optional DB_PORT, default 3306)\n" +
+      "Then restart the Node application.",
     );
     process.exit(1);
   }
