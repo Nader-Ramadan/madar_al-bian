@@ -13,6 +13,7 @@
     "start": "node server.js",
     "lint": "eslint",
     "check:db-env": "node scripts/check-db-env.mjs",
+    "verify:db-prisma": "npm run check:db-env && npx prisma migrate status",
     "verify:magazines-api": "node scripts/verify-magazines-api.mjs"
   },
   "dependencies": {

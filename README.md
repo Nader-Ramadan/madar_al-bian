@@ -130,6 +130,17 @@ Next.js + Prisma/MySQL website for magazine publishing, conferences, blogs, advi
 2. **Restart** the Node application.
 3. On **SSH** or the panel terminal, run **`npm run check:db-env`** — it should print `OK`. The script loads **`.env`**, **`.env.production`**, then **`.env.local`** (see [`scripts/load-project-env.mjs`](scripts/load-project-env.mjs)); Prisma CLI uses the same file order via [`prisma.config.ts`](prisma.config.ts). If the table is empty, run **`npx prisma migrate deploy`** then **`npm run db:seed`** against that same database.
 
+### Database authentication failed (P1000 / access denied)
+
+This is **different** from “Database URL is not configured”: the app reached MySQL but the user/password or **client host** was rejected (see [`lib/load-magazines-page.ts`](lib/load-magazines-page.ts) and [`lib/database-url.ts`](lib/database-url.ts)).
+
+1. **Precedence** — If **`DATABASE_URL`** and **`DB_*`** are both set in hPanel, **`DATABASE_URL` wins** (no auto-encoding of the password inside the URL). A stale or wrong `DATABASE_URL` causes auth errors even when `DB_*` is correct. **Fix:** remove the wrong variable set, or keep only **`DB_HOST`**, **`DB_USER`**, **`DB_PASSWORD`**, **`DB_NAME`** (and **`DB_PORT`**) so the URL is built with `encodeURIComponent` on the password. The app and **`npm run check:db-env`** log a **one-time warning** when both styles are present.
+2. **Password in `DATABASE_URL`** — Special characters (`@`, `:`, `/`, `#`, `?`, `%`, etc.) must be **percent-encoded** in the URL, or use **`DB_*`** only instead.
+3. **hPanel** — Reset the MySQL user password if unsure; copy host/user/database from **Databases → MySQL** (use the panel hostname, often `*.hstgr.io`, not `localhost`, unless Hostinger documents otherwise).
+4. **Remote MySQL** — If the error mentions the user not being allowed **from this host**, open **hPanel → Databases → Remote MySQL** (or manage user hosts) and allow the **IP of the machine running Node** (your VPS or app server).
+5. **Restart** the Node app after any env change.
+6. **Verify from SSH** (same `.env` / `.env.production` as production): **`npm run verify:db-prisma`** runs `check:db-env` then **`npx prisma migrate status`** (real DB handshake). Then open **`/api/magazines?limit=5`** in the browser or **`SITE_URL=https://your-domain.com npm run verify:magazines-api`**.
+
 ### After you SSH (Hostinger)
 
 1. **App root** — `cd` to the same directory Hostinger uses as **Application root** (must contain `package.json` and `server.js`). Confirm with `test -f package.json && echo OK` (Linux) or check that `package.json` is listed in that folder.

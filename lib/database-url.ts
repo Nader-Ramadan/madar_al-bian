@@ -4,6 +4,25 @@
  * or has no usable `DATABASE_URL`.
  */
 
+let warnedDatabaseUrlOverridesDbVars = false;
+
+/** Log once when both DATABASE_URL and DB_* exist (Hostinger: stale DATABASE_URL often causes P1000). */
+function warnIfDatabaseUrlOverridesDbVars(): void {
+  if (warnedDatabaseUrlOverridesDbVars) return;
+  const explicit = process.env.DATABASE_URL?.trim();
+  if (!explicit) return;
+  const hasDbVars =
+    Boolean(process.env.DB_HOST?.trim()) &&
+    Boolean(process.env.DB_USER?.trim()) &&
+    process.env.DB_PASSWORD !== undefined &&
+    Boolean(process.env.DB_NAME?.trim());
+  if (!hasDbVars) return;
+  warnedDatabaseUrlOverridesDbVars = true;
+  console.warn(
+    "[database-url] DATABASE_URL and DB_* are both set; DATABASE_URL wins. If you see database authentication errors, remove or fix DATABASE_URL so DB_* (with encoded password) is used, or keep only a correct DATABASE_URL.",
+  );
+}
+
 /** Append Prisma/MySQL driver params if absent (helps flaky networks / pool waits). */
 export function applyMysqlUrlDefaults(url: string): string {
   if (!url.startsWith("mysql://")) return url;
@@ -16,6 +35,7 @@ export function applyMysqlUrlDefaults(url: string): string {
 }
 
 export function resolveDatabaseUrl(): string {
+  warnIfDatabaseUrlOverridesDbVars();
   const explicit = process.env.DATABASE_URL?.trim();
   let raw: string;
   if (explicit) {

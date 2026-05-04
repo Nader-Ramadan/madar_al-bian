@@ -11,7 +11,28 @@ import { loadProjectEnv } from "./load-project-env.mjs";
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 await loadProjectEnv(root);
 
+function warnIfBothDatabaseUrlStyles() {
+  const explicit = process.env.DATABASE_URL?.trim();
+  const host = process.env.DB_HOST?.trim();
+  const user = process.env.DB_USER?.trim();
+  const password = process.env.DB_PASSWORD;
+  const database = process.env.DB_NAME?.trim();
+  const hasDbVars =
+    Boolean(host) &&
+    Boolean(user) &&
+    password !== undefined &&
+    Boolean(database);
+  if (explicit && hasDbVars) {
+    console.warn(
+      "[check-db-env] DATABASE_URL and DB_* are both set. At runtime DATABASE_URL wins (lib/database-url.ts). " +
+        "If you get authentication errors, remove the wrong DATABASE_URL from hPanel or fix the URL; " +
+        "or remove DATABASE_URL and use only DB_* so the password is URL-encoded automatically.",
+    );
+  }
+}
+
 function main() {
+  warnIfBothDatabaseUrlStyles();
   const explicit = process.env.DATABASE_URL?.trim();
   if (explicit) {
     console.log("[check-db-env] OK: DATABASE_URL is set.");
