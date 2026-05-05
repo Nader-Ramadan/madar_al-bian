@@ -32,6 +32,15 @@ export async function GET(request: NextRequest) {
         skip: (page - 1) * limit,
         take: limit,
         orderBy: { id: "desc" },
+        include: {
+          approvedAdvisors: {
+            include: {
+              advisoryMember: {
+                select: { id: true, name: true, title: true },
+              },
+            },
+          },
+        },
       }),
       prisma.magazine.count({ where }),
     ]);
@@ -76,7 +85,48 @@ export async function POST(request: NextRequest) {
     const parsed = magazineSchema.safeParse(body);
     if (!parsed.success) return fail("Invalid payload", 400, parsed.error.flatten());
 
-    const created = await prisma.magazine.create({ data: parsed.data });
+    const { approvedAdvisorIds: rawApprovedAdvisorIds, ...magazineData } = parsed.data;
+    const approvedAdvisorIds = Array.from(new Set(rawApprovedAdvisorIds ?? []));
+    if (approvedAdvisorIds.length > 0) {
+      const count = await prisma.advisoryMember.count({
+        where: { id: { in: approvedAdvisorIds } },
+      });
+      if (count !== approvedAdvisorIds.length) {
+        return fail("One or more approved advisors were not found", 400);
+      }
+    }
+
+    const created = await prisma.$transaction(async (tx) => {
+      const magazine = await tx.magazine.create({
+        data: {
+          ...magazineData,
+          advisorsApproved: approvedAdvisorIds.length > 0,
+        },
+      });
+
+      if (approvedAdvisorIds.length > 0) {
+        await tx.magazineApprovedAdvisor.createMany({
+          data: approvedAdvisorIds.map((advisoryMemberId) => ({
+            magazineId: magazine.id,
+            advisoryMemberId,
+          })),
+          skipDuplicates: true,
+        });
+      }
+
+      return tx.magazine.findUnique({
+        where: { id: magazine.id },
+        include: {
+          approvedAdvisors: {
+            include: {
+              advisoryMember: {
+                select: { id: true, name: true, title: true },
+              },
+            },
+          },
+        },
+      });
+    });
     return ok(created, { status: 201 });
   } catch {
     return fail("Failed to create magazine", 500);

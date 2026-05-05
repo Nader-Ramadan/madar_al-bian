@@ -31,6 +31,11 @@ export async function POST(request: NextRequest) {
   if (auth.error) return auth.error;
   const parsed = advisoryMemberSchema.safeParse(await request.json());
   if (!parsed.success) return fail("Invalid payload", 400, parsed.error.flatten());
-  const created = await prisma.advisoryMember.create({ data: parsed.data });
-  return ok(created, { status: 201 });
+  try {
+    const created = await prisma.advisoryMember.create({ data: parsed.data });
+    return ok(created, { status: 201 });
+  } catch (error) {
+    console.error("Failed to create advisory member", error);
+    return fail("Failed to create advisor", 500);
+  }
 }

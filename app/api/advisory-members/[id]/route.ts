@@ -27,8 +27,13 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   if (!id) return fail("Invalid id");
   const parsed = advisoryMemberSchema.safeParse(await request.json());
   if (!parsed.success) return fail("Invalid payload", 400, parsed.error.flatten());
-  const item = await prisma.advisoryMember.update({ where: { id }, data: parsed.data });
-  return ok(item);
+  try {
+    const item = await prisma.advisoryMember.update({ where: { id }, data: parsed.data });
+    return ok(item);
+  } catch (error) {
+    console.error("Failed to update advisory member", { id, error });
+    return fail("Failed to update advisor", 500);
+  }
 }
 
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {

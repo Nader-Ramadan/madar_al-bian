@@ -6,6 +6,11 @@ import { requireRole } from "@/lib/rbac";
 import { magazineVersionSchema } from "@/lib/schemas";
 import { syncMagazineVersionStats } from "@/lib/magazine-version-sync";
 
+function hasMissingColumnError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes("P2022") || message.includes("does not exist in the current database");
+}
+
 function parseId(value: string) {
   const id = Number(value);
   return Number.isFinite(id) ? id : null;
@@ -26,13 +31,28 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   });
   if (!existing) return fail("Not found", 404);
 
-  const updated = await prisma.magazineVersion.update({
-    where: { id },
-    data: {
-      ...parsed.data,
-      releaseDate: new Date(parsed.data.releaseDate),
-    },
-  });
+  let updated;
+  try {
+    updated = await prisma.magazineVersion.update({
+      where: { id },
+      data: {
+        ...parsed.data,
+        releaseDate: new Date(parsed.data.releaseDate),
+      },
+    });
+  } catch (error) {
+    if (!hasMissingColumnError(error)) return fail("Failed to update version", 500);
+    updated = await prisma.magazineVersion.update({
+      where: { id },
+      data: {
+        magazineId: parsed.data.magazineId,
+        version: parsed.data.version,
+        title: parsed.data.title,
+        releaseDate: new Date(parsed.data.releaseDate),
+        notes: parsed.data.notes ?? null,
+      },
+    });
+  }
   const ids = new Set([existing.magazineId, parsed.data.magazineId]);
   for (const magazineId of ids) {
     await syncMagazineVersionStats(magazineId);

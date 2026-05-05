@@ -3827,6 +3827,12 @@
   resize: vertical;
 }
 
+.adminHint {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #5f6f8d;
+}
+
 .adminError {
   margin: 0.5rem 0 0;
   color: #a12a34;
@@ -4181,6 +4187,388 @@
   .adminCard,
   .adminButton,
   .adminNavLink {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* ===================================================
+   ADMIN DASHBOARD UI REFRESH (professional + responsive)
+   =================================================== */
+
+.adminShell {
+  gap: 1.2rem;
+  padding: 1.2rem;
+}
+
+.adminSidebar {
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  box-shadow:
+    0 22px 30px var(--shadow-light),
+    0 1px 0 rgba(255, 255, 255, 0.72) inset;
+}
+
+.adminSidebarTitle {
+  color: var(--text-heading);
+}
+
+.adminSidebarText {
+  color: var(--text-muted);
+}
+
+.adminNavLink {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  color: var(--text-primary);
+  border: 1px solid transparent;
+}
+
+.adminNavLink:hover {
+  background: color-mix(in srgb, var(--secondary-color) 7%, var(--card-bg));
+  box-shadow: 0 8px 16px var(--shadow-light);
+}
+
+.adminNavLinkActive {
+  border-color: color-mix(in srgb, var(--primary-color) 60%, var(--border-light));
+  background: color-mix(in srgb, var(--primary-color) 13%, var(--card-bg));
+  color: var(--text-heading);
+}
+
+.adminNavLinkLabel {
+  flex: 1;
+}
+
+.adminNavIcon {
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--secondary-color);
+  flex-shrink: 0;
+}
+
+.adminNavBadge {
+  font-size: 0.72rem;
+  line-height: 1;
+  border-radius: 999px;
+  padding: 0.26rem 0.45rem;
+  color: var(--secondary-color);
+  background: color-mix(in srgb, var(--secondary-color) 12%, var(--card-bg));
+}
+
+.adminContent {
+  min-width: 0;
+}
+
+.adminPage {
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  box-shadow:
+    0 24px 42px var(--shadow-light),
+    0 1px 0 rgba(255, 255, 255, 0.6) inset;
+  padding: 1.25rem;
+}
+
+.adminHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 1.1rem;
+}
+
+.adminTitle {
+  color: var(--text-heading);
+}
+
+.adminSubtitle {
+  color: var(--text-muted);
+}
+
+.adminGrid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.95rem;
+}
+
+.adminCard {
+  background: color-mix(in srgb, var(--foreground-light) 72%, var(--card-bg));
+  border: 1px solid var(--border-light);
+  padding: 1rem;
+}
+
+.adminCard:hover {
+  box-shadow: 0 14px 26px var(--shadow-light);
+  border-color: color-mix(in srgb, var(--primary-color) 55%, var(--border-light));
+}
+
+.adminCardTitle {
+  color: var(--text-heading);
+}
+
+.adminCardText {
+  color: var(--text-muted);
+}
+
+.adminCardIconWrap {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 0.75rem;
+  display: grid;
+  place-items: center;
+  color: var(--secondary-color);
+  background: color-mix(in srgb, var(--secondary-color) 10%, var(--card-bg));
+  border: 1px solid color-mix(in srgb, var(--secondary-color) 18%, var(--border-light));
+  margin-bottom: 0.75rem;
+}
+
+.adminCardFooter {
+  margin-top: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--secondary-color);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.adminSection {
+  margin-top: 1.05rem;
+  background: color-mix(in srgb, var(--foreground-light) 42%, var(--card-bg));
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  padding: 0.95rem;
+}
+
+.adminSectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.65rem;
+}
+
+.adminSectionIcon {
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--secondary-color);
+}
+
+.adminSectionTitle {
+  margin: 0;
+  color: var(--text-heading);
+}
+
+.adminForm {
+  gap: 0.7rem;
+}
+
+.adminInput,
+.adminTextarea {
+  border: 1px solid var(--border-light);
+  background: var(--card-bg);
+  color: var(--text-primary);
+}
+
+.adminInput:focus,
+.adminTextarea:focus {
+  border-color: color-mix(in srgb, var(--primary-color) 65%, var(--border-light));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 22%, white);
+}
+
+.adminInput::placeholder,
+.adminTextarea::placeholder {
+  color: color-mix(in srgb, var(--text-muted) 70%, white);
+}
+
+.adminList {
+  gap: 0.65rem;
+}
+
+.adminListItem {
+  border: 1px solid var(--border-light);
+  background: var(--card-bg);
+}
+
+.adminListText {
+  color: var(--text-primary);
+}
+
+.adminActions {
+  gap: 0.5rem;
+}
+
+.adminButton {
+  min-height: 40px;
+  border: 1px solid var(--border-light);
+  background: var(--foreground-light);
+  color: var(--text-heading);
+}
+
+.adminButton:hover {
+  box-shadow: 0 8px 18px var(--shadow-light);
+}
+
+.adminButtonPrimary {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--secondary-color) 86%, white) 0%,
+    var(--secondary-color) 100%
+  );
+  border-color: var(--secondary-color);
+  color: var(--foreground);
+}
+
+.adminButtonDanger {
+  background: color-mix(in srgb, var(--primary-color) 16%, var(--card-bg));
+  border-color: color-mix(in srgb, var(--primary-color) 44%, var(--border-light));
+  color: var(--secondary-color);
+}
+
+.adminError {
+  color: var(--secondary-color);
+  background: color-mix(in srgb, var(--primary-color) 14%, var(--card-bg));
+  border-color: color-mix(in srgb, var(--primary-color) 36%, var(--border-light));
+}
+
+.adminEmpty {
+  color: var(--text-muted);
+  background: color-mix(in srgb, var(--foreground-light) 85%, var(--card-bg));
+  border-color: var(--border-light);
+}
+
+.adminStatusGrid {
+  margin-top: 0.9rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.65rem;
+}
+
+.adminStatusCard {
+  background: color-mix(in srgb, var(--foreground-light) 62%, var(--card-bg));
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 0.75rem;
+}
+
+.adminStatusLabel {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.adminStatusValue {
+  margin: 0.25rem 0 0;
+  color: var(--text-heading);
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+@keyframes adminFadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.adminSidebar,
+.adminPage,
+.adminSection,
+.adminCard {
+  animation: adminFadeSlide 0.36s ease both;
+}
+
+@media (max-width: 1024px) {
+  .adminShell {
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 0.85rem;
+    padding: 0.9rem;
+  }
+
+  .adminNav {
+    gap: 0.35rem;
+  }
+
+  .adminPage {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .adminShell {
+    grid-template-columns: 1fr;
+  }
+
+  .adminSidebar {
+    position: static;
+    padding: 0.85rem;
+  }
+
+  .adminNav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.45rem;
+  }
+
+  .adminNavLink {
+    min-height: 46px;
+  }
+
+  .adminGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .adminListItem {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .adminActions {
+    width: 100%;
+  }
+
+  .adminActions > * {
+    flex: 1;
+  }
+}
+
+@media (max-width: 540px) {
+  .adminShell {
+    padding: 0.7rem;
+  }
+
+  .adminPage,
+  .adminSidebar {
+    padding: 0.8rem;
+    border-radius: 16px;
+  }
+
+  .adminNav {
+    grid-template-columns: 1fr;
+  }
+
+  .adminCard {
+    padding: 0.85rem;
+  }
+
+  .adminSection {
+    padding: 0.8rem;
+  }
+
+  .adminButton {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adminSidebar,
+  .adminPage,
+  .adminSection,
+  .adminCard,
+  .adminButton,
+  .adminNavLink {
+    animation: none !important;
     transition: none !important;
     transform: none !important;
   }
