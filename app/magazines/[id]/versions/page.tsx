@@ -14,6 +14,27 @@ function formatReleaseDate(d: Date): string {
   }).format(d);
 }
 
+type LegacyVersion = {
+  id: number;
+  title: string;
+  notes: string | null;
+  releaseDate: Date;
+  pageCount: number | null;
+  pdfUrl: string | null;
+};
+
+function isMissingVersionColumnError(err: unknown): boolean {
+  if (typeof err !== "object" || err === null) return false;
+  const code = (err as { code?: unknown }).code;
+  const meta = (err as { meta?: unknown }).meta as { column?: unknown } | undefined;
+  return (
+    code === "P2022" &&
+    typeof meta?.column === "string" &&
+    (meta.column.includes("magazine_versions.pageCount") ||
+      meta.column.includes("magazine_versions.pdfUrl"))
+  );
+}
+
 function PagesColumn({
   pageCount,
   pdfUrl,
@@ -66,28 +87,52 @@ export default async function MagazineVersionsArchivePage({
   const magazineId = parseMagazineId(raw);
   if (!magazineId) notFound();
 
-  const magazine = await prisma.magazine.findUnique({
+  const baseMagazine = await prisma.magazine.findUnique({
     where: { id: magazineId },
-    include: {
-      versions: {
-        orderBy: { releaseDate: "desc" },
-      },
-    },
+    select: { id: true, title: true },
   });
-  if (!magazine) notFound();
+  if (!baseMagazine) notFound();
 
-  const versions = magazine.versions;
+  let versions: LegacyVersion[] = [];
+  try {
+    const richVersions = await prisma.magazineVersion.findMany({
+      where: { magazineId },
+      orderBy: { releaseDate: "desc" },
+      select: {
+        id: true,
+        title: true,
+        notes: true,
+        releaseDate: true,
+        pageCount: true,
+        pdfUrl: true,
+      },
+    });
+    versions = richVersions;
+  } catch (err) {
+    if (!isMissingVersionColumnError(err)) throw err;
+    const legacyVersions = await prisma.magazineVersion.findMany({
+      where: { magazineId },
+      orderBy: { releaseDate: "desc" },
+      select: {
+        id: true,
+        title: true,
+        notes: true,
+        releaseDate: true,
+      },
+    });
+    versions = legacyVersions.map((v) => ({ ...v, pageCount: null, pdfUrl: null }));
+  }
 
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
         <div className={styles.topBar}>
-          <Link href={`/magazines/${magazine.id}`} className={styles.backLink}>
+          <Link href={`/magazines/${baseMagazine.id}`} className={styles.backLink}>
             ← العودة للمجلة
           </Link>
           <div className={styles.headerBlock}>
             <h1 className={styles.pageTitle}>إصدارات المجلة</h1>
-            <p className={styles.subtitle}>{magazine.title}</p>
+            <p className={styles.subtitle}>{baseMagazine.title}</p>
           </div>
         </div>
 

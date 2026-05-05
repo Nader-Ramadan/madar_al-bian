@@ -32,6 +32,13 @@ export default async function MagazinePage({ params }: { params: Promise<{ id: s
     include: {
       versions: {
         orderBy: { releaseDate: "desc" },
+        select: {
+          id: true,
+          version: true,
+          title: true,
+          releaseDate: true,
+          notes: true,
+        },
       },
     },
   });
