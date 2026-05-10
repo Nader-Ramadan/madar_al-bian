@@ -1,12 +1,14 @@
-import Image from "next/image";
 import Link from "next/link";
+import MagazinePublishingAdvisors, {
+  type MagazinePublishingAdvisorItem,
+} from "./magazine-publishing-advisors";
 import styles from "../magazine-journal.module.css";
 
 export type MagazineJournalContentProps = {
   title: string;
   description: string;
-  image: string;
   category: string;
+  publishingAdvisors: MagazinePublishingAdvisorItem[];
   issn: string | null;
   impactFactor: string | null;
   currentVersion: string | null;
@@ -15,6 +17,8 @@ export type MagazineJournalContentProps = {
   versionMessage: string | null;
   certification: string | null;
   versionCount: number;
+  magazineId?: number;
+  publishingConditionsCount?: number;
 };
 
 function formatNextRelease(iso: string | null): string {
@@ -126,16 +130,6 @@ function IconAward() {
   );
 }
 
-function IconLayers() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-      <polygon points="12 2 2 7 12 12 22 7 12 2" />
-      <polyline points="2 17 12 22 22 17" />
-      <polyline points="2 12 12 17 22 12" />
-    </svg>
-  );
-}
-
 function IconBar() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
@@ -148,7 +142,6 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
   const {
     title,
     description,
-    image,
     category,
     issn,
     impactFactor,
@@ -158,7 +151,11 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
     versionMessage,
     certification,
     versionCount,
+    publishingAdvisors,
+    magazineId,
+    publishingConditionsCount = 0,
   } = props;
+  const showPublishingConditionsCta = magazineId != null && publishingConditionsCount > 0;
 
   const vision =
     publicationPreference?.trim() ||
@@ -208,6 +205,30 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
           </div>
         </div>
 
+        {showPublishingConditionsCta ? (
+          <Link
+            href={`/magazines/${magazineId}/publishing-conditions`}
+            className={styles.publishingConditionsCta}
+          >
+            <span className={styles.publishingConditionsCtaIcon} aria-hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="6" y="4" width="12" height="17" rx="2" />
+                <path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" />
+                <path d="M9 10h6M9 14h6M9 18h4" />
+              </svg>
+            </span>
+            <span className={styles.publishingConditionsCtaText}>
+              <span className={styles.publishingConditionsCtaTitle}>شروط النشر</span>
+              <span className={styles.publishingConditionsCtaSubtitle}>
+                اطّلع على {publishingConditionsCount} {publishingConditionsCount === 1 ? "قسم" : "أقسام"} من الإرشادات الخاصة بالمجلة قبل التقديم.
+              </span>
+            </span>
+            <span className={styles.publishingConditionsCtaArrow} aria-hidden>
+              ←
+            </span>
+          </Link>
+        ) : null}
+
         <div className={styles.grid}>
           <article className={`${styles.card} ${styles.cardWide}`}>
             <div className={styles.cardHeader}>
@@ -220,6 +241,15 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
               {description.split(/\n\n+/).map((para, i) => (
                 <p key={i}>{para}</p>
               ))}
+              <h3 className={styles.fieldsHeading}>مجالات النشر</h3>
+              <ul className={styles.fieldList}>
+                {fields.map((f) => (
+                  <li key={f}>
+                    <span className={styles.fieldBullet} />
+                    {f}
+                  </li>
+                ))}
+              </ul>
             </div>
           </article>
 
@@ -294,29 +324,9 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
             </div>
           </article>
 
-          <article className={styles.card}>
-            <div className={styles.cardHeader}>
-              <div className={styles.cardHeaderIcon}>
-                <IconLayers />
-              </div>
-              <h2 className={styles.cardTitle}>مجالات النشر</h2>
-            </div>
-            <div className={styles.cardBody}>
-              <div className={styles.publishRow}>
-                <div className={styles.publishCover}>
-                  <Image src={image} alt={title} width={200} height={280} sizes="100px" />
-                </div>
-                <ul className={styles.fieldList}>
-                  {fields.map((f) => (
-                    <li key={f}>
-                      <span className={styles.fieldBullet} />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </article>
+          <div className={styles.cardSpanAll}>
+            <MagazinePublishingAdvisors advisors={publishingAdvisors} showIntro />
+          </div>
 
           <article className={styles.card}>
             <div className={styles.cardHeader}>

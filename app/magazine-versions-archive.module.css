@@ -5,7 +5,6 @@
   min-height: 60vh;
   background: var(--background);
   padding: 2rem 1.25rem 3rem;
-  direction: rtl;
 }
 
 .inner {
@@ -34,7 +33,7 @@
 }
 
 .headerBlock {
-  text-align: right;
+  text-align: start;
   flex: 1;
   min-width: 0;
 }
@@ -77,12 +76,12 @@
 .main {
   flex: 1;
   min-width: 0;
-  text-align: right;
+  text-align: start;
 }
 
 .side {
   flex-shrink: 0;
-  text-align: left;
+  text-align: end;
   padding-top: 0.15rem;
 }
 
@@ -165,6 +164,252 @@
   border: 1px dashed var(--border-light);
 }
 
+.researchList {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.researchCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  background: var(--card-bg);
+  border-radius: 0.65rem;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 2px 14px var(--shadow-light);
+  padding: 1.15rem 1.25rem;
+  text-align: start;
+}
+
+.researchCardTitle {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: inherit;
+  line-height: 1.45;
+}
+
+.researchCardTitleLink {
+  color: var(--secondary-color);
+  font-weight: 800;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.researchCardTitleLink:hover {
+  text-decoration: underline;
+}
+
+.researchCardTitleLink:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--secondary-color) 65%, transparent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.researchAuthorRow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: auto;
+  color: var(--text-muted);
+}
+
+.researchAuthorIcon {
+  width: 1.05em;
+  height: 1.05em;
+  flex-shrink: 0;
+  fill: currentColor;
+  opacity: 0.88;
+}
+
+.researchAuthorRow .researchMeta {
+  margin: 0;
+}
+
+.researchMeta {
+  margin: 0 0 0.75rem;
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.summaryBox {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--text-heading);
+  white-space: pre-wrap;
+}
+
+.researchEmptyNote {
+  margin: 0;
+  font-size: 0.94rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+/* Research detail page — abstract sheet (reference layout) */
+.researchArticleSheet {
+  max-width: min(48rem, 100%);
+  margin-inline: auto;
+  margin-top: 1.75rem;
+  padding: 1.75rem 1.35rem 2rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  box-shadow: 0 2px 14px var(--shadow-light);
+}
+
+.researchSummaryTitle {
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-heading);
+  text-align: center;
+}
+
+.researchSummaryPanel {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.researchSummaryBody {
+  text-align: start;
+}
+
+.researchSummaryText {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--text-heading);
+  white-space: pre-wrap;
+}
+
+.researchKeywordsSection {
+  margin-top: 2rem;
+  text-align: start;
+}
+
+.researchKeywordsHeading {
+  margin: 0 0 0.65rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-heading);
+  text-align: end;
+}
+
+.researchKeywordChipsWrap {
+  width: 100%;
+}
+
+.researchArticleKeywordList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-start;
+}
+
+.researchArticleKeywordTag {
+  display: inline-block;
+  padding: 0.38rem 0.72rem;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--secondary-color) 9%, var(--foreground-light));
+  border: 1px solid color-mix(in srgb, var(--secondary-color) 22%, var(--border-light));
+  color: var(--secondary-color);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.researchArticleActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.externalButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  background: var(--secondary-color);
+  color: var(--foreground);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.externalButton:hover {
+  filter: brightness(1.05);
+}
+
+.pdfButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  background: var(--card-bg);
+  color: var(--secondary-color);
+  border: 2px solid color-mix(in srgb, var(--secondary-color) 55%, var(--border-light));
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.pdfButton:hover {
+  background: color-mix(in srgb, var(--secondary-color) 10%, var(--card-bg));
+}
+
+.versionResearchRow {
+  display: block;
+  margin-top: 0.65rem;
+}
+
+.versionResearchRow .versionResearchButton {
+  margin-top: 0;
+}
+
+.versionResearchButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.75rem;
+  padding: 0.55rem 1.15rem;
+  border-radius: 999px;
+  background: var(--secondary-color);
+  color: var(--foreground);
+  font-size: 0.88rem;
+  font-weight: 800;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--secondary-color) 35%, transparent);
+  transition: filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+.versionResearchButton:hover {
+  filter: brightness(1.06);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--secondary-color) 45%, transparent);
+}
+
+.versionResearchButton:focus-visible {
+  outline: 2px solid var(--secondary-color);
+  outline-offset: 3px;
+}
+
 @media (max-width: 900px) {
   .grid {
     grid-template-columns: 1fr;
@@ -182,7 +427,7 @@
   }
 
   .side {
-    text-align: right;
+    text-align: start;
     padding-top: 0;
     border-top: 1px solid var(--border-light);
     margin-top: 0.5rem;

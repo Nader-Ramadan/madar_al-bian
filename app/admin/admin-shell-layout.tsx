@@ -7,6 +7,7 @@ import styles from "@/app/page.module.css";
 const links = [
   { href: "/admin", label: "Dashboard Home", icon: "home" },
   { href: "/admin/magazines", label: "Magazines & Versions", icon: "book" },
+  { href: "/admin/researches", label: "Magazine researches", icon: "research" },
   { href: "/admin/advisors", label: "Advisors", icon: "users" },
   { href: "/admin/approvals", label: "Publication Approvals", icon: "check" },
   { href: "/admin/emails", label: "Email Center", icon: "mail" },
@@ -19,6 +20,13 @@ function NavIcon({ name }: { name: (typeof links)[number]["icon"] }) {
   const common = { className: styles.adminNavIcon, viewBox: "0 0 24 24", fill: "none", "aria-hidden": true as const };
   if (name === "home") return <svg {...common}><path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.8v-5.5H9.8V21H5a1 1 0 0 1-1-1z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
   if (name === "book") return <svg {...common}><path d="M5 6.5a2.5 2.5 0 0 1 2.5-2.5H19v15.2a1.8 1.8 0 0 1-1.8 1.8H7.5A2.5 2.5 0 0 1 5 18.5z" stroke="currentColor" strokeWidth="1.8" /><path d="M8.5 4v17" stroke="currentColor" strokeWidth="1.8" /><path d="M11 8h6M11 11.5h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>;
+  if (name === "research")
+    return (
+      <svg {...common}>
+        <path d="M8 4h11v17H8a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+        <path d="M11 9h8M11 13h8M11 17h5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      </svg>
+    );
   if (name === "users") return <svg {...common}><circle cx="9" cy="9" r="3" stroke="currentColor" strokeWidth="1.8" /><path d="M3.8 19a5.2 5.2 0 0 1 10.4 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /><path d="M15 8.5a2.5 2.5 0 1 1 0 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /><path d="M18.5 18.5a4 4 0 0 0-2.8-3.8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>;
   if (name === "check") return <svg {...common}><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" /><path d="m8.5 12 2.2 2.2L15.8 9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
   if (name === "mail") return <svg {...common}><rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="currentColor" strokeWidth="1.8" /><path d="m4.4 7 7.6 5.7L19.6 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;

@@ -6,6 +6,9 @@ import MagazineContent from "../../components/magazine-content";
 import MagazineVersions from "../../components/magazines-versions";
 import { prisma } from "@/lib/prisma";
 import { parseMagazineId } from "@/lib/magazine-id";
+import type { MagazinePublishingAdvisorItem } from "@/app/components/magazine-publishing-advisors";
+
+const ADVISORY_MEMBER_IMAGE_FALLBACK = "/images/advisory-member-placeholder.svg";
 
 export async function generateMetadata({
   params,
@@ -40,9 +43,32 @@ export default async function MagazinePage({ params }: { params: Promise<{ id: s
           notes: true,
         },
       },
+      approvedAdvisors: {
+        orderBy: { id: "asc" },
+        select: {
+          advisoryMember: {
+            select: { id: true, name: true, title: true, image: true },
+          },
+        },
+      },
+      _count: {
+        select: { publishingConditionTabs: true },
+      },
     },
   });
   if (!magazineRecord) notFound();
+
+  const publishingAdvisors: MagazinePublishingAdvisorItem[] =
+    magazineRecord.approvedAdvisors.map((row) => {
+      const m = row.advisoryMember;
+      const photo = m.image?.trim();
+      return {
+        id: m.id,
+        name: m.name,
+        jobTitle: m.title,
+        photoUrl: photo && photo.length > 0 ? photo : ADVISORY_MEMBER_IMAGE_FALLBACK,
+      };
+    });
 
   const impactFactorStr =
     magazineRecord.impactFactor != null ? magazineRecord.impactFactor.toString() : null;
@@ -69,8 +95,8 @@ export default async function MagazinePage({ params }: { params: Promise<{ id: s
       <MagazineContent
         title={magazineRecord.title}
         description={magazineRecord.description}
-        image={magazineRecord.image}
         category={magazineRecord.category}
+        publishingAdvisors={publishingAdvisors}
         issn={magazineRecord.issn}
         impactFactor={impactFactorStr}
         currentVersion={magazineRecord.currentVersion}
@@ -79,6 +105,8 @@ export default async function MagazinePage({ params }: { params: Promise<{ id: s
         versionMessage={magazineRecord.versionMessage}
         certification={magazineRecord.certification}
         versionCount={magazineRecord.versionCount}
+        magazineId={magazineRecord.id}
+        publishingConditionsCount={magazineRecord._count.publishingConditionTabs}
       />
       <MagazineVersions
         magazineId={magazineRecord.id}

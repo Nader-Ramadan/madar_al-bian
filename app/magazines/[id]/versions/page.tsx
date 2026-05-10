@@ -151,6 +151,11 @@ export default async function MagazineVersionsArchivePage({
                     <h2 className={styles.issueTitle}>{v.title}</h2>
                     <p className={styles.dateLine}>{formatReleaseDate(v.releaseDate)}</p>
                     {v.notes?.trim() ? <p className={styles.notes}>{v.notes.trim()}</p> : null}
+                    <div className={styles.versionResearchRow}>
+                      <Link href={`/magazines/${magazineId}/versions/${v.id}`} className={styles.versionResearchButton}>
+                        بحوث هذا الإصدار
+                      </Link>
+                    </div>
                   </div>
                   <div className={styles.side}>
                     <PagesColumn pageCount={v.pageCount} pdfUrl={v.pdfUrl} />

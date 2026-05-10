@@ -1,19 +1,26 @@
 "use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
+import Image from "next/image";
+import Link from "next/link";
 
-function Footer() {
+export default function Footer() {
   return (
     <footer className="footer">
       <div className="footerContent">
         <div className="footerBrand">
-          
           <div className="footerSocials">
-            <a href="#" aria-label="يوتيوب">YT</a>
-            <a href="#" aria-label="تويتر">TW</a>
-            <a href="#" aria-label="إنستغرام">IG</a>
-            <a href="#" aria-label="فيسبوك">FB</a>
+            <a href="#" aria-label="يوتيوب">
+              YT
+            </a>
+            <a href="#" aria-label="تويتر">
+              TW
+            </a>
+            <a href="#" aria-label="إنستغرام">
+              IG
+            </a>
+            <a href="#" aria-label="فيسبوك">
+              FB
+            </a>
           </div>
         </div>
 
@@ -38,19 +45,16 @@ function Footer() {
           <p>info@soudemy.com</p>
         </div>
         <Image
-            className="logo"
-            src="/images/logo/horizontal-logo/svg-horizontal-white-logo-transparent.svg"
-            alt="Madar Al-Bian logo"
-            width={180}
-            height={60}
+          className="logo"
+          src="/images/logo/horizontal-logo/svg-horizontal-white-logo-transparent.svg"
+          alt="Madar Al-Bian logo"
+          width={180}
+          height={60}
         />
         <p className="footerCopy">
-          جميع الحقوق محفوظة © 2026 مؤسسسة مدار البيان للنشر العلمي
+          جميع الحقوق محفوظة © 2026 مؤسسة مدار البيان للنشر العلمي
         </p>
       </div>
-      
     </footer>
   );
 }
-
-export default Footer;

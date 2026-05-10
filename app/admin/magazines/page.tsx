@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import MagazineResearchEditor from "@/app/admin/components/magazine-research-editor";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import styles from "@/app/page.module.css";
 
@@ -150,7 +152,12 @@ async function readResponseJson(response: Response) {
   }
 }
 
+type AdminMagazinesTab = "magazines" | "researches";
+
 export default function AdminMagazinesPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [adminTab, setAdminTab] = useState<AdminMagazinesTab>("magazines");
   const [magazines, setMagazines] = useState<Magazine[]>([]);
   const [versions, setVersions] = useState<MagazineVersion[]>([]);
   const [magazineSearch, setMagazineSearch] = useState("");
@@ -195,6 +202,11 @@ export default function AdminMagazinesPage() {
     const selected = new Set(magForm.approvedAdvisorIds);
     return advisorOptions.filter((advisor) => selected.has(advisor.id));
   }, [advisorOptions, magForm.approvedAdvisorIds]);
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    setAdminTab(tab === "researches" ? "researches" : "magazines");
+  }, [searchParams]);
 
   async function loadAttachedAdvisors(magazineId: number) {
     const response = await fetch(`/api/admin/magazines/${magazineId}/advisors`);
@@ -427,6 +439,35 @@ export default function AdminMagazinesPage() {
         </div>
       </section>
 
+      <div className={styles.adminTabRow} role="tablist" aria-label="Magazines admin sections">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={adminTab === "magazines"}
+          className={`${styles.adminTabButton} ${adminTab === "magazines" ? styles.adminTabButtonActive : ""}`}
+          onClick={() => {
+            setAdminTab("magazines");
+            router.replace("/admin/magazines", { scroll: false });
+          }}
+        >
+          Magazines &amp; versions
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={adminTab === "researches"}
+          className={`${styles.adminTabButton} ${adminTab === "researches" ? styles.adminTabButtonActive : ""}`}
+          onClick={() => {
+            setAdminTab("researches");
+            router.replace("/admin/magazines?tab=researches", { scroll: false });
+          }}
+        >
+          Researches
+        </button>
+      </div>
+
+      {adminTab === "magazines" ? (
+        <>
       <section className={styles.adminSection}>
         <div className={styles.adminSectionHeader}>
           <SectionIcon kind="edit" />
@@ -537,7 +578,6 @@ export default function AdminMagazinesPage() {
             ) : null}
           </div>
         </form>
-        {error ? <p className={styles.adminError}>{error}</p> : null}
       </section>
 
       <section className={styles.adminSection}>
@@ -563,6 +603,7 @@ export default function AdminMagazinesPage() {
               </span>
               <div className={styles.adminActions}>
                 <Link href={`/admin/magazines/${item.id}`} className={`${styles.adminButton} ${styles.adminButtonPrimary}`}>Manage advisors</Link>
+                <Link href={`/admin/magazines/${item.id}/publishing-conditions`} className={styles.adminButton}>Publishing conditions</Link>
                 <button type="button" className={styles.adminButton} onClick={() => startEdit(item)}>Edit</button>
                 <button type="button" className={`${styles.adminButton} ${styles.adminButtonDanger}`} onClick={() => removeMagazine(item.id)}>Delete</button>
               </div>
@@ -616,6 +657,19 @@ export default function AdminMagazinesPage() {
                 {new Date(item.releaseDate).toLocaleString()}
               </span>
               <div className={styles.adminActions}>
+                <button
+                  type="button"
+                  className={`${styles.adminButton} ${styles.adminButtonPrimary}`}
+                  onClick={() => {
+                    setAdminTab("researches");
+                    router.replace(
+                      `/admin/magazines?tab=researches&magazineId=${item.magazineId}&versionId=${item.id}`,
+                      { scroll: false },
+                    );
+                  }}
+                >
+                  Manage researches
+                </button>
                 <button type="button" className={styles.adminButton} onClick={() => setVersionForm({
                   id: item.id,
                   magazineId: String(item.magazineId),
@@ -632,6 +686,11 @@ export default function AdminMagazinesPage() {
           ))}
         </ul>
       </section>
+        </>
+      ) : (
+        <MagazineResearchEditor />
+      )}
+      {error ? <p className={styles.adminError}>{error}</p> : null}
     </div>
   );
 }

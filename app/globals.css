@@ -8,7 +8,7 @@
 }
 
 :root {
-  text-align: right;
+  text-align: start;
   background-color: var(--background);
 
   /* Color Palette */
@@ -50,10 +50,6 @@
   /* Shadows */
   --shadow-light: rgba(0, 0, 0, 0.08);
   --shadow-medium: rgba(24, 36, 75, 0.08);
-}
-
-body {
-  direction: rtl;
 }
 
 .nav-brand {
@@ -340,7 +336,7 @@ a {
   .nav-links {
     position: fixed;
     top: 60px;
-    right: -100%;
+    inset-inline-end: -100%;
     width: 100%;
     max-width: 300px;
     height: calc(100vh - 60px);
@@ -348,15 +344,15 @@ a {
     flex-direction: column;
     gap: 0;
     padding: 1rem 1.25rem;
-    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    border-inline-start: 1px solid rgba(0, 0, 0, 0.1);
     overflow-y: auto;
-    transition: right 0.3s ease;
+    transition: inset-inline-end 0.3s ease;
     z-index: 999;
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 14px rgba(0, 0, 0, 0.12);
   }
 
   .nav-links.open {
-    right: 0;
+    inset-inline-end: 0;
   }
 
   .nav-links li {
@@ -367,7 +363,7 @@ a {
   .nav-links a {
     width: 100%;
     padding: 1rem 0.5rem;
-    justify-content: flex-end;
+    justify-content: flex-start;
     font-size: 1rem;
     color: var(--text-primary);
   }
@@ -495,25 +491,32 @@ a {
 .footerSection a {
   cursor: pointer;
   position: relative;
-  padding-left: 0.5rem;
+  padding-inline-start: 0.5rem;
 }
 
 .footerSection a::before {
   content: "→";
   position: absolute;
-  left: -0.5rem;
+  inset-inline-start: -0.5rem;
   opacity: 0;
   transition: all 0.2s ease;
 }
 
 .footerSection a:hover {
   color: var(--primary-color);
+}
+
+[dir="rtl"] .footerSection a:hover {
   transform: translateX(4px);
+}
+
+[dir="ltr"] .footerSection a:hover {
+  transform: translateX(-4px);
 }
 
 .footerSection a:hover::before {
   opacity: 1;
-  left: 0;
+  inset-inline-start: 0;
 }
 
 .footerSection p {
@@ -529,15 +532,6 @@ a {
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.9rem;
   letter-spacing: 0.3px;
-}
-
-/* align footer text RTL */
-.footerSection,
-.footerBrand,
-.footerContent,
-.footerSide {
-  direction: rtl;
-  text-align: right;
 }
 
 @media (max-width: 900px) {
@@ -576,7 +570,7 @@ a {
   .nav-links {
     max-width: 100%;
     width: 100vw;
-    right: -100vw;
+    inset-inline-end: -100vw;
   }
 
   /* Footer */

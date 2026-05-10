@@ -4,7 +4,6 @@
   width: 100%;
   background: var(--background);
   padding: 2rem 1.25rem 3.5rem;
-  direction: rtl;
 }
 
 .inner {
@@ -121,12 +120,120 @@
   color: var(--primary-color);
 }
 
+/* Publishing-conditions CTA stripe (magazine page → /magazines/[id]/publishing-conditions) */
+.publishingConditionsCta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.75rem;
+  background: linear-gradient(
+    100deg,
+    color-mix(in srgb, var(--secondary-color) 8%, var(--card-bg)) 0%,
+    var(--card-bg) 65%
+  );
+  border: 1px solid color-mix(in srgb, var(--secondary-color) 18%, var(--border-light));
+  border-radius: 0.85rem;
+  box-shadow: 0 4px 18px var(--shadow-light);
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.publishingConditionsCta::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 4px;
+  background: var(--primary-color);
+}
+
+.publishingConditionsCta:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--secondary-color) 35%, transparent);
+  box-shadow: 0 6px 22px var(--shadow-medium);
+}
+
+.publishingConditionsCta:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--secondary-color) 65%, transparent);
+  outline-offset: 3px;
+}
+
+.publishingConditionsCtaIcon {
+  flex-shrink: 0;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--primary-color) 25%, transparent);
+  color: var(--secondary-color);
+}
+
+.publishingConditionsCtaIcon svg {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.publishingConditionsCtaText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+}
+
+.publishingConditionsCtaTitle {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: var(--text-heading);
+  letter-spacing: 0.01em;
+}
+
+.publishingConditionsCtaSubtitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.publishingConditionsCtaArrow {
+  flex-shrink: 0;
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--secondary-color);
+  transition: transform 0.18s ease;
+}
+
+.publishingConditionsCta:hover .publishingConditionsCtaArrow {
+  transform: translateX(-3px);
+}
+
+@media (max-width: 480px) {
+  .publishingConditionsCta {
+    flex-wrap: wrap;
+  }
+
+  .publishingConditionsCtaArrow {
+    display: none;
+  }
+}
+
 /* Card grid */
 .grid {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   gap: 1.5rem;
   margin-bottom: 2.5rem;
+}
+
+.cardSpanAll {
+  grid-column: 1 / -1;
+  min-width: 0;
 }
 
 .card {
@@ -253,28 +360,11 @@
   font-style: italic;
 }
 
-/* Publishing + cover row */
-.publishRow {
-  display: flex;
-  flex-direction: row;
-  gap: 1.25rem;
-  align-items: flex-start;
-}
-
-.publishCover {
-  flex-shrink: 0;
-  width: 100px;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  border: 1px solid var(--border-light);
-  box-shadow: 0 4px 12px var(--shadow-light);
-}
-
-.publishCover img {
-  display: block;
-  width: 100%;
-  height: auto;
-  object-fit: cover;
+.fieldsHeading {
+  margin: 1.35rem 0 0.65rem;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-heading);
 }
 
 .fieldList {
@@ -337,7 +427,7 @@
 .statValue {
   font-weight: 800;
   color: var(--secondary-color);
-  text-align: left;
+  text-align: end;
 }
 
 /* Versions section */
@@ -345,7 +435,6 @@
   width: 100%;
   background: var(--background);
   padding: 0 1.25rem 3.5rem;
-  direction: rtl;
 }
 
 .versionsSection {
@@ -404,6 +493,34 @@
 
 .versionsArchiveLink:hover {
   text-decoration: underline;
+}
+
+.versionResearchButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.75rem;
+  padding: 0.55rem 1.15rem;
+  border-radius: 999px;
+  background: var(--secondary-color);
+  color: var(--foreground);
+  font-size: 0.88rem;
+  font-weight: 800;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--secondary-color) 35%, transparent);
+  transition: filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+.versionResearchButton:hover {
+  filter: brightness(1.06);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--secondary-color) 45%, transparent);
+}
+
+.versionResearchButton:focus-visible {
+  outline: 2px solid var(--secondary-color);
+  outline-offset: 3px;
 }
 
 .versionsGrid {
@@ -487,22 +604,8 @@
     padding: 1rem;
   }
 
-  .publishRow {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .publishCover {
-    width: 140px;
-  }
-
-  .fieldList {
-    align-items: center;
-  }
-
-  .fieldList li {
-    justify-content: center;
+  .advisorsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   }
 }
 
@@ -530,30 +633,77 @@
   }
 }
 
-/* لجنة التحكيم — magazine-specific publishing advisors */
+/* لجنة التحكيم — outer frame matches journal cards (navy header + white body) */
 .advisorsSection {
   width: 100%;
-  background: color-mix(in srgb, var(--border-light) 35%, var(--background));
-  padding: 2.25rem 1.25rem 3rem;
   direction: rtl;
+  box-sizing: border-box;
+}
+
+.advisorsCardFrame {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 4px 20px var(--shadow-light);
+  background: var(--card-bg);
+}
+
+.advisorsCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-direction: row;
+  padding: 0.85rem 1.15rem;
+  background: var(--secondary-color);
+  color: var(--foreground);
+}
+
+.advisorsCardHeaderIcon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--primary-color);
+  background: color-mix(in srgb, var(--primary-color) 28%, transparent);
+  color: var(--foreground);
+}
+
+.advisorsCardHeaderIcon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.advisorsCardTitle {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--foreground);
+  text-align: start;
+  line-height: 1.35;
+}
+
+.advisorsCardBody {
+  background: var(--card-bg);
+  padding: 1.25rem 1.15rem 1.5rem;
 }
 
 .advisorsInner {
-  max-width: 1200px;
+  max-width: none;
   margin: 0 auto;
 }
 
-.advisorsTitle {
-  margin: 0 0 0.35rem;
-  font-size: clamp(1.35rem, 2.5vw, 1.75rem);
-  font-weight: 800;
-  color: var(--secondary-color);
-  text-align: center;
-}
-
 .advisorsIntro {
-  margin: 0 0 1.75rem;
-  text-align: center;
+  margin: 0 0 1.5rem;
+  text-align: start;
   color: var(--text-muted);
   font-size: 0.95rem;
   line-height: 1.5;
@@ -562,16 +712,20 @@
 .advisorsGrid {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 1rem 0 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.25rem;
-  justify-items: center;
+  align-items: stretch;
+}
+
+.advisorsIntro + .advisorsGrid {
+  margin-top: 0;
 }
 
 .advisorCard {
   width: 100%;
-  max-width: 320px;
+  max-width: none;
   background: var(--card-bg);
   border: 1px solid var(--border-light);
   border-radius: 1rem;

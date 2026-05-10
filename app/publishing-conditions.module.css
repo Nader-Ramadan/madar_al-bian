@@ -1,0 +1,435 @@
+/* Publishing conditions — distinct tabbed layout (RTL).
+   Uses :root tokens from globals.css so it inherits site theme. */
+
+.page {
+  width: 100%;
+  min-height: 70vh;
+  background: var(--background);
+  padding: 2.25rem 1.25rem 3.5rem;
+}
+
+.inner {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.topBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--secondary-color);
+  text-decoration: none;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.hero {
+  position: relative;
+  border-radius: 1rem;
+  padding: 1.75rem 1.5rem 1.85rem;
+  background: linear-gradient(
+    140deg,
+    var(--secondary-color) 0%,
+    color-mix(in srgb, var(--secondary-color) 78%, #000) 100%
+  );
+  color: var(--foreground);
+  overflow: hidden;
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--secondary-color) 18%, transparent);
+}
+
+.heroAccent {
+  position: absolute;
+  inset-inline-end: -2.25rem;
+  inset-block-start: -2.25rem;
+  width: 9rem;
+  height: 9rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--primary-color) 65%, transparent);
+  filter: blur(0.5px);
+}
+
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  background: color-mix(in srgb, var(--primary-color) 32%, transparent);
+  color: var(--foreground);
+  border: 1px solid color-mix(in srgb, var(--primary-color) 55%, transparent);
+}
+
+.heroBadgeDot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--primary-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 30%, transparent);
+}
+
+.heroTitle {
+  margin: 0.85rem 0 0.4rem;
+  font-size: clamp(1.6rem, 2.4vw, 2.05rem);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: var(--hero-title);
+}
+
+.heroSubtitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--hero-subtitle);
+  line-height: 1.7;
+  max-width: 60rem;
+}
+
+.heroDivider {
+  position: relative;
+  height: 4px;
+  margin-top: 1.4rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary-color) 35%, transparent);
+}
+
+.heroDivider::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 30%;
+  border-radius: 999px;
+  background: var(--primary-color);
+}
+
+/* Two-column layout */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.75rem;
+  align-items: start;
+}
+
+/* Sidebar tab list (desktop) */
+.tabList {
+  list-style: none;
+  margin: 0;
+  padding: 0.65rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 0.95rem;
+  box-shadow: 0 4px 18px var(--shadow-light);
+  position: sticky;
+  top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.tabListHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.45rem 0.75rem 0.55rem;
+  border-bottom: 1px dashed var(--border-light);
+  margin-bottom: 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.tabListHeaderCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.5rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  background: color-mix(in srgb, var(--secondary-color) 12%, var(--foreground-light));
+  color: var(--secondary-color);
+}
+
+.tabButton {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 0.85rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 0.7rem;
+  background: transparent;
+  color: var(--text-heading);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: start;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.tabButton:hover {
+  background: color-mix(in srgb, var(--secondary-color) 6%, var(--card-bg));
+  border-color: color-mix(in srgb, var(--secondary-color) 18%, transparent);
+}
+
+.tabButton:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--secondary-color) 65%, transparent);
+  outline-offset: 2px;
+}
+
+.tabButtonActive {
+  background: color-mix(in srgb, var(--secondary-color) 14%, var(--foreground-light));
+  border-color: color-mix(in srgb, var(--secondary-color) 35%, transparent);
+  color: var(--secondary-color);
+  position: relative;
+}
+
+.tabButtonActive::before {
+  content: "";
+  position: absolute;
+  inset-block: 0.55rem;
+  inset-inline-end: 0.25rem;
+  width: 4px;
+  border-radius: 999px;
+  background: var(--primary-color);
+}
+
+.tabIcon {
+  flex-shrink: 0;
+  width: 2.1rem;
+  height: 2.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.6rem;
+  background: color-mix(in srgb, var(--primary-color) 22%, transparent);
+  color: var(--secondary-color);
+}
+
+.tabIcon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.tabLabel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tabIndex {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  font-feature-settings: "tnum";
+}
+
+.tabButtonActive .tabIndex {
+  color: var(--secondary-color);
+}
+
+/* Mobile tab strip — pill bar with horizontal scroll */
+.mobileTabBar {
+  display: none;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.4rem 0.1rem;
+  margin-top: 1.5rem;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobilePill {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: 999px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  color: var(--text-heading);
+  font-weight: 700;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  cursor: pointer;
+  scroll-snap-align: start;
+}
+
+.mobilePillActive {
+  background: var(--secondary-color);
+  border-color: var(--secondary-color);
+  color: var(--foreground);
+}
+
+.mobilePillIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Panel */
+.panel {
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px var(--shadow-light);
+  padding: 1.6rem 1.65rem 1.85rem;
+  min-height: 14rem;
+  position: relative;
+}
+
+.panel::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 1.6rem;
+  inset-inline-start: 0;
+  width: 4px;
+  height: 2.25rem;
+  border-radius: 999px;
+  background: var(--primary-color);
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.panelIcon {
+  flex-shrink: 0;
+  width: 2.7rem;
+  height: 2.7rem;
+  border-radius: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--secondary-color) 12%, var(--foreground-light));
+  color: var(--secondary-color);
+  border: 1px solid color-mix(in srgb, var(--secondary-color) 22%, transparent);
+}
+
+.panelIcon svg {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--text-heading);
+  line-height: 1.4;
+}
+
+.panelMetaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  align-items: center;
+}
+
+.panelMetaPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--primary-color) 22%, transparent);
+  color: var(--secondary-color);
+  border: 1px solid color-mix(in srgb, var(--primary-color) 50%, transparent);
+}
+
+.panelBody {
+  white-space: pre-wrap;
+  font-size: 1.02rem;
+  line-height: 1.95;
+  color: var(--text-primary);
+  text-align: start;
+}
+
+.panelBody p {
+  margin: 0 0 0.9rem;
+}
+
+.panelBody p:last-child {
+  margin-bottom: 0;
+}
+
+.empty {
+  margin-top: 1.75rem;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+  background: var(--card-bg);
+  border-radius: 1rem;
+  border: 1px dashed var(--border-light);
+}
+
+.emptyTitle {
+  margin: 0 0 0.5rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-heading);
+}
+
+.emptyText {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .tabList {
+    display: none;
+  }
+
+  .mobileTabBar {
+    display: flex;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 1.5rem 0.85rem 2.5rem;
+  }
+
+  .hero {
+    padding: 1.25rem 1.1rem 1.4rem;
+  }
+
+  .panel {
+    padding: 1.25rem 1.15rem 1.4rem;
+  }
+}

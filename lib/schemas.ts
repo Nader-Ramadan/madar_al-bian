@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PUBLISHING_CONDITION_ICON_KEYS } from "@/lib/publishing-condition-icons";
 
 export const paginationSchema = z.object({
   page: z.coerce.number().min(1).default(1),
@@ -61,6 +62,23 @@ export const magazineVersionSchema = z.object({
   notes: z.string().optional().nullable(),
   pageCount: z.union([z.number().int().positive().max(500000), z.null()]).optional(),
   pdfUrl: z.union([z.string().url().max(500), z.null()]).optional(),
+});
+
+export const magazinePublishingConditionTabBodySchema = z.object({
+  title: z.string().min(2).max(255),
+  body: z.string().min(2).max(50000),
+  iconKey: z.enum(PUBLISHING_CONDITION_ICON_KEYS),
+  sortOrder: z.number().int().min(0).max(1_000_000).optional().default(0),
+});
+
+export const magazineVersionResearchBodySchema = z.object({
+  researcherNames: z.string().min(1).max(8000),
+  title: z.string().min(1).max(255),
+  externalUrl: z.string().url().max(500),
+  summary: z.string().max(20000).optional().nullable(),
+  keywords: z.string().max(4000).optional().nullable(),
+  pdfUrl: z.union([z.string().url().max(500), z.literal("")]).optional().nullable(),
+  sortOrder: z.number().int().min(0).max(1_000_000).optional().default(0),
 });
 
 const imageContentTypes = ["image/jpeg", "image/png", "image/webp"] as const;

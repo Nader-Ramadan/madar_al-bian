@@ -103,8 +103,7 @@
   margin-bottom: 1rem;
   line-height: 1.2;
   color: var(--hero-title);
-  text-align: right;
-  direction: rtl;
+  text-align: start;
 }
 
 .subtitle {
@@ -112,8 +111,7 @@
   line-height: 1.6;
   color: var(--hero-subtitle);
   margin-bottom: 2rem;
-  text-align: right;
-  direction: rtl;
+  text-align: start;
 }
 
 .button {
@@ -171,7 +169,6 @@
   color: var(--secondary-color);
   font-weight: 700;
   line-height: 1.4;
-  direction: rtl;
 }
 
 .dots {
@@ -549,7 +546,6 @@
   gap: 1.5rem;
   max-width: 1200px;
   margin: 0 auto;
-  direction: rtl;
 }
 
 .faqList h2 {
@@ -575,7 +571,7 @@
   border: none;
   background: none;
   padding: 1rem 1.2rem;
-  text-align: left;
+  text-align: start;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -619,8 +615,6 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  direction: rtl;
-  text-align: right;
 }
 
 .faqIcon {
@@ -648,7 +642,7 @@
 
 .faqForm {
   width: 100%;
-  text-align: left;
+  text-align: start;
 }
 
 .faqForm label {
@@ -660,7 +654,6 @@
 .faqInputWrapper {
   display: flex;
   gap: 0.5rem;
-  direction: rtl;
 }
 
 .faqInputWrapper input {
@@ -668,7 +661,7 @@
   padding: 0.75rem 0.9rem;
   border: 1px solid var(--faq-input-border);
   border-radius: 6px;
-  text-align: right;
+  text-align: start;
 }
 
 .faqInputWrapper button {
@@ -1411,7 +1404,7 @@
   font-weight: 800;
   color: var(--secondary-color);
   margin-bottom: 1.5rem;
-  text-align: right;
+  text-align: start;
 }
 
 .formGrid {
@@ -1430,7 +1423,7 @@
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 0.5rem;
-  text-align: right;
+  text-align: start;
 }
 
 .formGroup input,
@@ -1443,8 +1436,7 @@
   font-size: 0.95rem;
   color: var(--text-primary);
   background: white;
-  text-align: right;
-  direction: rtl;
+  text-align: start;
 }
 
 .formGroup input::placeholder,
@@ -3406,7 +3398,7 @@
 
 .trafficTable th {
   padding: 0.95rem 1rem;
-  text-align: right;
+  text-align: start;
   font-weight: 650;
   white-space: nowrap;
   font-size: 0.88rem;
@@ -3417,7 +3409,7 @@
   padding: 0.95rem 1rem;
   border-bottom: 1px solid #edf2fa;
   color: #20304e;
-  text-align: right;
+  text-align: start;
   font-size: 0.94rem;
 }
 
@@ -3512,17 +3504,17 @@
 
   .trafficTable td {
     border-bottom: 1px solid #eef3fb;
-    text-align: right;
+    text-align: start;
     padding: 0.7rem 0.8rem;
     position: relative;
-    padding-right: 8.6rem;
+    padding-inline-end: 8.6rem;
     min-height: 2.55rem;
   }
 
   .trafficTable td::before {
     content: attr(data-label);
     position: absolute;
-    right: 0.8rem;
+    inset-inline-end: 0.8rem;
     top: 50%;
     transform: translateY(-50%);
     color: #63769b;
@@ -3692,6 +3684,35 @@
   font-size: 0.94rem;
 }
 
+.adminTabRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0 0.25rem;
+}
+
+.adminTabButton {
+  border: 1px solid #d7e2f3;
+  border-radius: 999px;
+  padding: 0.45rem 1rem;
+  background: #f6f9ff;
+  color: #22344f;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.adminTabButton:hover {
+  border-color: #b8cce8;
+}
+
+.adminTabButtonActive {
+  border-color: #4c7aff;
+  background: #eef3ff;
+  color: #143a8a;
+  box-shadow: 0 0 0 2px rgba(76, 122, 255, 0.18);
+}
+
 .adminGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
@@ -3760,6 +3781,12 @@
   background: white;
   border-radius: 12px;
   color: #22344f;
+}
+
+.adminListItemEditing {
+  border-color: #95b2f5;
+  box-shadow: 0 0 0 3px rgba(76, 122, 255, 0.15);
+  background: #f3f7ff;
 }
 
 .adminListText {
@@ -4285,6 +4312,27 @@
   color: var(--text-muted);
 }
 
+.adminTabRow {
+  margin-top: 1.05rem;
+}
+
+.adminTabButton {
+  border: 1px solid var(--border-light);
+  background: var(--foreground-light);
+  color: var(--text-heading);
+}
+
+.adminTabButton:hover {
+  border-color: color-mix(in srgb, var(--secondary-color) 45%, var(--border-light));
+}
+
+.adminTabButtonActive {
+  border-color: color-mix(in srgb, var(--secondary-color) 65%, var(--border-light));
+  background: color-mix(in srgb, var(--secondary-color) 12%, var(--card-bg));
+  color: var(--text-heading);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--secondary-color) 22%, transparent);
+}
+
 .adminGrid {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 0.95rem;
@@ -4386,6 +4434,12 @@
 .adminListItem {
   border: 1px solid var(--border-light);
   background: var(--card-bg);
+}
+
+.adminListItemEditing {
+  border-color: color-mix(in srgb, var(--secondary-color) 55%, var(--border-light));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--secondary-color) 22%, transparent);
+  background: color-mix(in srgb, var(--secondary-color) 8%, var(--card-bg));
 }
 
 .adminListText {

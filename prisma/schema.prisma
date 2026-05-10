@@ -94,8 +94,24 @@ model Magazine {
   versions               MagazineVersion[]
   advisors               MagazineAdvisor[]
   approvedAdvisors       MagazineApprovedAdvisor[]
+  publishingConditionTabs MagazinePublishingConditionTab[]
 
   @@map("magazines")
+}
+
+model MagazinePublishingConditionTab {
+  id          Int      @id @default(autoincrement())
+  magazineId  Int
+  title       String   @db.VarChar(255)
+  body        String   @db.Text
+  iconKey     String   @db.VarChar(50)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  magazine    Magazine @relation(fields: [magazineId], references: [id], onDelete: Cascade)
+
+  @@index([magazineId])
+  @@map("magazine_publishing_condition_tabs")
 }
 
 model MagazineApprovedAdvisor {
@@ -139,9 +155,28 @@ model MagazineVersion {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   magazine    Magazine @relation(fields: [magazineId], references: [id], onDelete: Cascade)
+  researches  MagazineVersionResearch[]
 
   @@index([magazineId])
   @@map("magazine_versions")
+}
+
+model MagazineVersionResearch {
+  id                 Int             @id @default(autoincrement())
+  magazineVersionId  Int
+  researcherNames    String          @db.Text
+  title              String          @db.VarChar(255)
+  externalUrl        String          @db.VarChar(500)
+  summary            String?         @db.Text
+  keywords           String?         @db.Text
+  pdfUrl             String?         @db.VarChar(500)
+  sortOrder          Int             @default(0)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  magazineVersion    MagazineVersion @relation(fields: [magazineVersionId], references: [id], onDelete: Cascade)
+
+  @@index([magazineVersionId])
+  @@map("magazine_version_researches")
 }
 
 model PublicationRequest {

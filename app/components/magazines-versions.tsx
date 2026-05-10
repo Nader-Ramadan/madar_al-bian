@@ -49,6 +49,12 @@ export default function MagazineVersions({ magazineId, versions, pdfUrl }: Magaz
                 <div className={styles.versionCardBody}>
                   <div className={styles.versionMeta}>تاريخ الإصدار: {v.releaseDateLabel}</div>
                   {v.notes?.trim() ? <p className={styles.versionNotes}>{v.notes.trim()}</p> : null}
+                  <Link
+                    href={`/magazines/${magazineId}/versions/${v.id}`}
+                    className={styles.versionResearchButton}
+                  >
+                    بحوث هذا الإصدار
+                  </Link>
                 </div>
               </article>
             ))}
