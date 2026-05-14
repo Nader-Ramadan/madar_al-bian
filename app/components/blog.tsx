@@ -37,15 +37,19 @@ export default async function Blog() {
       <h2 className={styles.blogTitle}>المدونة</h2>
       <p className={styles.blogSubtitle}>مقالات ونصائح قيمة للباحثين والأكاديميين في مجال النشر العلمي والبحث الأكاديمي</p>
       <div className={styles.blogGrid}>
-        {blogPosts.map((post, idx) => (
+        {blogPosts.map((post, idx) => {
+          const imgSrc = post.image || "/images/The-Business-Magazine-Cover-Design.jpg";
+          const imgRemote = imgSrc.startsWith("http://") || imgSrc.startsWith("https://");
+          return (
           <article key={post.id ?? idx} className={styles.blogCard}>
                 <div className={styles.blogImageWrapper}>
                     <Image
-                        src={post.image || "/images/The-Business-Magazine-Cover-Design.jpg"}
+                        src={imgSrc}
                         alt={post.title}
                         width={400}
                         height={250}
                         className={styles.blogImage}
+                        unoptimized={imgRemote}
                     />
             </div>
             <div className={styles.blogCardBody}>
@@ -58,7 +62,8 @@ export default async function Blog() {
               <Link href='/blog' className={styles.blogReadMore}>اقرأ المزيد</Link>
             </div>
           </article>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

@@ -10,7 +10,7 @@ export const paginationSchema = z.object({
 export const magazineSchema = z.object({
   title: z.string().min(2).max(255),
   description: z.string().min(5),
-  image: z.string().min(1).max(255),
+  image: z.string().min(1).max(2048),
   category: z.string().min(2).max(100),
   pdfUrl: z.string().url().optional().nullable(),
   issn: z.string().max(32).optional().nullable(),
@@ -30,7 +30,7 @@ export const blogSchema = z.object({
   summary: z.string().min(10),
   date: z.string().min(2).max(50),
   author: z.string().min(2).max(255),
-  image: z.string().max(255).optional().nullable(),
+  image: z.string().max(2048).optional().nullable(),
 });
 
 export const conferenceSchema = z.object({
@@ -38,14 +38,14 @@ export const conferenceSchema = z.object({
   description: z.string().min(10),
   date: z.string().min(2).max(50),
   location: z.string().min(2).max(255),
-  image: z.string().max(255).optional().nullable(),
+  image: z.string().max(2048).optional().nullable(),
   attendees: z.string().max(100).optional().nullable(),
 });
 
 export const advisoryMemberSchema = z.object({
   name: z.string().min(2).max(255),
   title: z.string().min(2).max(255),
-  image: z.union([z.string().url().max(255), z.literal(""), z.null()]).optional(),
+  image: z.union([z.string().url().max(2048), z.literal(""), z.null()]).optional(),
   bio: z.union([z.string().max(4000), z.literal(""), z.null()]).optional(),
 });
 

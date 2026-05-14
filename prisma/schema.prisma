@@ -77,7 +77,7 @@ model Magazine {
   id                     Int       @id @default(autoincrement())
   title                  String    @db.VarChar(255)
   description            String    @db.Text
-  image                  String    @db.VarChar(255)
+  image                  String    @db.VarChar(2048)
   category               String    @db.VarChar(100)
   pdfUrl                 String?   @db.VarChar(500)
   issn                   String?   @db.VarChar(32)
@@ -216,7 +216,7 @@ model BlogPost {
   summary String  @db.Text
   date    String  @db.VarChar(50)
   author  String  @db.VarChar(255)
-  image   String? @db.VarChar(255)
+  image   String? @db.VarChar(2048)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -229,7 +229,7 @@ model Conference {
   description String  @db.Text
   date      String  @db.VarChar(50)
   location  String  @db.VarChar(255)
-  image     String? @db.VarChar(255)
+  image     String? @db.VarChar(2048)
   attendees String? @db.VarChar(100)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -241,7 +241,7 @@ model AdvisoryMember {
   id    Int     @id @default(autoincrement())
   name  String  @db.VarChar(255)
   title String  @db.VarChar(255)
-  image String? @db.VarChar(255)
+  image String? @db.VarChar(2048)
   bio   String? @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

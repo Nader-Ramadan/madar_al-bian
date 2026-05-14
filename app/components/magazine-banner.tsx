@@ -18,6 +18,10 @@ export default function MagazineBanner({
   coverImage = "/images/new-scientist.jpg",
   description,
 }: MagazineBannerProps) {
+  const isRemoteCover =
+    typeof coverImage === "string" &&
+    (coverImage.startsWith("http://") || coverImage.startsWith("https://"));
+
   useEffect(() => {
     // Log view when component mounts
     if (magazineId) {
@@ -33,6 +37,7 @@ export default function MagazineBanner({
                     width={300}
                     height={400}
                     alt={title}
+                    unoptimized={isRemoteCover}
                 />
                 </div>
             <div className={styles.magazinetitle}>
