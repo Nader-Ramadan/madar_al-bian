@@ -10,11 +10,25 @@ export async function GET() {
   if (auth.error) return auth.error;
   const items = await prisma.publicationRequest.findMany({
     orderBy: { createdAt: "desc" },
-    include: {
-      magazine: { select: { id: true, title: true } },
-    },
   });
-  return ok(items);
+  const magazineIds = [
+    ...new Set(
+      items.map((row) => row.magazineId).filter((id): id is number => typeof id === "number" && id > 0),
+    ),
+  ];
+  const magazines =
+    magazineIds.length === 0
+      ? []
+      : await prisma.magazine.findMany({
+          where: { id: { in: magazineIds } },
+          select: { id: true, title: true },
+        });
+  const magazineById = new Map(magazines.map((m) => [m.id, m]));
+  const withMagazine = items.map((row) => ({
+    ...row,
+    magazine: row.magazineId != null ? magazineById.get(row.magazineId) ?? null : null,
+  }));
+  return ok(withMagazine);
 }
 
 export async function POST(request: NextRequest) {
