@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { type CSSProperties, FormEvent, useEffect, useState } from "react";
 import styles from "@/app/page.module.css";
 
 const rtlSection = {
@@ -11,26 +11,66 @@ const rtlSection = {
   direction: "rtl" as const,
 };
 
+const inputStyle: CSSProperties = {
+  width: "100%",
+  padding: "0.75rem",
+  border: "1px solid var(--border-light)",
+  borderRadius: "0.5rem",
+  background: "var(--card-bg)",
+  color: "var(--text-primary)",
+};
+
+type MagazineOption = { id: number; title: string };
+
 export default function RequestPublicationPage() {
   const [authorName, setAuthorName] = useState("");
   const [authorEmail, setAuthorEmail] = useState("");
+  const [magazineId, setMagazineId] = useState("");
   const [title, setTitle] = useState("");
   const [abstract, setAbstract] = useState("");
   const [field, setField] = useState("");
+  const [magazines, setMagazines] = useState<MagazineOption[]>([]);
+  const [magazinesError, setMagazinesError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "ok" | "err"; text: string } | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/magazines?limit=100");
+        const payload = await res.json().catch(() => null);
+        if (!res.ok || !payload?.success) {
+          if (!cancelled) setMagazinesError("تعذر تحميل قائمة المجلات");
+          return;
+        }
+        const items = (payload.data?.items ?? []) as { id: number; title: string }[];
+        if (!cancelled) {
+          setMagazines(items.map((m) => ({ id: m.id, title: m.title })));
+          setMagazinesError(null);
+        }
+      } catch {
+        if (!cancelled) setMagazinesError("تعذر تحميل قائمة المجلات");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
     try {
+      const mid = magazineId.trim() === "" ? null : Number.parseInt(magazineId, 10);
       const body = {
         authorName,
         authorEmail,
         title,
         abstract,
         field: field.trim() || null,
+        magazineId: mid != null && Number.isFinite(mid) ? mid : null,
       };
       const response = await fetch("/api/publication-requests", {
         method: "POST",
@@ -48,6 +88,7 @@ export default function RequestPublicationPage() {
       setMessage({ type: "ok", text: "تم استلام طلبك بنجاح." });
       setAuthorName("");
       setAuthorEmail("");
+      setMagazineId("");
       setTitle("");
       setAbstract("");
       setField("");
@@ -83,12 +124,7 @@ export default function RequestPublicationPage() {
                 value={authorName}
                 onChange={(ev) => setAuthorName(ev.target.value)}
                 type="text"
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  border: "1px solid var(--border-light)",
-                  borderRadius: "0.5rem",
-                }}
+                style={inputStyle}
               />
             </div>
             <div>
@@ -98,13 +134,26 @@ export default function RequestPublicationPage() {
                 value={authorEmail}
                 onChange={(ev) => setAuthorEmail(ev.target.value)}
                 type="email"
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  border: "1px solid var(--border-light)",
-                  borderRadius: "0.5rem",
-                }}
+                style={inputStyle}
               />
+            </div>
+            <div>
+              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>المجلة</label>
+              <select
+                value={magazineId}
+                onChange={(ev) => setMagazineId(ev.target.value)}
+                style={inputStyle}
+              >
+                <option value="">— اختر المجلة (اختياري) —</option>
+                {magazines.map((m) => (
+                  <option key={m.id} value={String(m.id)}>
+                    {m.title}
+                  </option>
+                ))}
+              </select>
+              {magazinesError ? (
+                <p style={{ marginTop: "0.35rem", fontSize: "0.85rem", color: "crimson" }}>{magazinesError}</p>
+              ) : null}
             </div>
             <div>
               <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>عنوان الدراسة</label>
@@ -113,12 +162,7 @@ export default function RequestPublicationPage() {
                 value={title}
                 onChange={(ev) => setTitle(ev.target.value)}
                 type="text"
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  border: "1px solid var(--border-light)",
-                  borderRadius: "0.5rem",
-                }}
+                style={inputStyle}
               />
             </div>
             <div>
@@ -129,12 +173,7 @@ export default function RequestPublicationPage() {
                 value={abstract}
                 onChange={(ev) => setAbstract(ev.target.value)}
                 rows={6}
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  border: "1px solid var(--border-light)",
-                  borderRadius: "0.5rem",
-                }}
+                style={inputStyle}
               />
             </div>
             <div>
@@ -145,12 +184,7 @@ export default function RequestPublicationPage() {
                 value={field}
                 onChange={(ev) => setField(ev.target.value)}
                 type="text"
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  border: "1px solid var(--border-light)",
-                  borderRadius: "0.5rem",
-                }}
+                style={inputStyle}
               />
             </div>
             <button

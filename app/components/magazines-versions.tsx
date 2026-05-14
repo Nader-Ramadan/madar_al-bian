@@ -21,9 +21,38 @@ export default function MagazineVersions({ magazineId, versions, pdfUrl }: Magaz
       <div className={`${styles.inner} ${styles.versionsSection}`}>
         <div className={styles.versionsHeadRow}>
           <h2 className={styles.versionsTitle}>إصدارات المجلة</h2>
-          <Link href={`/magazines/${magazineId}/versions`} className={styles.versionsArchiveLink}>
-            عرض سجل الإصدارات كاملاً
-          </Link>
+          <div className={styles.versionsHeadActions}>
+            <Link
+              href={`/magazines/${magazineId}/publishing-conditions`}
+              className={styles.versionsArchiveLink}
+            >
+              <span className={styles.versionsArchiveIcon} aria-hidden>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <path d="M14 2v6h6" />
+                  <path d="M8 13h8M8 17h6" />
+                </svg>
+              </span>
+              <span>شروط النشر</span>
+              <span className={styles.versionsArchiveChevron} aria-hidden>
+                ‹
+              </span>
+            </Link>
+            <Link href={`/magazines/${magazineId}/versions`} className={styles.versionsArchiveLink}>
+              <span className={styles.versionsArchiveIcon} aria-hidden>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M8 6h13M8 12h13M8 18h9" />
+                  <circle cx="4" cy="6" r="1" fill="currentColor" stroke="none" />
+                  <circle cx="4" cy="12" r="1" fill="currentColor" stroke="none" />
+                  <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none" />
+                </svg>
+              </span>
+              <span>عرض سجل الإصدارات كاملاً</span>
+              <span className={styles.versionsArchiveChevron} aria-hidden>
+                ‹
+              </span>
+            </Link>
+          </div>
         </div>
 
         {pdfUrl ? (

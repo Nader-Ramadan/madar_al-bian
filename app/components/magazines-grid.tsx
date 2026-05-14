@@ -56,21 +56,23 @@ export default function MagazinesGrid({ initialItems, initialError }: MagazinesG
   return (
     <section className={styles.section}>
       <div className={styles.grid}>
-        {initialItems.map((magazine) => {
+        {initialItems.map((magazine, index) => {
           const meta = formatMetaLine(magazine);
           return (
             <Link
               key={magazine.id}
               href={`/magazines/${magazine.id}`}
               className={styles.card}
+              style={{ animationDelay: `${Math.min(index, 24) * 55}ms` }}
             >
               <div className={styles.imageWrapper}>
                 <Image
                   src={magazine.image}
                   alt={magazine.title}
-                  width={400}
-                  height={300}
+                  width={360}
+                  height={240}
                   className={styles.image}
+                  sizes="(max-width: 640px) min(100vw, 26rem), (max-width: 900px) 45vw, 280px"
                   unoptimized={
                     magazine.image.startsWith("http://") ||
                     magazine.image.startsWith("https://") ||
@@ -85,7 +87,9 @@ export default function MagazinesGrid({ initialItems, initialError }: MagazinesG
                 <p className={styles.description}>{magazine.description}</p>
                 <span className={styles.visitBtn}>
                   <span>زيارة المجلة</span>
-                  <span>→</span>
+                  <span className={styles.ctaChevron} aria-hidden>
+                    ←
+                  </span>
                 </span>
               </div>
             </Link>

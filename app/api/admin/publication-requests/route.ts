@@ -10,6 +10,9 @@ export async function GET() {
   if (auth.error) return auth.error;
   const items = await prisma.publicationRequest.findMany({
     orderBy: { createdAt: "desc" },
+    include: {
+      magazine: { select: { id: true, title: true } },
+    },
   });
   return ok(items);
 }

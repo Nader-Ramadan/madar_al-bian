@@ -135,6 +135,7 @@ export const publicationRequestSchema = z.object({
   title: z.string().min(2).max(255),
   abstract: z.string().min(20),
   field: z.string().max(255).optional().nullable(),
+  magazineId: z.number().int().positive().optional().nullable(),
 });
 
 export const publicationStatusSchema = z.object({

@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect } from 'react';
-import styles from '../page.module.css';
-import Image from 'next/image';
-import { logMagazineTraffic } from '@/lib/traffic-logger';
+import { useEffect } from "react";
+import Image from "next/image";
+import styles from "./magazine-banner.module.css";
+import { logMagazineTraffic } from "@/lib/traffic-logger";
 
 interface MagazineBannerProps {
   title: string;
@@ -25,30 +25,44 @@ export default function MagazineBanner({
       coverImage.startsWith("/uploads/"));
 
   useEffect(() => {
-    // Log view when component mounts
     if (magazineId) {
-      logMagazineTraffic(magazineId, 'view');
+      logMagazineTraffic(magazineId, "view");
     }
   }, [magazineId]);
 
+  const trimmed = description?.trim();
+  const hasDescription = Boolean(trimmed);
+
   return (
-        <div className={styles.magazineBanner}>
-            <div className={styles.magazineCover}>
-                <Image
-                    src={coverImage}
-                    width={300}
-                    height={400}
-                    alt={title}
-                    unoptimized={useUnoptimizedCover}
-                />
-                </div>
-            <div className={styles.magazinetitle}>
-                <h1>{title}</h1>
-                <h3>
-                  {description ??
-                    "لوريم إيبسوم هو ببساطة نص شكلي (بمعنى أن الغاية هي الشكل وليس المحتوى) ويُستخدم في صناعات الطباعة والتنضيد. كان لوريم إيبسوم هو النص الوهمي القياسي منذ القرن الخامس عشر، عندما أخذت مطبعة غير معروفة مجموعة من الأحرف وخلطتها لتكوين كتاب عينة. لقد نجت ليس فقط خمسة قرون، بل أيضًا قفزة إلى التنضيد الإلكتروني، وظلت دون تغيير جوهري."}
-                </h3>
-            </div>
+    <section className={styles.shell} aria-labelledby="magazine-banner-title">
+      <div className={styles.bgPattern} aria-hidden />
+      <div className={styles.inner}>
+        <div className={styles.textCol}>
+          <span className={styles.eyebrow}>مجلة محكّمة</span>
+          <h1 id="magazine-banner-title" className={styles.title}>
+            {title}
+          </h1>
+          <span className={styles.accentLine} aria-hidden />
+          {hasDescription ? (
+            <p className={styles.description}>{trimmed}</p>
+          ) : (
+            <p className={styles.descriptionMuted}>لا يتوفر وصف مختصر لهذه المجلة.</p>
+          )}
         </div>
-    );
+        <div className={styles.coverCol}>
+          <div className={styles.coverFrame}>
+            <Image
+              src={coverImage}
+              alt={`غلاف ${title}`}
+              fill
+              className={styles.coverImage}
+              sizes="(max-width: 768px) 55vw, 280px"
+              priority
+              unoptimized={useUnoptimizedCover}
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }

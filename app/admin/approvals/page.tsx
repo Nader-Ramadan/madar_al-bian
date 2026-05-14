@@ -10,6 +10,8 @@ type PublicationRequest = {
   authorEmail: string;
   abstract: string;
   field?: string | null;
+  magazineId?: number | null;
+  magazine?: { id: number; title: string } | null;
   reviewNotes?: string | null;
   status: "PENDING" | "APPROVED" | "REJECTED";
 };
@@ -57,7 +59,14 @@ export default function AdminApprovalsPage() {
             {requests.map((item) => (
               <li key={item.id} className={styles.adminListItem}>
                 <span className={styles.adminListText}>
-                  <strong>{item.title}</strong> - {item.authorName} ({item.authorEmail})<br />
+                  <strong>{item.title}</strong> - {item.authorName} ({item.authorEmail})
+                  <br />
+                  {item.magazine ? (
+                    <>
+                      المجلة: <strong>{item.magazine.title}</strong>
+                      <br />
+                    </>
+                  ) : null}
                   Status: {item.status}
                 </span>
                 <div className={styles.adminForm} style={{ minWidth: 300 }}>

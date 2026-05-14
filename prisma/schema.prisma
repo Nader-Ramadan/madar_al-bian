@@ -95,6 +95,7 @@ model Magazine {
   advisors               MagazineAdvisor[]
   approvedAdvisors       MagazineApprovedAdvisor[]
   publishingConditionTabs MagazinePublishingConditionTab[]
+  publicationRequests     PublicationRequest[]
 
   @@map("magazines")
 }
@@ -186,13 +187,16 @@ model PublicationRequest {
   title          String            @db.VarChar(255)
   abstract       String            @db.Text
   field          String?           @db.VarChar(255)
+  magazineId     Int?
   status         PublicationStatus @default(PENDING)
   reviewNotes    String?           @db.Text
   reviewedById   Int?
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
+  magazine       Magazine?         @relation(fields: [magazineId], references: [id], onDelete: SetNull)
 
   @@index([status])
+  @@index([magazineId])
   @@map("publication_requests")
 }
 
