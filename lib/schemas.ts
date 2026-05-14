@@ -1,6 +1,14 @@
 import { z } from "zod";
 import { PUBLISHING_CONDITION_ICON_KEYS } from "@/lib/publishing-condition-icons";
 
+/** S3/CDN absolute URL or local public path `/uploads/...` from STORAGE_DRIVER=local. */
+export function storageHttpUrlOrUploadsPathSchema(maxLen: number) {
+  return z.union([
+    z.string().url().max(maxLen),
+    z.string().min(12).max(maxLen).startsWith("/uploads/"),
+  ]);
+}
+
 export const paginationSchema = z.object({
   page: z.coerce.number().min(1).default(1),
   limit: z.coerce.number().min(1).max(100).default(10),
@@ -12,7 +20,7 @@ export const magazineSchema = z.object({
   description: z.string().min(5),
   image: z.string().min(1).max(2048),
   category: z.string().min(2).max(100),
-  pdfUrl: z.string().url().optional().nullable(),
+  pdfUrl: z.union([storageHttpUrlOrUploadsPathSchema(2048), z.null()]).optional(),
   issn: z.string().max(32).optional().nullable(),
   impactFactor: z.coerce.number().finite().optional().nullable(),
   currentVersion: z.string().max(50).optional().nullable(),
@@ -45,7 +53,9 @@ export const conferenceSchema = z.object({
 export const advisoryMemberSchema = z.object({
   name: z.string().min(2).max(255),
   title: z.string().min(2).max(255),
-  image: z.union([z.string().url().max(2048), z.literal(""), z.null()]).optional(),
+  image: z
+    .union([storageHttpUrlOrUploadsPathSchema(2048), z.literal(""), z.null()])
+    .optional(),
   bio: z.union([z.string().max(4000), z.literal(""), z.null()]).optional(),
 });
 
@@ -61,7 +71,7 @@ export const magazineVersionSchema = z.object({
   releaseDate: z.string().datetime(),
   notes: z.string().optional().nullable(),
   pageCount: z.union([z.number().int().positive().max(500000), z.null()]).optional(),
-  pdfUrl: z.union([z.string().url().max(500), z.null()]).optional(),
+  pdfUrl: z.union([storageHttpUrlOrUploadsPathSchema(500), z.null()]).optional(),
 });
 
 export const magazinePublishingConditionTabBodySchema = z.object({
@@ -77,7 +87,10 @@ export const magazineVersionResearchBodySchema = z.object({
   externalUrl: z.string().url().max(500),
   summary: z.string().max(20000).optional().nullable(),
   keywords: z.string().max(4000).optional().nullable(),
-  pdfUrl: z.union([z.string().url().max(500), z.literal("")]).optional().nullable(),
+  pdfUrl: z
+    .union([storageHttpUrlOrUploadsPathSchema(500), z.literal("")])
+    .optional()
+    .nullable(),
   sortOrder: z.number().int().min(0).max(1_000_000).optional().default(0),
 });
 
