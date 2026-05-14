@@ -1,4 +1,4 @@
-/** Browser-side uploads for admin dashboard: S3 presign + PUT, or multipart POST when STORAGE_DRIVER=local. */
+/** Browser-side uploads for admin dashboard: S3 presign + PUT, or multipart POST when storage is local. */
 
 export async function readAdminResponseJson(response: Response) {
   const text = await response.text();
@@ -10,8 +10,32 @@ export async function readAdminResponseJson(response: Response) {
   }
 }
 
-function isClientLocalStorage(): boolean {
-  return process.env.NEXT_PUBLIC_STORAGE_DRIVER?.trim().toLowerCase() === "local";
+let cachedServerDriver: "local" | "s3" | undefined;
+
+function publicEnvDriver(): "local" | "s3" | undefined {
+  const v = process.env.NEXT_PUBLIC_STORAGE_DRIVER?.trim().toLowerCase();
+  if (v === "local" || v === "s3") return v;
+  return undefined;
+}
+
+/** Prefer NEXT_PUBLIC_* when set; otherwise ask the server once (matches STORAGE_DRIVER on the host). */
+async function useLocalMultipartUpload(): Promise<boolean> {
+  const pub = publicEnvDriver();
+  if (pub === "local") return true;
+  if (pub === "s3") return false;
+  if (cachedServerDriver) return cachedServerDriver === "local";
+  const res = await fetch("/api/admin/storage-driver", { credentials: "same-origin" });
+  const payload = await readAdminResponseJson(res);
+  if (!res.ok || !payload?.success || !payload.data || typeof payload.data !== "object") {
+    throw new Error(
+      res.status === 401 || res.status === 403
+        ? "Session expired or not allowed. Sign in again, or set NEXT_PUBLIC_STORAGE_DRIVER to match STORAGE_DRIVER."
+        : "Could not read storage mode from the server. Set NEXT_PUBLIC_STORAGE_DRIVER to local or s3, or try again after signing in.",
+    );
+  }
+  const d = (payload.data as { storageDriver?: string }).storageDriver;
+  cachedServerDriver = d === "local" ? "local" : "s3";
+  return cachedServerDriver === "local";
 }
 
 async function putToPresignedUrl(uploadUrl: string, file: File, contentType: string) {
@@ -40,7 +64,7 @@ function parseFileUrlFromOkPayload(payload: { success?: boolean; data?: unknown 
 }
 
 export async function uploadPdfFileToStorage(file: File): Promise<string> {
-  if (isClientLocalStorage()) {
+  if (await useLocalMultipartUpload()) {
     const fd = new FormData();
     fd.append("file", file);
     const res = await fetch("/api/pdfs", { method: "PUT", body: fd });
@@ -70,7 +94,7 @@ export async function uploadPdfFileToStorage(file: File): Promise<string> {
 }
 
 export async function uploadBannerFileToStorage(file: File, magazineId?: number): Promise<string> {
-  if (isClientLocalStorage()) {
+  if (await useLocalMultipartUpload()) {
     const fd = new FormData();
     fd.append("file", file);
     if (magazineId != null) fd.append("magazineId", String(magazineId));
@@ -103,7 +127,7 @@ export async function uploadBannerFileToStorage(file: File, magazineId?: number)
 }
 
 export async function uploadMagazineAdvisorPhotoToStorage(file: File, magazineId: number): Promise<string> {
-  if (isClientLocalStorage()) {
+  if (await useLocalMultipartUpload()) {
     const fd = new FormData();
     fd.append("file", file);
     fd.append("magazineId", String(magazineId));
@@ -137,7 +161,7 @@ export async function uploadMagazineAdvisorPhotoToStorage(file: File, magazineId
 
 export async function uploadAdvisoryMemberPhotoToStorage(file: File): Promise<string> {
   const ct = imageContentTypeForPresign(file);
-  if (isClientLocalStorage()) {
+  if (await useLocalMultipartUpload()) {
     const fd = new FormData();
     fd.append("file", file);
     const res = await fetch("/api/admin/advisory-member-upload", { method: "POST", body: fd });
@@ -168,7 +192,7 @@ export async function uploadAdvisoryMemberPhotoToStorage(file: File): Promise<st
 
 export async function uploadContentImageToStorage(file: File, kind: "blog" | "conference"): Promise<string> {
   const ct = imageContentTypeForPresign(file);
-  if (isClientLocalStorage()) {
+  if (await useLocalMultipartUpload()) {
     const fd = new FormData();
     fd.append("file", file);
     fd.append("kind", kind);

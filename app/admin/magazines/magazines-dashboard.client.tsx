@@ -153,6 +153,26 @@ async function readResponseJson(response: Response) {
   }
 }
 
+function formatApiFailureMessage(
+  response: Response,
+  payload: { success?: boolean; error?: string; details?: unknown } | null,
+  fallback: string,
+): string {
+  const base = (payload && typeof payload === "object" && typeof payload.error === "string" && payload.error.trim())
+    ? payload.error.trim()
+    : fallback;
+  const details = payload?.details;
+  if (details != null && typeof details === "object") {
+    try {
+      const snippet = JSON.stringify(details).slice(0, 400);
+      return `${base} (${response.status}) ${snippet}`;
+    } catch {
+      return `${base} (${response.status})`;
+    }
+  }
+  return `${base} (${response.status})`;
+}
+
 type AdminMagazinesTab = "magazines" | "researches";
 
 export default function AdminMagazinesDashboard() {
@@ -299,7 +319,9 @@ export default function AdminMagazinesDashboard() {
         body: JSON.stringify(payload),
       });
       const responsePayload = await readResponseJson(response);
-      if (!response.ok || !responsePayload?.success) throw new Error(responsePayload?.error ?? "Save failed");
+      if (!response.ok || !responsePayload?.success) {
+        throw new Error(formatApiFailureMessage(response, responsePayload, "Save failed"));
+      }
       setMagForm(emptyMagazineForm);
       setEditingId(null);
       setBannerFile(null);
