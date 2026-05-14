@@ -253,7 +253,22 @@ export default function AdminMagazinesDashboard() {
     ]);
     const magazinesPayload = await readResponseJson(magazinesResponse);
     const versionsPayload = await readResponseJson(versionsResponse);
-    if (!magazinesResponse.ok || !versionsResponse.ok) throw new Error("Failed to load dashboard data.");
+    if (!magazinesResponse.ok || !versionsResponse.ok) {
+      const parts: string[] = [];
+      if (!magazinesResponse.ok) {
+        const err =
+          (magazinesPayload as { error?: string } | null)?.error ??
+          `HTTP ${magazinesResponse.status}`;
+        parts.push(`Magazines (${magazinesResponse.status}): ${err}`);
+      }
+      if (!versionsResponse.ok) {
+        const err =
+          (versionsPayload as { error?: string } | null)?.error ??
+          `HTTP ${versionsResponse.status}`;
+        parts.push(`Versions (${versionsResponse.status}): ${err}`);
+      }
+      throw new Error(`Failed to load dashboard data. ${parts.join(" · ")}`);
+    }
     setMagazines(magazinesPayload?.data?.items ?? []);
     setVersions(versionsPayload?.data ?? []);
   }

@@ -64,7 +64,21 @@ function magazinesLoadErrorMessage(err: unknown): string {
     return `تعذر تحميل المجلات: Cannot reach the database server. Check DATABASE_URL, firewall, and Remote MySQL access. تحقق من الاتصال بقاعدة البيانات على Hostinger.`;
   }
 
-  return `تعذر تحميل المجلات (خطأ من الخادم). تحقق من اتصال قاعدة البيانات وإعدادات DATABASE_URL أو DB_HOST و DB_USER و DB_PASSWORD و DB_NAME ثم أعد تشغيل الخادم.`;
+  if (
+    code === "P2021" ||
+    /does not exist/i.test(msg) ||
+    /Unknown table/i.test(msg) ||
+    /Table .* doesn't exist/i.test(msg)
+  ) {
+    return `تعذر تحميل المجلات: الجداول غير موجودة في قاعدة البيانات. على الخادم شغّل ترحيل Prisma: npx prisma migrate deploy ثم أعد تشغيل التطبيق. (The database schema is missing — run migrations on the server.)`;
+  }
+
+  if (code === "P1003" || /database .* does not exist/i.test(msg)) {
+    return `تعذر تحميل المجلات: اسم قاعدة البيانات غير صحيح أو غير موجود (P1003). راجع DB_NAME في hPanel أو DATABASE_URL.`;
+  }
+
+  const codeHint = code != null ? ` رمز الخطأ: ${code}.` : "";
+  return `تعذر تحميل المجلات (خطأ من الخادم).${codeHint} تحقق من اتصال قاعدة البيانات وإعدادات DATABASE_URL أو DB_HOST و DB_USER و DB_PASSWORD و DB_NAME ثم أعد تشغيل الخادم. إذا كان لديك DATABASE_URL و DB_* معاً، DATABASE_URL هو المستخدم — احذف القيمة الخاطئة أو صححها.`;
 }
 
 export async function loadMagazineCardsForPage(
