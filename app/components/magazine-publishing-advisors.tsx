@@ -9,7 +9,11 @@ export type MagazinePublishingAdvisorItem = {
 };
 
 function needsUnoptimizedAsset(src: string) {
-  return src.startsWith("http://") || src.startsWith("https://");
+  return (
+    src.startsWith("http://") ||
+    src.startsWith("https://") ||
+    src.startsWith("/uploads/")
+  );
 }
 
 function IconEyeHeader() {

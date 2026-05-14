@@ -39,7 +39,10 @@ export default async function Blog() {
       <div className={styles.blogGrid}>
         {blogPosts.map((post, idx) => {
           const imgSrc = post.image || "/images/The-Business-Magazine-Cover-Design.jpg";
-          const imgRemote = imgSrc.startsWith("http://") || imgSrc.startsWith("https://");
+          const imgRemote =
+            imgSrc.startsWith("http://") ||
+            imgSrc.startsWith("https://") ||
+            imgSrc.startsWith("/uploads/");
           return (
           <article key={post.id ?? idx} className={styles.blogCard}>
                 <div className={styles.blogImageWrapper}>

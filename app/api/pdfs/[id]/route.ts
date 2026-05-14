@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { ok, fail } from "@/lib/api-response";
 import { requireRole } from "@/lib/rbac";
 import { UserRole } from "@prisma/client";
-import { deleteObjectByKey } from "@/lib/storage";
+import { deleteStoredFile } from "@/lib/storage";
 
 function parseId(value: string) {
   const id = Number(value);
@@ -28,10 +28,7 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
   const pdf = await prisma.pdf.findUnique({ where: { id } });
   if (!pdf) return fail("PDF not found", 404);
 
-  const key = pdf.filepath.split("/").slice(-2).join("/");
-  if (key) {
-    await deleteObjectByKey(key);
-  }
+  await deleteStoredFile(pdf.filepath);
 
   await prisma.pdf.delete({ where: { id } });
   return ok({ deleted: true });

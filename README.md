@@ -10,7 +10,7 @@ Next.js + Prisma/MySQL website for magazine publishing, conferences, blogs, advi
    - **Database (Hostinger only for production):** set either **`DATABASE_URL`** (`mysql://…`) or **`DB_HOST`**, **`DB_USER`**, **`DB_PASSWORD`**, **`DB_NAME`**, **`DB_PORT`** in **Hostinger hPanel** (Node.js app → Environment variables) or in **`.env.production`** on the server—see [`lib/database-url.ts`](lib/database-url.ts). Do not put production DB credentials in **`.env.local`**. The Next.js app and `prisma db seed` must use the **same** database. For one-off CLI commands from your PC (migrate/seed), use a private untracked `.env` with the same Hostinger values only if Remote MySQL allows your IP, or run commands over SSH on the Hostinger host where env is already set.
    - Auth: `JWT_SECRET`, `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD`, `BOOTSTRAP_ADMIN_NAME`
    - Google sign-in (optional): `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `AUTH_GOOGLE_REDIRECT_URI` (must match the authorized redirect URI in Google Cloud Console, e.g. `https://yourdomain.com/api/auth/google/callback`). Only Google accounts whose email matches an existing active `ADMIN` user in the database receive a session for the workspace.
-   - Storage: `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_PUBLIC_BASE_URL`
+   - Storage: either **S3** (default) — `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_PUBLIC_BASE_URL` — or **on-disk** — set `STORAGE_DRIVER=local` and `NEXT_PUBLIC_STORAGE_DRIVER=local` (omit S3 vars). Local files live under `public/uploads/` and are served as `/uploads/...`. On a single VPS this avoids object storage cost; files can be lost on redeploy if the deploy replaces that tree, so back up `public/uploads` or mount a persistent volume. Match reverse-proxy body size limits for large PDFs.
    - SMTP (Email Center): `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`
 3. Apply database schema (choose one):
    - **Migrate (recommended for production):** `npx prisma migrate deploy` (or `npx prisma migrate dev` in development) so migrations such as `add_magazine_metadata` run against your MySQL database.
@@ -64,11 +64,11 @@ Next.js + Prisma/MySQL website for magazine publishing, conferences, blogs, advi
 - `POST /api/fields`, `PUT/DELETE /api/fields/:id`
 - `POST /api/pdfs`, `DELETE /api/pdfs/:id`
 
-### File Upload (Cloud Storage)
+### File Upload
 
-- `PUT /api/pdfs` returns pre-signed upload URL and final file URL
-- Upload the PDF directly to storage with returned `uploadUrl`
-- Persist metadata with `POST /api/pdfs`
+**S3 (default):** `PUT /api/pdfs` with JSON `{ filename, contentType, size }` returns a pre-signed `uploadUrl` and `fileUrl`. The client PUTs the file to `uploadUrl`, then `POST /api/pdfs` persists metadata with `filepath` set to the HTTPS `fileUrl`.
+
+**Local (`STORAGE_DRIVER=local` + `NEXT_PUBLIC_STORAGE_DRIVER=local`):** admin uploads use `multipart/form-data` with field `file` on the same admin routes; `PUT /api/pdfs` accepts multipart `file` and returns `{ fileUrl }` only (no `uploadUrl`). `filepath` in `POST /api/pdfs` is a same-origin path such as `/uploads/pdfs/...`.
 
 ### Traffic Analytics
 

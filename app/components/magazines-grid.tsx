@@ -72,7 +72,9 @@ export default function MagazinesGrid({ initialItems, initialError }: MagazinesG
                   height={300}
                   className={styles.image}
                   unoptimized={
-                    magazine.image.startsWith("http://") || magazine.image.startsWith("https://")
+                    magazine.image.startsWith("http://") ||
+                    magazine.image.startsWith("https://") ||
+                    magazine.image.startsWith("/uploads/")
                   }
                 />
               </div>

@@ -18,9 +18,11 @@ export default function MagazineBanner({
   coverImage = "/images/new-scientist.jpg",
   description,
 }: MagazineBannerProps) {
-  const isRemoteCover =
+  const useUnoptimizedCover =
     typeof coverImage === "string" &&
-    (coverImage.startsWith("http://") || coverImage.startsWith("https://"));
+    (coverImage.startsWith("http://") ||
+      coverImage.startsWith("https://") ||
+      coverImage.startsWith("/uploads/"));
 
   useEffect(() => {
     // Log view when component mounts
@@ -37,7 +39,7 @@ export default function MagazineBanner({
                     width={300}
                     height={400}
                     alt={title}
-                    unoptimized={isRemoteCover}
+                    unoptimized={useUnoptimizedCover}
                 />
                 </div>
             <div className={styles.magazinetitle}>

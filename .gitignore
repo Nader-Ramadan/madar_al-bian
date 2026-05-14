@@ -44,3 +44,7 @@ debug-*.log
 next-env.d.ts
 
 /app/generated/prisma
+
+# User uploads (keep directory via .gitkeep)
+/public/uploads/*
+!/public/uploads/.gitkeep
