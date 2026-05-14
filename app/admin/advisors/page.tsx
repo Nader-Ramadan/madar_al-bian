@@ -1,7 +1,8 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 import styles from "@/app/page.module.css";
+import { readAdminResponseJson, uploadAdvisoryMemberPhotoToStorage } from "@/lib/admin-client-upload";
 
 type Advisor = { id: number; name: string; title: string; image: string | null; bio: string | null };
 
@@ -15,55 +16,24 @@ export default function AdminAdvisorsPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function readResponseJson(response: Response) {
-    const text = await response.text();
-    if (!text) return null;
-    try {
-      return JSON.parse(text) as any;
-    } catch {
-      return null;
-    }
-  }
-
-  async function load() {
+  const load = useCallback(async () => {
     const response = await fetch("/api/advisory-members?limit=100");
-    const payload = await readResponseJson(response);
-    if (!response.ok || !payload?.success) throw new Error(payload?.error ?? "Load failed");
-    setItems(payload?.data?.items ?? []);
-  }
-
-  async function uploadPhotoAndGetUrl() {
-    if (!photoFile) return form.image.trim() || null;
-
-    const presignResponse = await fetch("/api/admin/advisory-member-upload", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        filename: photoFile.name,
-        contentType: photoFile.type || "image/jpeg",
-        size: photoFile.size,
-      }),
-    });
-    const presignPayload = await readResponseJson(presignResponse);
-    if (!presignResponse.ok || !presignPayload?.success) {
-      throw new Error(presignPayload?.error ?? "Failed to prepare photo upload");
+    const payload = await readAdminResponseJson(response);
+    if (!response.ok || !payload?.success) {
+      throw new Error((payload as { error?: string } | null)?.error ?? "Load failed");
     }
-
-    const { uploadUrl, fileUrl } = presignPayload.data ?? {};
-    if (!uploadUrl || !fileUrl) throw new Error("Upload URL is missing");
-
-    const uploadResponse = await fetch(uploadUrl, {
-      method: "PUT",
-      headers: { "Content-Type": photoFile.type || "application/octet-stream" },
-      body: photoFile,
-    });
-    if (!uploadResponse.ok) throw new Error("Photo upload failed");
-    return fileUrl as string;
-  }
+    const data = payload.data as { items?: Advisor[] } | undefined;
+    setItems(data?.items ?? []);
+  }, []);
 
   useEffect(() => {
     load().catch((e) => setError(e instanceof Error ? e.message : "Failed to load"));
-  }, []);
+  }, [load]);
+
+  async function uploadPhotoAndGetUrl() {
+    if (!photoFile) return form.image.trim() || null;
+    return uploadAdvisoryMemberPhotoToStorage(photoFile);
+  }
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -81,8 +51,10 @@ export default function AdminAdvisorsPage() {
           bio: form.bio.trim() || null,
         }),
       });
-      const payload = await readResponseJson(response);
-      if (!response.ok || !payload?.success) throw new Error(payload?.error ?? "Save failed");
+      const payload = await readAdminResponseJson(response);
+      if (!response.ok || !payload?.success) {
+        throw new Error((payload as { error?: string } | null)?.error ?? "Save failed");
+      }
       setForm(initialForm);
       setPhotoFile(null);
       setEditingId(null);
@@ -99,8 +71,10 @@ export default function AdminAdvisorsPage() {
     setBusy(true);
     try {
       const response = await fetch(`/api/advisory-members/${id}`, { method: "DELETE" });
-      const payload = await readResponseJson(response);
-      if (!response.ok || !payload?.success) throw new Error(payload?.error ?? "Delete failed");
+      const payload = await readAdminResponseJson(response);
+      if (!response.ok || !payload?.success) {
+        throw new Error((payload as { error?: string } | null)?.error ?? "Delete failed");
+      }
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Delete failed");

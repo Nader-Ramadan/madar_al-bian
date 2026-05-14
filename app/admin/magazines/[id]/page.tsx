@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import styles from "@/app/page.module.css";
+import { uploadMagazineAdvisorPhotoToStorage } from "@/lib/admin-client-upload";
 
 type Magazine = { id: number; title: string };
 type Advisor = { id: number; photoUrl: string; name: string; jobTitle: string };
@@ -27,7 +28,8 @@ export default function AdminMagazinePublishingAdvisorsPage() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [jobTitle, setJobTitle] = useState("");
-  const [photoUrl, setPhotoUrl] = useState("");
+  /** Current photo URL when editing (from DB); not user-editable */
+  const [existingPhotoUrl, setExistingPhotoUrl] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [fileInputKey, setFileInputKey] = useState(0);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -77,7 +79,7 @@ export default function AdminMagazinePublishingAdvisorsPage() {
   function resetForm() {
     setName("");
     setJobTitle("");
-    setPhotoUrl("");
+    setExistingPhotoUrl("");
     setFile(null);
     setEditingAdvisorId(null);
     setSelectedMemberId("");
@@ -103,31 +105,14 @@ export default function AdminMagazinePublishingAdvisorsPage() {
   }
 
   async function uploadIfNeeded(): Promise<string> {
-    if (!file) return photoUrl.trim();
-    if (!magazineId) return "";
-    const presignRes = await fetch("/api/admin/magazine-advisor-upload", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        magazineId,
-        filename: file.name,
-        contentType: file.type,
-        size: file.size,
-      }),
-    });
-    const presignPayload = await presignRes.json();
-    if (!presignRes.ok || !presignPayload?.success) {
-      throw new Error(presignPayload?.error ?? "Could not start upload");
+    if (!magazineId) throw new Error("Invalid magazine");
+    if (file) {
+      return uploadMagazineAdvisorPhotoToStorage(file, magazineId);
     }
-    const { uploadUrl, fileUrl } = presignPayload.data as { uploadUrl: string; fileUrl: string };
-
-    const putRes = await fetch(uploadUrl, {
-      method: "PUT",
-      body: file,
-      headers: { "Content-Type": file.type },
-    });
-    if (!putRes.ok) throw new Error("Upload to storage failed.");
-    return fileUrl;
+    if (editingAdvisorId && existingPhotoUrl.trim()) {
+      return existingPhotoUrl.trim();
+    }
+    throw new Error("Upload a photo (JPEG, PNG, or WebP).");
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -254,7 +239,7 @@ export default function AdminMagazinePublishingAdvisorsPage() {
                           setEditingAdvisorId(a.id);
                           setName(a.name);
                           setJobTitle(a.jobTitle);
-                          setPhotoUrl(a.photoUrl);
+                          setExistingPhotoUrl(a.photoUrl);
                           setFile(null);
                           setFileInputKey((k) => k + 1);
                         }}
@@ -294,19 +279,26 @@ export default function AdminMagazinePublishingAdvisorsPage() {
                 onChange={(e) => setJobTitle(e.target.value)}
                 required
               />
-              <input
-                className={styles.adminInput}
-                placeholder="Photo URL"
-                value={photoUrl}
-                onChange={(e) => setPhotoUrl(e.target.value)}
-                required={!file}
-              />
+              {editingAdvisorId && existingPhotoUrl.trim() ? (
+                <p className={styles.adminHint}>
+                  Current photo:{" "}
+                  <a href={existingPhotoUrl} target="_blank" rel="noreferrer">
+                    Open image
+                  </a>{" "}
+                  — upload a new file below to replace it.
+                </p>
+              ) : !editingAdvisorId ? (
+                <p className={styles.adminHint}>Photo required: choose an image file below.</p>
+              ) : (
+                <p className={styles.adminHint}>No photo on file; upload one below.</p>
+              )}
               <input
                 key={fileInputKey}
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
                 onChange={(e) => setFile(e.target.files?.[0] ?? null)}
               />
+              {file ? <p className={styles.adminHint}>Selected: {file.name}</p> : null}
               {submitError ? <p className={styles.adminError}>{submitError}</p> : null}
               <div className={styles.adminActions}>
                 <button

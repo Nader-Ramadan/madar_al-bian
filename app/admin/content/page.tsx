@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import styles from "@/app/page.module.css";
+import { uploadContentImageToStorage } from "@/lib/admin-client-upload";
 
 type Blog = { id: number; title: string; summary: string; date: string; author: string; image?: string | null };
 type Conference = { id: number; title: string; description: string; date: string; location: string; image?: string | null; attendees?: string | null };
@@ -17,6 +18,10 @@ export default function AdminContentPage() {
   const [blogForm, setBlogForm] = useState({ id: 0, title: "", summary: "", date: "", author: "", image: "" });
   const [conferenceForm, setConferenceForm] = useState({ id: 0, title: "", description: "", date: "", location: "", image: "", attendees: "" });
   const [fieldForm, setFieldForm] = useState({ id: 0, name: "", description: "" });
+  const [blogImageFile, setBlogImageFile] = useState<File | null>(null);
+  const [blogImageInputKey, setBlogImageInputKey] = useState(0);
+  const [conferenceImageFile, setConferenceImageFile] = useState<File | null>(null);
+  const [conferenceImageInputKey, setConferenceImageInputKey] = useState(0);
 
   async function load() {
     const [bRes, cRes, fRes] = await Promise.all([
@@ -52,14 +57,20 @@ export default function AdminContentPage() {
     setBusy(true);
     setError(null);
     try {
+      let imageUrl: string | null = blogForm.image.trim() || null;
+      if (blogImageFile) {
+        imageUrl = await uploadContentImageToStorage(blogImageFile, "blog");
+      }
       await save(blogForm.id ? `/api/blogs/${blogForm.id}` : "/api/blogs", blogForm.id ? "PUT" : "POST", {
         title: blogForm.title.trim(),
         summary: blogForm.summary.trim(),
         date: blogForm.date.trim(),
         author: blogForm.author.trim(),
-        image: blogForm.image.trim() || null,
+        image: imageUrl,
       });
       setBlogForm({ id: 0, title: "", summary: "", date: "", author: "", image: "" });
+      setBlogImageFile(null);
+      setBlogImageInputKey((k) => k + 1);
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Save failed");
@@ -71,15 +82,21 @@ export default function AdminContentPage() {
     setBusy(true);
     setError(null);
     try {
+      let imageUrl: string | null = conferenceForm.image.trim() || null;
+      if (conferenceImageFile) {
+        imageUrl = await uploadContentImageToStorage(conferenceImageFile, "conference");
+      }
       await save(conferenceForm.id ? `/api/conferences/${conferenceForm.id}` : "/api/conferences", conferenceForm.id ? "PUT" : "POST", {
         title: conferenceForm.title.trim(),
         description: conferenceForm.description.trim(),
         date: conferenceForm.date.trim(),
         location: conferenceForm.location.trim(),
-        image: conferenceForm.image.trim() || null,
+        image: imageUrl,
         attendees: conferenceForm.attendees.trim() || null,
       });
       setConferenceForm({ id: 0, title: "", description: "", date: "", location: "", image: "", attendees: "" });
+      setConferenceImageFile(null);
+      setConferenceImageInputKey((k) => k + 1);
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Save failed");
@@ -128,7 +145,24 @@ export default function AdminContentPage() {
           <textarea className={styles.adminTextarea} placeholder="Summary" value={blogForm.summary} onChange={(e) => setBlogForm((s) => ({ ...s, summary: e.target.value }))} required />
           <input className={styles.adminInput} placeholder="Date" value={blogForm.date} onChange={(e) => setBlogForm((s) => ({ ...s, date: e.target.value }))} required />
           <input className={styles.adminInput} placeholder="Author" value={blogForm.author} onChange={(e) => setBlogForm((s) => ({ ...s, author: e.target.value }))} required />
-          <input className={styles.adminInput} placeholder="Image URL" value={blogForm.image} onChange={(e) => setBlogForm((s) => ({ ...s, image: e.target.value }))} />
+          {blogForm.image.trim() ? (
+            <p className={styles.adminSubtitle}>
+              Current image:{" "}
+              <a href={blogForm.image} target="_blank" rel="noreferrer">
+                Open
+              </a>{" "}
+              — upload below to replace.
+            </p>
+          ) : (
+            <p className={styles.adminSubtitle}>Optional cover image: upload a file below.</p>
+          )}
+          <input
+            key={blogImageInputKey}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={(e) => setBlogImageFile(e.target.files?.[0] ?? null)}
+          />
+          {blogImageFile ? <p className={styles.adminHint}>Selected: {blogImageFile.name}</p> : null}
           <button className={`${styles.adminButton} ${styles.adminButtonPrimary}`} disabled={busy} type="submit">{blogForm.id ? "Update blog" : "Create blog"}</button>
         </form>
         <ul className={styles.adminList}>
@@ -136,7 +170,11 @@ export default function AdminContentPage() {
             <li key={item.id} className={styles.adminListItem}>
               <span className={styles.adminListText}><strong>{item.title}</strong> - {item.author}</span>
               <div className={styles.adminActions}>
-                <button className={styles.adminButton} onClick={() => setBlogForm({ id: item.id, title: item.title, summary: item.summary, date: item.date, author: item.author, image: item.image ?? "" })}>Edit</button>
+                <button className={styles.adminButton} onClick={() => {
+                  setBlogImageFile(null);
+                  setBlogImageInputKey((k) => k + 1);
+                  setBlogForm({ id: item.id, title: item.title, summary: item.summary, date: item.date, author: item.author, image: item.image ?? "" });
+                }}>Edit</button>
                 <button className={`${styles.adminButton} ${styles.adminButtonDanger}`} onClick={() => deleteItem(`/api/blogs/${item.id}`)}>Delete</button>
               </div>
             </li>
@@ -151,7 +189,24 @@ export default function AdminContentPage() {
           <textarea className={styles.adminTextarea} placeholder="Description" value={conferenceForm.description} onChange={(e) => setConferenceForm((s) => ({ ...s, description: e.target.value }))} required />
           <input className={styles.adminInput} placeholder="Date" value={conferenceForm.date} onChange={(e) => setConferenceForm((s) => ({ ...s, date: e.target.value }))} required />
           <input className={styles.adminInput} placeholder="Location" value={conferenceForm.location} onChange={(e) => setConferenceForm((s) => ({ ...s, location: e.target.value }))} required />
-          <input className={styles.adminInput} placeholder="Image URL" value={conferenceForm.image} onChange={(e) => setConferenceForm((s) => ({ ...s, image: e.target.value }))} />
+          {conferenceForm.image.trim() ? (
+            <p className={styles.adminSubtitle}>
+              Current image:{" "}
+              <a href={conferenceForm.image} target="_blank" rel="noreferrer">
+                Open
+              </a>{" "}
+              — upload below to replace.
+            </p>
+          ) : (
+            <p className={styles.adminSubtitle}>Optional image: upload a file below.</p>
+          )}
+          <input
+            key={conferenceImageInputKey}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={(e) => setConferenceImageFile(e.target.files?.[0] ?? null)}
+          />
+          {conferenceImageFile ? <p className={styles.adminHint}>Selected: {conferenceImageFile.name}</p> : null}
           <input className={styles.adminInput} placeholder="Attendees" value={conferenceForm.attendees} onChange={(e) => setConferenceForm((s) => ({ ...s, attendees: e.target.value }))} />
           <button className={`${styles.adminButton} ${styles.adminButtonPrimary}`} disabled={busy} type="submit">{conferenceForm.id ? "Update conference" : "Create conference"}</button>
         </form>
@@ -160,7 +215,11 @@ export default function AdminContentPage() {
             <li key={item.id} className={styles.adminListItem}>
               <span className={styles.adminListText}><strong>{item.title}</strong> - {item.location}</span>
               <div className={styles.adminActions}>
-                <button className={styles.adminButton} onClick={() => setConferenceForm({ id: item.id, title: item.title, description: item.description, date: item.date, location: item.location, image: item.image ?? "", attendees: item.attendees ?? "" })}>Edit</button>
+                <button className={styles.adminButton} onClick={() => {
+                  setConferenceImageFile(null);
+                  setConferenceImageInputKey((k) => k + 1);
+                  setConferenceForm({ id: item.id, title: item.title, description: item.description, date: item.date, location: item.location, image: item.image ?? "", attendees: item.attendees ?? "" });
+                }}>Edit</button>
                 <button className={`${styles.adminButton} ${styles.adminButtonDanger}`} onClick={() => deleteItem(`/api/conferences/${item.id}`)}>Delete</button>
               </div>
             </li>

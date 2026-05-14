@@ -15,6 +15,9 @@ export default function NavBar() {
       try {
         const response = await fetch("/api/auth/me", { cache: "no-store" });
         const payload = await response.json();
+        // #region agent log
+        fetch('http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'51cdae'},body:JSON.stringify({sessionId:'51cdae',runId:'site-debug',hypothesisId:'H2',location:'app/components/nav-bar.tsx:loadSession',message:'nav_auth_me',data:{httpStatus:response.status,success:Boolean(payload?.success),role:String(payload?.data?.role ?? '')},timestamp:Date.now()})}).catch(()=>{});
+        // #endregion
         setIsAdmin(Boolean(payload?.success && payload?.data?.role === "ADMIN"));
       } catch {
         setIsAdmin(false);

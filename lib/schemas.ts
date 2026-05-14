@@ -109,6 +109,13 @@ export const magazineBannerUploadPresignSchema = z.object({
   size: z.number().int().positive().max(8 * 1024 * 1024),
 });
 
+export const contentImageUploadPresignSchema = z.object({
+  kind: z.enum(["blog", "conference"]),
+  filename: z.string().min(1).max(255),
+  contentType: z.enum(imageContentTypes),
+  size: z.number().int().positive().max(8 * 1024 * 1024),
+});
+
 export const publicationRequestSchema = z.object({
   authorName: z.string().min(2).max(255),
   authorEmail: z.string().email(),

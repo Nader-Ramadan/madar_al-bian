@@ -14,11 +14,18 @@ type BlogPost = {
 
 async function getBlogPosts(): Promise<BlogPost[]> {
   try {
-    return await prisma.blogPost.findMany({
+    const rows = await prisma.blogPost.findMany({
       orderBy: { id: "desc" },
       take: 6,
     });
-  } catch {
+    // #region agent log
+    fetch('http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'51cdae'},body:JSON.stringify({sessionId:'51cdae',runId:'site-debug',hypothesisId:'H1',location:'app/components/blog.tsx:getBlogPosts',message:'blog_fetch_ok',data:{rowCount:rows.length},timestamp:0})}).catch(()=>{});
+    // #endregion
+    return rows;
+  } catch (err) {
+    // #region agent log
+    fetch('http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'51cdae'},body:JSON.stringify({sessionId:'51cdae',runId:'site-debug',hypothesisId:'H1',location:'app/components/blog.tsx:getBlogPosts',message:'blog_fetch_failed',data:{name:err instanceof Error ? err.name : 'unknown'},timestamp:0})}).catch(()=>{});
+    // #endregion
     return [];
   }
 }

@@ -43,12 +43,18 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
       const payload = await response.json().catch(() => ({ parseError: true }));
+      // #region agent log
+      fetch('http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'51cdae'},body:JSON.stringify({sessionId:'51cdae',runId:'site-debug',hypothesisId:'H3',location:'app/login/page.tsx:submit',message:'login_client_response',data:{httpStatus:response.status,success:Boolean((payload as { success?: boolean }).success),parseError:Boolean((payload as { parseError?: boolean }).parseError)},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
       if (!(payload as { success?: boolean }).success) {
         setError((payload as { error?: string }).error || "تعذر تسجيل الدخول");
         return;
       }
       router.push("/admin");
     } catch {
+      // #region agent log
+      fetch('http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'51cdae'},body:JSON.stringify({sessionId:'51cdae',runId:'site-debug',hypothesisId:'H3',location:'app/login/page.tsx:submit',message:'login_client_network_error',data:{},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
       setError("تعذر تسجيل الدخول");
     } finally {
       setLoading(false);

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import MagazineResearchEditor from "@/app/admin/components/magazine-research-editor";
+import { uploadBannerFileToStorage, uploadPdfFileToStorage } from "@/lib/admin-client-upload";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import styles from "@/app/page.module.css";
@@ -169,6 +170,8 @@ export default function AdminMagazinesPage() {
   const [busy, setBusy] = useState(false);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [versionPdfFile, setVersionPdfFile] = useState<File | null>(null);
+  const [versionPdfInputKey, setVersionPdfInputKey] = useState(0);
   const [advisorSource, setAdvisorSource] = useState<"global" | "attached" | "both">("both");
   const [globalAdvisors, setGlobalAdvisors] = useState<AdvisorOption[]>([]);
   const [attachedAdvisors, setAttachedAdvisors] = useState<AdvisorOption[]>([]);
@@ -257,49 +260,17 @@ export default function AdminMagazinesPage() {
 
   async function uploadBannerAndGetUrl(targetMagazineId?: number) {
     if (!bannerFile) return null;
-    const presignRes = await fetch("/api/admin/magazine-banner-upload", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        magazineId: targetMagazineId,
-        filename: bannerFile.name,
-        contentType: bannerFile.type,
-        size: bannerFile.size,
-      }),
-    });
-    const presignPayload = await readResponseJson(presignRes);
-    if (!presignRes.ok || !presignPayload?.success) {
-      throw new Error(presignPayload?.error ?? "Could not start banner upload");
-    }
-    const { uploadUrl, fileUrl } = presignPayload.data as { uploadUrl: string; fileUrl: string };
-    const putRes = await fetch(uploadUrl, { method: "PUT", headers: { "Content-Type": bannerFile.type }, body: bannerFile });
-    if (!putRes.ok) throw new Error("Could not upload banner file");
-    return fileUrl;
+    return uploadBannerFileToStorage(bannerFile, targetMagazineId);
   }
 
   async function uploadPdfAndGetUrl() {
     if (!pdfFile) return null;
-    const presignRes = await fetch("/api/pdfs", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        filename: pdfFile.name,
-        contentType: pdfFile.type,
-        size: pdfFile.size,
-      }),
-    });
-    const presignPayload = await readResponseJson(presignRes);
-    if (!presignRes.ok || !presignPayload?.success) {
-      throw new Error(presignPayload?.error ?? "Could not start PDF upload");
-    }
-    const { uploadUrl, fileUrl } = presignPayload.data as { uploadUrl: string; fileUrl: string };
-    const putRes = await fetch(uploadUrl, {
-      method: "PUT",
-      headers: { "Content-Type": pdfFile.type },
-      body: pdfFile,
-    });
-    if (!putRes.ok) throw new Error("Could not upload PDF file");
-    return fileUrl;
+    return uploadPdfFileToStorage(pdfFile);
+  }
+
+  async function uploadVersionPdfAndGetUrl() {
+    if (!versionPdfFile) return null;
+    return uploadPdfFileToStorage(versionPdfFile);
   }
 
   async function submitMagazine(event: FormEvent) {
@@ -307,8 +278,11 @@ export default function AdminMagazinesPage() {
     setBusy(true);
     setError(null);
     try {
-      if (!magForm.image.trim() && !bannerFile) {
-        throw new Error("Banner image URL is required, or upload a banner file.");
+      if (!editingId && !bannerFile) {
+        throw new Error("Upload a banner image (JPEG, PNG, or WebP).");
+      }
+      if (editingId && !magForm.image.trim() && !bannerFile) {
+        throw new Error("Upload a new banner or keep the existing one (re-open edit from the list).");
       }
       const bannerUrl = await uploadBannerAndGetUrl(editingId ?? undefined);
       const uploadedPdfUrl = await uploadPdfAndGetUrl();
@@ -383,7 +357,11 @@ export default function AdminMagazinesPage() {
     setBusy(true);
     setError(null);
     try {
-      const payload = normalizeVersionPayload(versionForm);
+      const uploadedVersionPdf = await uploadVersionPdfAndGetUrl();
+      const payload = normalizeVersionPayload({
+        ...versionForm,
+        pdfUrl: uploadedVersionPdf ?? (versionForm.pdfUrl.trim() || ""),
+      });
       const response = await fetch(
         versionForm.id ? `/api/admin/magazine-versions/${versionForm.id}` : "/api/admin/magazine-versions",
         {
@@ -395,6 +373,8 @@ export default function AdminMagazinesPage() {
       const resPayload = await readResponseJson(response);
       if (!response.ok || !resPayload?.success) throw new Error(resPayload?.error ?? "Version save failed");
       setVersionForm(emptyVersionForm);
+      setVersionPdfFile(null);
+      setVersionPdfInputKey((k) => k + 1);
       await loadData();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Version save failed");
@@ -477,8 +457,22 @@ export default function AdminMagazinesPage() {
           <input className={styles.adminInput} placeholder="Magazine name" value={magForm.title} onChange={(e) => setMagForm((s) => ({ ...s, title: e.target.value }))} required />
           <textarea className={styles.adminTextarea} placeholder="Description" value={magForm.description} onChange={(e) => setMagForm((s) => ({ ...s, description: e.target.value }))} required />
           <input className={styles.adminInput} placeholder="Category" value={magForm.category} onChange={(e) => setMagForm((s) => ({ ...s, category: e.target.value }))} required />
-          <input className={styles.adminInput} placeholder="Banner image URL" value={magForm.image} onChange={(e) => setMagForm((s) => ({ ...s, image: e.target.value }))} required />
+          <p className={styles.adminSubtitle}>
+            {editingId && magForm.image.trim() ? (
+              <>
+                Current banner:{" "}
+                <a href={magForm.image} target="_blank" rel="noreferrer">
+                  Open image
+                </a>
+              </>
+            ) : editingId ? (
+              "No banner on file; upload one below."
+            ) : (
+              "Upload a banner image (required for new magazines)."
+            )}
+          </p>
           <input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => setBannerFile(e.target.files?.[0] ?? null)} />
+          {bannerFile ? <p className={styles.adminHint}>Selected: {bannerFile.name}</p> : null}
           <input className={styles.adminInput} placeholder="ISSN" value={magForm.issn} onChange={(e) => setMagForm((s) => ({ ...s, issn: e.target.value }))} />
           <input className={styles.adminInput} placeholder="Impact factor" value={magForm.impactFactor} onChange={(e) => setMagForm((s) => ({ ...s, impactFactor: e.target.value }))} />
           <input className={styles.adminInput} placeholder="Current version" value={magForm.currentVersion} onChange={(e) => setMagForm((s) => ({ ...s, currentVersion: e.target.value }))} />
@@ -626,13 +620,43 @@ export default function AdminMagazinesPage() {
           <input className={styles.adminInput} placeholder="Title" value={versionForm.title} onChange={(e) => setVersionForm((s) => ({ ...s, title: e.target.value }))} required />
           <input type="datetime-local" className={styles.adminInput} value={versionForm.releaseDate} onChange={(e) => setVersionForm((s) => ({ ...s, releaseDate: e.target.value }))} required />
           <input className={styles.adminInput} placeholder="Page count" value={versionForm.pageCount} onChange={(e) => setVersionForm((s) => ({ ...s, pageCount: e.target.value }))} />
-          <input className={styles.adminInput} placeholder="PDF URL" value={versionForm.pdfUrl} onChange={(e) => setVersionForm((s) => ({ ...s, pdfUrl: e.target.value }))} />
+          <p className={styles.adminSubtitle}>
+            {versionForm.pdfUrl.trim() ? (
+              <>
+                Current issue PDF:{" "}
+                <a href={versionForm.pdfUrl} target="_blank" rel="noreferrer">
+                  Open PDF
+                </a>
+              </>
+            ) : (
+              "No PDF on file for this version (optional)."
+            )}
+          </p>
+          <input
+            key={versionPdfInputKey}
+            type="file"
+            accept="application/pdf"
+            onChange={(e) => setVersionPdfFile(e.target.files?.[0] ?? null)}
+          />
+          {versionPdfFile ? <p className={styles.adminHint}>Selected: {versionPdfFile.name}</p> : null}
           <textarea className={styles.adminTextarea} placeholder="Notes" value={versionForm.notes} onChange={(e) => setVersionForm((s) => ({ ...s, notes: e.target.value }))} />
           <div className={styles.adminActions}>
             <button className={`${styles.adminButton} ${styles.adminButtonPrimary}`} type="submit" disabled={busy}>
               {versionForm.id ? "Update version" : "Create version"}
             </button>
-            {versionForm.id ? <button type="button" className={styles.adminButton} onClick={() => setVersionForm(emptyVersionForm)}>Cancel</button> : null}
+            {versionForm.id ? (
+              <button
+                type="button"
+                className={styles.adminButton}
+                onClick={() => {
+                  setVersionForm(emptyVersionForm);
+                  setVersionPdfFile(null);
+                  setVersionPdfInputKey((k) => k + 1);
+                }}
+              >
+                Cancel
+              </button>
+            ) : null}
           </div>
         </form>
       </section>
@@ -670,16 +694,26 @@ export default function AdminMagazinesPage() {
                 >
                   Manage researches
                 </button>
-                <button type="button" className={styles.adminButton} onClick={() => setVersionForm({
-                  id: item.id,
-                  magazineId: String(item.magazineId),
-                  version: item.version,
-                  title: item.title,
-                  releaseDate: new Date(item.releaseDate).toISOString().slice(0, 16),
-                  notes: item.notes ?? "",
-                  pageCount: item.pageCount != null ? String(item.pageCount) : "",
-                  pdfUrl: item.pdfUrl ?? "",
-                })}>Edit</button>
+                <button
+                  type="button"
+                  className={styles.adminButton}
+                  onClick={() => {
+                    setVersionPdfFile(null);
+                    setVersionPdfInputKey((k) => k + 1);
+                    setVersionForm({
+                      id: item.id,
+                      magazineId: String(item.magazineId),
+                      version: item.version,
+                      title: item.title,
+                      releaseDate: new Date(item.releaseDate).toISOString().slice(0, 16),
+                      notes: item.notes ?? "",
+                      pageCount: item.pageCount != null ? String(item.pageCount) : "",
+                      pdfUrl: item.pdfUrl ?? "",
+                    });
+                  }}
+                >
+                  Edit
+                </button>
                 <button type="button" className={`${styles.adminButton} ${styles.adminButtonDanger}`} onClick={() => deleteVersion(item.id)}>Delete</button>
               </div>
             </li>

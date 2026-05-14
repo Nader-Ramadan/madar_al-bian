@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import styles from "@/app/page.module.css";
+import { uploadPdfFileToStorage } from "@/lib/admin-client-upload";
 
 /** Minimal fields returned by `/api/magazines` that we need */
 type Magazine = {
@@ -85,6 +86,8 @@ export default function MagazineResearchEditor() {
   const [researchPickVersionId, setResearchPickVersionId] = useState<number | null>(null);
   const [researches, setResearches] = useState<MagazineVersionResearch[]>([]);
   const [researchForm, setResearchForm] = useState<ResearchFormState>(emptyResearchForm);
+  const [researchPdfFile, setResearchPdfFile] = useState<File | null>(null);
+  const [researchPdfInputKey, setResearchPdfInputKey] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -135,6 +138,8 @@ export default function MagazineResearchEditor() {
     if (researchPickVersionId !== versionId) {
       setResearchPickVersionId(versionId);
       setResearchForm(emptyResearchForm);
+      setResearchPdfFile(null);
+      setResearchPdfInputKey((k) => k + 1);
       void loadResearches(versionId).catch((err) => {
         setResearches([]);
         setError(err instanceof Error ? err.message : "Failed to load researches");
@@ -167,7 +172,11 @@ export default function MagazineResearchEditor() {
     setBusy(true);
     setError(null);
     try {
-      const body = normalizeResearchPayload(researchForm);
+      const base = normalizeResearchPayload(researchForm);
+      const pdfUrlFinal = researchPdfFile
+        ? await uploadPdfFileToStorage(researchPdfFile)
+        : base.pdfUrl;
+      const body = { ...base, pdfUrl: pdfUrlFinal };
       const url = researchForm.id
         ? `/api/admin/magazine-versions/${researchPickVersionId}/researches/${researchForm.id}`
         : `/api/admin/magazine-versions/${researchPickVersionId}/researches`;
@@ -179,6 +188,8 @@ export default function MagazineResearchEditor() {
       const payload = await readResponseJson(response);
       if (!response.ok || !payload?.success) throw new Error(payload?.error ?? "Research save failed");
       setResearchForm(emptyResearchForm);
+      setResearchPdfFile(null);
+      setResearchPdfInputKey((k) => k + 1);
       await loadResearches(researchPickVersionId);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Research save failed");
@@ -223,6 +234,8 @@ export default function MagazineResearchEditor() {
             setResearchPickVersionId(null);
             setResearches([]);
             setResearchForm(emptyResearchForm);
+            setResearchPdfFile(null);
+            setResearchPdfInputKey((k) => k + 1);
           }}
         >
           <option value="">Select magazine</option>
@@ -240,6 +253,8 @@ export default function MagazineResearchEditor() {
           onChange={(e) => {
             const raw = e.target.value;
             setResearchForm(emptyResearchForm);
+            setResearchPdfFile(null);
+            setResearchPdfInputKey((k) => k + 1);
             setError(null);
             if (!raw) {
               setResearchPickVersionId(null);
@@ -331,12 +346,25 @@ export default function MagazineResearchEditor() {
               value={researchForm.keywords}
               onChange={(e) => setResearchForm((s) => ({ ...s, keywords: e.target.value }))}
             />
+            <p className={styles.adminSubtitle}>
+              {researchForm.pdfUrl.trim() ? (
+                <>
+                  Current PDF:{" "}
+                  <a href={researchForm.pdfUrl} target="_blank" rel="noreferrer">
+                    Open PDF
+                  </a>
+                </>
+              ) : (
+                "No PDF on file (optional)."
+              )}
+            </p>
             <input
-              className={styles.adminInput}
-              placeholder="Research PDF URL (optional)"
-              value={researchForm.pdfUrl}
-              onChange={(e) => setResearchForm((s) => ({ ...s, pdfUrl: e.target.value }))}
+              key={researchPdfInputKey}
+              type="file"
+              accept="application/pdf"
+              onChange={(e) => setResearchPdfFile(e.target.files?.[0] ?? null)}
             />
+            {researchPdfFile ? <p className={styles.adminHint}>Selected: {researchPdfFile.name}</p> : null}
             <input
               className={styles.adminInput}
               placeholder="Sort order"
@@ -348,7 +376,15 @@ export default function MagazineResearchEditor() {
                 {researchForm.id ? "Update research" : "Add research"}
               </button>
               {researchForm.id ? (
-                <button type="button" className={styles.adminButton} onClick={() => setResearchForm(emptyResearchForm)}>
+                <button
+                  type="button"
+                  className={styles.adminButton}
+                  onClick={() => {
+                    setResearchForm(emptyResearchForm);
+                    setResearchPdfFile(null);
+                    setResearchPdfInputKey((k) => k + 1);
+                  }}
+                >
                   Cancel edit
                 </button>
               ) : null}
@@ -381,7 +417,9 @@ export default function MagazineResearchEditor() {
                         ? `${styles.adminButton} ${styles.adminButtonPrimary}`
                         : styles.adminButton
                     }
-                    onClick={() =>
+                    onClick={() => {
+                      setResearchPdfFile(null);
+                      setResearchPdfInputKey((k) => k + 1);
                       setResearchForm({
                         id: r.id,
                         researcherNames: r.researcherNames,
@@ -391,8 +429,8 @@ export default function MagazineResearchEditor() {
                         keywords: r.keywords ?? "",
                         pdfUrl: r.pdfUrl ?? "",
                         sortOrder: String(r.sortOrder),
-                      })
-                    }
+                      });
+                    }}
                   >
                     Edit
                   </button>
