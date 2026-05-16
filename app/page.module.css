@@ -23,7 +23,7 @@
   --hero-btn-nudge: 1.35rem;
   position: relative;
   width: 100%;
-  min-height: min(70vh, 640px);
+  min-height: clamp(320px, 55vh, 640px);
   background-color: var(--secondary-color, #0a3f62);
   padding: var(--hero-pad-block) var(--hero-pad-inline);
   overflow: hidden;
@@ -282,7 +282,11 @@
 
 .authorImage img {
   width: 100%;
-  height: 100%;
+  max-width: 12rem;
+  height: auto;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
 }
 
 .authorInfo {
@@ -448,14 +452,21 @@
 }
 
 .reasonsIcon {
-  width: 64px;
-  height: 64px;
+  width: clamp(56px, 16vw, 80px);
+  height: clamp(56px, 16vw, 80px);
   border-radius: 50%;
   background: rgba(10, 63, 98, 0.12);
   display: grid;
   place-items: center;
   color: var(--secondary-color);
+  flex-shrink: 0;
   box-shadow: 0 6px 16px rgba(10, 63, 98, 0.08);
+}
+
+.reasonsIconImg {
+  width: clamp(48px, 14vw, 80px);
+  height: auto;
+  max-width: 100%;
 }
 
 .reasonsIcon svg {
@@ -625,9 +636,10 @@
    =================================================== */
 .blogSection {
   width: 100%;
-  padding: 4rem 2rem;
+  padding: clamp(2rem, 4vw, 4rem) clamp(0.75rem, 3vw, 2rem);
   background: var(--blog-background);
   color: var(--blog-color);
+  box-sizing: border-box;
 }
 
 .blogTitle {
@@ -651,6 +663,18 @@
   gap: 1rem;
 }
 
+@media (max-width: 640px) {
+  .blogGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .conferenceImage {
+    aspect-ratio: 2 / 1;
+  }
+}
+
 .blogCard {
   background: white;
   border-radius: 16px;
@@ -661,16 +685,14 @@
 }
 
 .blogImageWrapper {
+  position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
 }
 
 .blogImage {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
-  display: block;
 }
 
 .blogCardBody {
@@ -888,282 +910,6 @@
 }
 
 /* ===================================================
-   ADVISORY COMMITTEE SECTION
-   =================================================== */
-.advisoryCommitteeSection {
-  width: 100%;
-  padding: 3rem 2rem;
-  background-color: var(--foreground);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.advisoryCommitteeHeader {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto 3rem;
-  text-align: center;
-}
-
-.advisoryCommitteeTitle {
-  font-size: 2.5rem;
-  font-weight: 900;
-  color: var(--secondary-color);
-  margin-bottom: 1rem;
-}
-
-.advisoryCommitteeSubtitle {
-  font-size: 1.1rem;
-  color: var(--text-muted);
-  line-height: 1.6;
-  max-width: 800px;
-  margin: 0 auto 2rem;
-}
-
-.advisoryStatsGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-.advisoryStat {
-  background: var(--background);
-  border-radius: 1rem;
-  padding: 2rem 1.5rem;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-}
-
-.advisoryStat:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-.advisoryStatIcon {
-  font-size: 2.5rem;
-  margin-bottom: 0.75rem;
-}
-
-.advisoryStat h3 {
-  font-size: 2rem;
-  font-weight: 900;
-  color: var(--secondary-color);
-  margin: 0.5rem 0;
-}
-
-.advisoryStat p {
-  font-size: 0.95rem;
-  color: var(--text-muted);
-  margin: 0;
-}
-
-/* Committee Members Grid */
-.committeeMembersWrapper {
-  width: 100%;
-  max-width: 1200px;
-  margin: 2rem auto;
-}
-
-.committeeMembersGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.committeeMemberCard {
-  background: var(--background);
-  border-radius: 1rem;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-  display: flex;
-  flex-direction: column;
-}
-
-.committeeMemberCard:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-}
-
-.memberImagePlaceholder {
-  width: 100%;
-  height: 200px;
-  background: linear-gradient(135deg, #d4b376 0%, #c6a664 100%);
-  position: relative;
-  overflow: hidden;
-}
-
-.memberPhoto {
-  object-fit: cover;
-}
-
-.memberBadge {
-  background: var(--primary-color);
-  color: white;
-  padding: 0.5rem 1rem;
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-align: center;
-}
-
-.memberInfo {
-  padding: 1.25rem;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.memberTitle {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 0.5rem;
-  line-height: 1.4;
-}
-
-.memberSpecialty {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin: 0;
-}
-
-/* Selection Criteria Section */
-.selectionCriteriaSection {
-  width: 100%;
-  max-width: 1200px;
-  margin: 3rem auto 0;
-  padding: 2rem;
-  background: linear-gradient(135deg, var(--secondary-color) 0%, #1a5a84 100%);
-  border-radius: 1rem;
-  color: white;
-  text-align: center;
-}
-
-.selectionCriteriaSection h2 {
-  font-size: 2rem;
-  font-weight: 900;
-  margin-bottom: 2rem;
-  color: var(--primary-color);
-}
-
-.selectionCriteriaGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-}
-
-.criteriaCard {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-}
-
-.criteriaCard:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.4);
-  transform: translateY(-4px);
-}
-
-.criteriaCard h3 {
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: var(--primary-color);
-  margin-bottom: 0.75rem;
-  margin-top: 0;
-}
-
-.criteriaCard p {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.85);
-  margin: 0;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .advisoryCommitteeTitle {
-    font-size: 2rem;
-  }
-
-  .advisoryCommitteeSubtitle {
-    font-size: 1rem;
-  }
-
-  .advisoryStatsGrid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    max-width: 100%;
-  }
-
-  .committeeMembersGrid {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-  }
-
-  .selectionCriteriaGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .advisoryCommitteeSection {
-    padding: 2rem 1rem;
-  }
-
-  .selectionCriteriaSection {
-    margin: 2rem 0;
-    padding: 1.5rem;
-  }
-
-  .selectionCriteriaSection h2 {
-    font-size: 1.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .advisoryCommitteeTitle {
-    font-size: 1.5rem;
-  }
-
-  .advisoryStatsGrid {
-    gap: 0.75rem;
-  }
-
-  .committeeMembersGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
-  }
-
-  .selectionCriteriaGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .memberImagePlaceholder {
-    height: 150px;
-  }
-
-  .memberInfo {
-    padding: 0.75rem;
-  }
-
-  .memberTitle {
-    font-size: 0.8rem;
-  }
-}
-
-/* ===================================================
    REQUEST FOR PUBLICATION SECTION
    =================================================== */
 .requestForPublicationSection {
@@ -1238,7 +984,7 @@
 /* Hero Section */
 .publicationHero {
   width: 100%;
-  height: 350px;
+  min-height: clamp(180px, 45vw, 350px);
   background:
     linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)),
     url("/images/hero-bg.jpg") center/cover;
@@ -1521,7 +1267,9 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .publicationHero {
-    height: 250px;
+    min-height: clamp(160px, 40vw, 250px);
+    height: auto;
+    background-attachment: scroll;
   }
 
   .publicationTitle {
@@ -1561,7 +1309,8 @@
 
 @media (max-width: 480px) {
   .publicationHero {
-    height: 200px;
+    min-height: clamp(140px, 38vw, 200px);
+    height: auto;
   }
 
   .publicationTitle {
@@ -1833,9 +1582,16 @@
 }
 
 .conferenceImage {
-  min-height: 220px;
-  background-size: cover;
-  background-position: center;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: clamp(160px, 38vw, 220px);
+  overflow: hidden;
+  background-color: var(--border-light);
+}
+
+.conferenceImageFill {
+  object-fit: cover;
 }
 
 .conferenceInfo {
@@ -2087,7 +1843,11 @@
 
   .heroBgImage {
     object-fit: cover;
-    object-position: center 28%;
+    object-position: center 30%;
+  }
+
+  .hero {
+    min-height: clamp(320px, 55vh, 640px);
   }
 
   .lineLeft,
@@ -2141,16 +1901,6 @@
   .reasonsCard {
     max-width: 100%;
     padding: 1.5rem 1rem;
-  }
-
-  .reasonsIcon {
-    width: 50px;
-    height: 50px;
-  }
-
-  .reasonsIcon svg {
-    width: 24px;
-    height: 24px;
   }
 
   .reasonsCardTitle {
@@ -2313,58 +2063,6 @@
     bottom: 0;
   }
 
-  /* Advisory Committee */
-  .advisoryCommitteeTitle {
-    font-size: 1.8rem;
-  }
-
-  .advisoryCommitteeSubtitle {
-    font-size: 0.95rem;
-  }
-
-  .advisoryStatsGrid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .advisoryStat {
-    padding: 1.5rem;
-  }
-
-  .advisoryStat h3 {
-    font-size: 1.5rem;
-  }
-
-  .advisoryStatIcon {
-    font-size: 2rem;
-  }
-
-  .committeeMembersGrid {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 0.8rem;
-  }
-
-  .memberImagePlaceholder {
-    height: 150px;
-  }
-
-  .memberInfo {
-    padding: 0.8rem;
-  }
-
-  .memberTitle {
-    font-size: 0.8rem;
-  }
-
-  .memberSpecialty {
-    font-size: 0.75rem;
-  }
-
-  .selectionCriteriaGrid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
   /* Magazine Content */
   .magazineContent {
     grid-template-columns: 1fr;
@@ -2477,17 +2175,13 @@
   }
 
   .reasonsGrid {
+    grid-template-columns: 1fr;
     gap: 0.75rem;
   }
 
   .reasonsCard {
     padding: 1rem 0.75rem;
     gap: 0.75rem;
-  }
-
-  .reasonsIcon {
-    width: 45px;
-    height: 45px;
   }
 
   .reasonsIcon svg {
@@ -2663,92 +2357,6 @@
     font-size: 0.8rem;
   }
 
-  /* Advisory Committee */
-  .advisoryCommitteeSection {
-    padding: 1.5rem 1rem;
-  }
-
-  .advisoryCommitteeTitle {
-    font-size: 1.4rem;
-  }
-
-  .advisoryCommitteeSubtitle {
-    font-size: 0.85rem;
-  }
-
-  .advisoryStatsGrid {
-    gap: 0.75rem;
-  }
-
-  .advisoryStat {
-    padding: 1rem;
-  }
-
-  .advisoryStat h3 {
-    font-size: 1.2rem;
-  }
-
-  .advisoryStatIcon {
-    font-size: 1.75rem;
-  }
-
-  .advisoryStat p {
-    font-size: 0.8rem;
-  }
-
-  .committeeMembersGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.6rem;
-  }
-
-  .memberImagePlaceholder {
-    height: 120px;
-  }
-
-  .memberBadge {
-    font-size: 0.7rem;
-    padding: 0.4rem 0.8rem;
-  }
-
-  .memberInfo {
-    padding: 0.6rem;
-  }
-
-  .memberTitle {
-    font-size: 0.7rem;
-    margin-bottom: 0.3rem;
-  }
-
-  .memberSpecialty {
-    font-size: 0.65rem;
-  }
-
-  .selectionCriteriaSection {
-    margin: 1.5rem 0;
-    padding: 1rem;
-  }
-
-  .selectionCriteriaSection h2 {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-  }
-
-  .selectionCriteriaGrid {
-    gap: 0.75rem;
-  }
-
-  .criteriaCard {
-    padding: 1rem;
-  }
-
-  .criteriaCard h3 {
-    font-size: 0.95rem;
-  }
-
-  .criteriaCard p {
-    font-size: 0.8rem;
-  }
-
   /* Magazine Content */
   .magazineContent {
     padding: 1rem;
@@ -2791,7 +2399,9 @@
 
   /* Publication Process */
   .publicationHero {
-    height: 200px;
+    min-height: clamp(140px, 38vw, 200px);
+    height: auto;
+    background-attachment: scroll;
   }
 
   .publicationTitle {
@@ -2969,7 +2579,7 @@
   }
 
   .conferenceImage {
-    min-height: 150px;
+    min-height: clamp(140px, 36vw, 180px);
   }
 
   .conferenceInfo {

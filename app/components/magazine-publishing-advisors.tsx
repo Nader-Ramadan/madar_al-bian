@@ -58,9 +58,8 @@ export default function MagazinePublishingAdvisors({
                       className={styles.advisorAvatar}
                       src={a.photoUrl}
                       alt=""
-                      width={112}
-                      height={112}
-                      sizes="112px"
+                      fill
+                      sizes="(max-width: 480px) 33vw, (max-width: 900px) 25vw, 112px"
                       unoptimized={needsUnoptimizedAsset(a.photoUrl)}
                     />
                   </div>

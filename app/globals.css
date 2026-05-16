@@ -52,8 +52,31 @@
   --shadow-medium: rgba(24, 36, 75, 0.08);
 }
 
+/* Reusable responsive image helpers */
+.imgCoverWrap {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.imgCover {
+  object-fit: cover;
+}
+
+.imgFluid {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
 .nav-brand {
   flex-shrink: 0;
+}
+
+.nav-brand img {
+  max-width: min(150px, 42vw);
+  width: auto !important;
+  height: auto !important;
 }
 
 .nav-bar {
@@ -436,34 +459,55 @@ a {
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(6, minmax(120px, 1fr));
+  grid-template-columns: minmax(200px, 1.4fr) repeat(3, minmax(140px, 1fr));
   gap: 2rem;
   align-items: start;
-  justify-items: stretch;
   position: relative;
   z-index: 1;
 }
 
 .footerBrand {
-  grid-column: 1 / span 2;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.footerLogoLink {
+  display: inline-block;
+  line-height: 0;
+  border-radius: 4px;
+  transition: transform 0.3s ease, opacity 0.2s ease;
+}
+
+.footerLogoLink:hover {
+  transform: scale(1.03);
+}
+
+.footerLogoLink:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 4px;
 }
 
 .footerBrand .logo {
-  width: 160px;
-  height: auto;
-  transition: transform 0.3s ease;
+  width: min(180px, 55vw);
+  max-width: 100%;
+  height: auto !important;
 }
 
-.footerBrand .logo:hover {
-  transform: scale(1.05);
+.footerTagline {
+  margin: 0;
+  max-width: 22rem;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .footerSocials {
   display: flex;
-  gap: 0.8rem;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 0.25rem;
 }
 
 .footerSocials a {
@@ -471,32 +515,43 @@ a {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
   align-items: center;
   justify-content: center;
   color: white;
   text-decoration: none;
-  font-weight: 700;
-  font-size: 0.85rem;
-  transition: all 0.3s ease;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease,
+    border-color 0.25s ease, box-shadow 0.25s ease;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.footerSocials a svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
 }
 
 .footerSocials a:hover {
   background: var(--primary-color);
   color: var(--secondary-color);
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   border-color: var(--primary-color);
-  box-shadow: 0 8px 16px rgba(198, 166, 100, 0.3);
+  box-shadow: 0 6px 14px rgba(198, 166, 100, 0.28);
+}
+
+.footerSocials a:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
 }
 
 .footerSection {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
-  padding: 1rem;
-  border-radius: 8px;
+  gap: 0.85rem;
+  padding: 1.1rem 1.15rem;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   transition: background 0.3s ease;
 }
 
@@ -504,57 +559,109 @@ a {
   background: rgba(255, 255, 255, 0.08);
 }
 
-.footerSection h4 {
+.footerSectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   margin: 0;
   color: rgba(255, 255, 255, 0.95);
   font-size: 1.05rem;
   font-weight: 800;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.02em;
 }
 
-.footerSection a,
-.footerSection p {
+.footerSectionTitle svg {
+  flex-shrink: 0;
+  color: var(--primary-color);
+  opacity: 0.95;
+}
+
+.footerNav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.footerNav a {
   margin: 0;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.82);
   text-decoration: none;
   font-size: 0.95rem;
-  line-height: 1.6;
-  transition: all 0.2s ease;
+  line-height: 1.5;
+  transition: color 0.2s ease;
+  width: fit-content;
 }
 
-.footerSection a {
-  cursor: pointer;
-  position: relative;
-  padding-inline-start: 0.5rem;
-}
-
-.footerSection a::before {
-  content: "→";
-  position: absolute;
-  inset-inline-start: -0.5rem;
-  opacity: 0;
-  transition: all 0.2s ease;
-}
-
-.footerSection a:hover {
+.footerNav a:hover {
   color: var(--primary-color);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
-[dir="rtl"] .footerSection a:hover {
-  transform: translateX(4px);
+.footerNav a:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
-[dir="ltr"] .footerSection a:hover {
-  transform: translateX(-4px);
+.footerSectionContact {
+  gap: 0.75rem;
 }
 
-.footerSection a:hover::before {
-  opacity: 1;
-  inset-inline-start: 0;
+.footerContactList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
 }
 
-.footerSection p {
-  font-size: 0.9rem;
+.footerContactItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.footerContactIcon {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--primary-color);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footerContactIcon svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.footerContactItem a {
+  color: rgba(255, 255, 255, 0.88);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  word-break: break-word;
+}
+
+.footerContactItem a:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.footerContactItem a:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 .footerCopy {
@@ -570,13 +677,18 @@ a {
 
 @media (max-width: 900px) {
   .footerContent {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.5rem;
   }
 
   .footerBrand {
     grid-column: 1 / -1;
+    align-items: center;
     text-align: center;
+  }
+
+  .footerTagline {
+    max-width: 28rem;
   }
 
   .footerSocials {
@@ -607,7 +719,7 @@ a {
   }
 
   .footerBrand .logo {
-    width: 140px;
+    width: min(160px, 50vw);
   }
 
   .footerSocials {
@@ -616,23 +728,22 @@ a {
   }
 
   .footerSocials a {
-    width: 36px;
-    height: 36px;
-    font-size: 0.8rem;
+    width: 38px;
+    height: 38px;
   }
 
   .footerSection {
-    padding: 0.8rem;
-    gap: 0.6rem;
+    padding: 0.9rem 1rem;
+    gap: 0.65rem;
   }
 
-  .footerSection h4 {
-    font-size: 0.95rem;
+  .footerSectionTitle {
+    font-size: 0.98rem;
   }
 
-  .footerSection a,
-  .footerSection p {
-    font-size: 0.85rem;
+  .footerNav a,
+  .footerContactItem {
+    font-size: 0.88rem;
   }
 
   .footerCopy {
@@ -701,36 +812,28 @@ a {
   }
 
   .footerSocials a {
-    width: 34px;
-    height: 34px;
-    font-size: 0.75rem;
+    width: 36px;
+    height: 36px;
   }
 
   .footerSection {
-    grid-column: auto;
-    padding: 0.75rem;
-    gap: 0.5rem;
-    border-radius: 6px;
+    padding: 0.85rem;
+    gap: 0.55rem;
+    border-radius: 8px;
   }
 
-  .footerSection h4 {
-    font-size: 0.9rem;
-    margin-bottom: 0.25rem;
+  .footerSectionTitle {
+    font-size: 0.92rem;
   }
 
-  .footerSection a,
-  .footerSection p {
-    font-size: 0.8rem;
-    line-height: 1.5;
+  .footerNav a,
+  .footerContactItem {
+    font-size: 0.82rem;
   }
 
-  .footerSection a::before {
-    display: none;
-  }
-
-  .footerSection a:hover {
-    transform: none;
-    text-decoration: underline;
+  .footerContactIcon {
+    width: 32px;
+    height: 32px;
   }
 
   .footerCopy {
@@ -771,24 +874,22 @@ a {
   }
 
   .footerSocials a {
-    width: 32px;
-    height: 32px;
-    font-size: 0.7rem;
+    width: 34px;
+    height: 34px;
   }
 
   .footerSection {
-    padding: 0.6rem;
-    gap: 0.4rem;
-    border-radius: 4px;
+    padding: 0.75rem;
+    gap: 0.45rem;
   }
 
-  .footerSection h4 {
-    font-size: 0.85rem;
+  .footerSectionTitle {
+    font-size: 0.88rem;
   }
 
-  .footerSection a,
-  .footerSection p {
-    font-size: 0.75rem;
+  .footerNav a,
+  .footerContactItem {
+    font-size: 0.78rem;
   }
 
   .footerCopy {

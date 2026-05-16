@@ -42,9 +42,9 @@ export default async function Blog() {
                     <Image
                         src={imgSrc}
                         alt={post.title}
-                        width={400}
-                        height={250}
+                        fill
                         className={styles.blogImage}
+                        sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 280px"
                         unoptimized={imgRemote}
                     />
             </div>

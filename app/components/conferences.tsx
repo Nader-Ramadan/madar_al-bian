@@ -1,6 +1,15 @@
 "use client";
+import Image from "next/image";
 import styles from '../page.module.css';
 import { useEffect, useState } from "react";
+
+function needsUnoptimizedAsset(src: string) {
+  return (
+    src.startsWith("http://") ||
+    src.startsWith("https://") ||
+    src.startsWith("/uploads/")
+  );
+}
 
 export default function Conferences() {
   const [upcoming, setUpcoming] = useState<Array<{
@@ -64,9 +73,20 @@ export default function Conferences() {
 
       <h2 className={styles.upcomingTitle}>المؤتمرات القادمة</h2>
       <div className={styles.upcomingConferencesGrid}>
-        {upcoming.map((item, idx) => (
+        {upcoming.map((item, idx) => {
+          const imgSrc = item.image || "/images/conference-1.jpg";
+          return (
           <article key={item.id ?? idx} className={styles.conferenceCard}>
-            <div className={styles.conferenceImage} style={{ backgroundImage: `url(${item.image || "/images/conference-1.jpg"})` }} />
+            <div className={styles.conferenceImage}>
+              <Image
+                src={imgSrc}
+                alt=""
+                fill
+                className={styles.conferenceImageFill}
+                sizes="(max-width: 768px) 100vw, 560px"
+                unoptimized={needsUnoptimizedAsset(imgSrc)}
+              />
+            </div>
             <div className={styles.conferenceInfo}>
               <h3>{item.title}</h3>
               <p>{item.description}</p>
@@ -81,7 +101,8 @@ export default function Conferences() {
               </div>
             </div>
           </article>
-        ))}
+          );
+        })}
       </div>
 
       <div className={styles.conferenceSummaryGrid}>
