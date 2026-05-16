@@ -4,10 +4,9 @@ const requiredEnv = [
   "DB_PASSWORD",
   "DB_NAME",
   "JWT_SECRET",
-  "S3_REGION",
-  "S3_BUCKET",
-  "S3_ACCESS_KEY_ID",
-  "S3_SECRET_ACCESS_KEY",
+  "CLOUDINARY_CLOUD_NAME",
+  "CLOUDINARY_API_KEY",
+  "CLOUDINARY_API_SECRET",
 ] as const;
 
 export function assertEnv() {

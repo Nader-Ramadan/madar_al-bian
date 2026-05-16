@@ -6,7 +6,10 @@
     "node": ">=20.11.0"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
+    "dev:turbo": "next dev",
+    "dev:clean": "npm run clean:next && npm run dev",
+    "clean:next": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\"",
     "db:seed": "prisma db seed",
     "prebuild": "prisma generate",
     "build": "next build",
@@ -17,8 +20,6 @@
     "verify:magazines-api": "node scripts/verify-magazines-api.mjs"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.922.0",
-    "@aws-sdk/s3-request-presigner": "^3.922.0",
     "@prisma/adapter-mariadb": "^7.8.0",
     "@prisma/client": "^6.19.3",
     "@types/node": "^20",
@@ -26,6 +27,7 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "^19",
     "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.10.0",
     "google-auth-library": "^9.15.1",
     "jose": "^6.1.0",
     "mysql2": "^3.22.1",

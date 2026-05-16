@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import styles from "@/app/page.module.css";
+import { translateAdminApiMessage } from "@/lib/admin/api-error-ar";
 
 type AdminSignUpFormProps = {
   onRegistered?: (email: string) => void;
@@ -37,13 +38,13 @@ export default function AdminSignUpForm({ onRegistered }: AdminSignUpFormProps) 
       });
       const payload = await response.json().catch(() => ({ parseError: true }));
       if (!(payload as { success?: boolean }).success) {
-        setError((payload as { error?: string }).error || "تعذر إنشاء الحساب");
+        setError(translateAdminApiMessage((payload as { error?: string }).error || "تعذر إنشاء الحساب"));
         return;
       }
       const data = (payload as { data?: { email?: string } }).data;
       onRegistered?.(data?.email ?? email);
     } catch {
-      setError("تعذر إنشاء الحساب");
+      setError(translateAdminApiMessage("تعذر إنشاء الحساب"));
     } finally {
       setLoading(false);
     }

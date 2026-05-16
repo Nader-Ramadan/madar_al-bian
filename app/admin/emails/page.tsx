@@ -2,6 +2,8 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import styles from "@/app/page.module.css";
+import { adminCopy } from "@/lib/admin/ar-copy";
+import { translateAdminApiMessage } from "@/lib/admin/api-error-ar";
 
 type EmailLog = {
   id: number;
@@ -13,6 +15,7 @@ type EmailLog = {
 };
 
 export default function AdminEmailsPage() {
+  const ep = adminCopy.emailsPage;
   const [to, setTo] = useState("");
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
@@ -42,7 +45,7 @@ export default function AdminEmailsPage() {
       });
       const payload = await response.json();
       if (!response.ok || !payload.success) {
-        setError(payload.error || "Failed to send email");
+        setError(translateAdminApiMessage(payload.error || "Failed to send email"));
         return;
       }
       setTo("");
@@ -57,17 +60,18 @@ export default function AdminEmailsPage() {
   return (
     <div className={styles.adminPage}>
       <header className={styles.adminHeader}>
-        <h1 className={styles.adminTitle}>Email Center</h1>
-        <p className={styles.adminSubtitle}>Send messages and review delivery status logs.</p>
+        <h1 className={styles.adminTitle}>{ep.title}</h1>
+        <p className={styles.adminSectionExplainer}>{ep.explainer}</p>
       </header>
 
       <section className={styles.adminSection}>
+        <p className={styles.adminSectionExplainer}>{ep.composeExplainer}</p>
         <form onSubmit={onSubmit} className={styles.adminForm}>
-          <input value={to} onChange={(e) => setTo(e.target.value)} placeholder="Recipient email" className={styles.adminInput} required />
-          <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject" className={styles.adminInput} required />
-          <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Message" className={styles.adminTextarea} required />
+          <input value={to} onChange={(e) => setTo(e.target.value)} placeholder={ep.placeholderTo} className={styles.adminInput} required />
+          <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder={ep.placeholderSubject} className={styles.adminInput} required />
+          <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder={ep.placeholderBody} className={styles.adminTextarea} required />
           <button type="submit" className={`${styles.adminButton} ${styles.adminButtonPrimary}`} disabled={busy}>
-            {busy ? "Sending..." : "Send email"}
+            {busy ? ep.sending : ep.send}
           </button>
         </form>
         {error ? <p className={styles.adminError}>{error}</p> : null}
@@ -75,20 +79,28 @@ export default function AdminEmailsPage() {
 
       <section className={styles.adminSection}>
         <div className={styles.adminActions}>
-          <h3 className={styles.adminSectionTitle}>Email Logs</h3>
-          <button className={styles.adminButton} onClick={refreshLogs}>Refresh logs</button>
+          <h3 className={styles.adminSectionTitle}>{ep.logsTitle}</h3>
+          <button type="button" className={styles.adminButton} onClick={refreshLogs}>
+            {ep.refreshLogs}
+          </button>
         </div>
+        <p className={styles.adminSectionExplainer}>{ep.logsExplainer}</p>
         {logs.length === 0 ? (
-          <p className={styles.adminEmpty}>No email logs yet.</p>
+          <p className={styles.adminEmpty}>{ep.emptyLogs}</p>
         ) : (
           <ul className={styles.adminList}>
             {logs.map((item) => (
               <li key={item.id} className={styles.adminListItem}>
                 <span className={styles.adminListText}>
-                  <strong>{item.to}</strong> - {item.subject} - {item.status}
-                  {item.error ? <><br />Error: {item.error}</> : null}
+                  <strong>{item.to}</strong> — {item.subject} — {item.status}
+                  {item.error ? (
+                    <>
+                      <br />
+                      {ep.errorPrefix} {translateAdminApiMessage(item.error)}
+                    </>
+                  ) : null}
                 </span>
-                <span className={styles.adminListText}>{new Date(item.sentAt).toLocaleString()}</span>
+                <span className={styles.adminListText}>{new Date(item.sentAt).toLocaleString("ar")}</span>
               </li>
             ))}
           </ul>

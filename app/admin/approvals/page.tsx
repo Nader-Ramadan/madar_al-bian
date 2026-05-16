@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import styles from "@/app/page.module.css";
+import { adminCopy } from "@/lib/admin/ar-copy";
 
 type PublicationRequest = {
   id: number;
@@ -16,7 +17,22 @@ type PublicationRequest = {
   status: "PENDING" | "APPROVED" | "REJECTED";
 };
 
+function statusLabelAr(status: PublicationRequest["status"]) {
+  const ap = adminCopy.approvalsPage;
+  switch (status) {
+    case "PENDING":
+      return ap.statusPending;
+    case "APPROVED":
+      return ap.statusApproved;
+    case "REJECTED":
+      return ap.statusRejected;
+    default:
+      return status;
+  }
+}
+
 export default function AdminApprovalsPage() {
+  const ap = adminCopy.approvalsPage;
   const [requests, setRequests] = useState<PublicationRequest[]>([]);
   const [notesById, setNotesById] = useState<Record<number, string>>({});
   const [busy, setBusy] = useState(false);
@@ -48,18 +64,18 @@ export default function AdminApprovalsPage() {
   return (
     <div className={styles.adminPage}>
       <header className={styles.adminHeader}>
-        <h1 className={styles.adminTitle}>Publication Approvals</h1>
-        <p className={styles.adminSubtitle}>Review requests, set notes, and approve or reject.</p>
+        <h1 className={styles.adminTitle}>{ap.title}</h1>
+        <p className={styles.adminSectionExplainer}>{ap.explainer}</p>
       </header>
       <section className={styles.adminSection}>
         {requests.length === 0 ? (
-          <p className={styles.adminEmpty}>No requests found.</p>
+          <p className={styles.adminEmpty}>{ap.empty}</p>
         ) : (
           <ul className={styles.adminList}>
             {requests.map((item) => (
               <li key={item.id} className={styles.adminListItem}>
                 <span className={styles.adminListText}>
-                  <strong>{item.title}</strong> - {item.authorName} ({item.authorEmail})
+                  <strong>{item.title}</strong> — {item.authorName} ({item.authorEmail})
                   <br />
                   {item.magazine ? (
                     <>
@@ -67,18 +83,32 @@ export default function AdminApprovalsPage() {
                       <br />
                     </>
                   ) : null}
-                  Status: {item.status}
+                  {ap.statusLabel} {statusLabelAr(item.status)}
                 </span>
                 <div className={styles.adminForm} style={{ minWidth: 300 }}>
                   <textarea
                     className={styles.adminTextarea}
-                    placeholder="Review notes"
+                    placeholder={ap.placeholderNotes}
                     value={notesById[item.id] ?? item.reviewNotes ?? ""}
                     onChange={(e) => setNotesById((s) => ({ ...s, [item.id]: e.target.value }))}
                   />
                   <div className={styles.adminActions}>
-                    <button type="button" className={`${styles.adminButton} ${styles.adminButtonPrimary}`} disabled={busy} onClick={() => updateStatus(item.id, "APPROVED")}>Approve</button>
-                    <button type="button" className={`${styles.adminButton} ${styles.adminButtonDanger}`} disabled={busy} onClick={() => updateStatus(item.id, "REJECTED")}>Reject</button>
+                    <button
+                      type="button"
+                      className={`${styles.adminButton} ${styles.adminButtonPrimary}`}
+                      disabled={busy}
+                      onClick={() => updateStatus(item.id, "APPROVED")}
+                    >
+                      {ap.approve}
+                    </button>
+                    <button
+                      type="button"
+                      className={`${styles.adminButton} ${styles.adminButtonDanger}`}
+                      disabled={busy}
+                      onClick={() => updateStatus(item.id, "REJECTED")}
+                    >
+                      {ap.reject}
+                    </button>
                   </div>
                 </div>
               </li>

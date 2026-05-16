@@ -2,8 +2,11 @@
 
 import { FormEvent, useState } from "react";
 import styles from "@/app/page.module.css";
+import { adminCopy } from "@/lib/admin/ar-copy";
+import { translateAdminApiMessage } from "@/lib/admin/api-error-ar";
 
 export default function AdminAccountPage() {
+  const ap = adminCopy.accountPage;
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState<string | null>(null);
@@ -23,10 +26,10 @@ export default function AdminAccountPage() {
       });
       const payload = await response.json();
       if (!response.ok || !payload?.success) {
-        setError(payload?.error ?? "Failed to change password");
+        setError(translateAdminApiMessage(payload?.error ?? "Failed to change password"));
         return;
       }
-      setMessage("Password updated. Please log in again.");
+      setMessage(ap.success);
       setCurrentPassword("");
       setNewPassword("");
     } finally {
@@ -37,15 +40,15 @@ export default function AdminAccountPage() {
   return (
     <div className={styles.adminPage}>
       <header className={styles.adminHeader}>
-        <h1 className={styles.adminTitle}>Account Security</h1>
-        <p className={styles.adminSubtitle}>Change your dashboard password securely.</p>
+        <h1 className={styles.adminTitle}>{ap.title}</h1>
+        <p className={styles.adminSectionExplainer}>{ap.explainer}</p>
       </header>
       <section className={styles.adminSection}>
         <form className={styles.adminForm} onSubmit={onSubmit}>
           <input
             type="password"
             className={styles.adminInput}
-            placeholder="Current password"
+            placeholder={ap.placeholderCurrent}
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
             required
@@ -53,14 +56,14 @@ export default function AdminAccountPage() {
           <input
             type="password"
             className={styles.adminInput}
-            placeholder="New password (min 8 chars)"
+            placeholder={ap.placeholderNew}
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             minLength={8}
             required
           />
           <button className={`${styles.adminButton} ${styles.adminButtonPrimary}`} disabled={busy}>
-            {busy ? "Updating..." : "Change password"}
+            {busy ? ap.updating : ap.submit}
           </button>
         </form>
         {message ? <p className={styles.adminEmpty}>{message}</p> : null}

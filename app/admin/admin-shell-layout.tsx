@@ -3,17 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "@/app/page.module.css";
+import { adminCopy } from "@/lib/admin/ar-copy";
 
 const links = [
-  { href: "/admin", label: "Dashboard Home", icon: "home" },
-  { href: "/admin/magazines", label: "Magazines & Versions", icon: "book" },
-  { href: "/admin/researches", label: "Magazine researches", icon: "research" },
-  { href: "/admin/advisors", label: "Advisors", icon: "users" },
-  { href: "/admin/approvals", label: "Publication Approvals", icon: "check" },
-  { href: "/admin/emails", label: "Email Center", icon: "mail" },
-  { href: "/admin/content", label: "Content CRUD", icon: "layers" },
-  { href: "/admin/traffic", label: "Traffic Analytics", icon: "chart", badge: "Live" },
-  { href: "/admin/account", label: "Account Security", icon: "shield" },
+  { href: "/admin", labelKey: "dashboardHome" as const, icon: "home" },
+  { href: "/admin/magazines", labelKey: "magazines" as const, icon: "book" },
+  { href: "/admin/researches", labelKey: "researches" as const, icon: "research" },
+  { href: "/admin/advisors", labelKey: "advisors" as const, icon: "users" },
+  { href: "/admin/approvals", labelKey: "approvals" as const, icon: "check" },
+  { href: "/admin/emails", labelKey: "emails" as const, icon: "mail" },
+  { href: "/admin/content", labelKey: "content" as const, icon: "layers" },
+  { href: "/admin/traffic", labelKey: "traffic" as const, icon: "chart", badgeKey: "badgeLive" as const },
+  { href: "/admin/account", labelKey: "account" as const, icon: "shield" },
 ];
 
 function NavIcon({ name }: { name: (typeof links)[number]["icon"] }) {
@@ -41,15 +42,19 @@ export default function AdminShellLayout({ children }: { children: React.ReactNo
     return <>{children}</>;
   }
 
+  const sb = adminCopy.sidebar;
+
   return (
-    <div className={styles.page}>
+    <div className={styles.page} lang="ar" dir="rtl">
       <main className={styles.adminShell}>
         <aside className={styles.adminSidebar}>
-          <h2 className={styles.adminSidebarTitle}>Workspace</h2>
-          <p className={styles.adminSidebarText}>Tools and content</p>
-          <nav className={styles.adminNav}>
+          <h2 className={styles.adminSidebarTitle}>{sb.workspaceTitle}</h2>
+          <p className={styles.adminSidebarText}>{sb.workspaceSubtitle}</p>
+          <nav className={styles.adminNav} aria-label={sb.workspaceTitle}>
             {links.map((item) => {
               const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(`${item.href}/`));
+              const label = sb[item.labelKey];
+              const badge = item.badgeKey ? sb[item.badgeKey] : undefined;
               return (
               <Link
                 key={item.href}
@@ -58,8 +63,8 @@ export default function AdminShellLayout({ children }: { children: React.ReactNo
                 aria-current={isActive ? "page" : undefined}
               >
                 <NavIcon name={item.icon} />
-                <span className={styles.adminNavLinkLabel}>{item.label}</span>
-                {item.badge ? <span className={styles.adminNavBadge}>{item.badge}</span> : null}
+                <span className={styles.adminNavLinkLabel}>{label}</span>
+                {badge ? <span className={styles.adminNavBadge}>{badge}</span> : null}
               </Link>
             );
             })}

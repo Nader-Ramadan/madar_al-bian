@@ -3,9 +3,14 @@
 import Link from "next/link";
 import MagazineResearchEditor from "@/app/admin/components/magazine-research-editor";
 import { uploadBannerFileToStorage, uploadPdfFileToStorage } from "@/lib/admin-client-upload";
+import { adminCopy } from "@/lib/admin/ar-copy";
+import { translateAdminApiMessage } from "@/lib/admin/api-error-ar";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import styles from "@/app/page.module.css";
+
+const ac = adminCopy.magazines;
+const c = adminCopy.common;
 
 type Magazine = {
   id: number;
@@ -165,12 +170,12 @@ function formatApiFailureMessage(
   if (details != null && typeof details === "object") {
     try {
       const snippet = JSON.stringify(details).slice(0, 400);
-      return `${base} (${response.status}) ${snippet}`;
+      return translateAdminApiMessage(`${base} (${response.status}) ${snippet}`);
     } catch {
-      return `${base} (${response.status})`;
+      return translateAdminApiMessage(`${base} (${response.status})`);
     }
   }
-  return `${base} (${response.status})`;
+  return translateAdminApiMessage(`${base} (${response.status})`);
 }
 
 type AdminMagazinesTab = "magazines" | "researches";
@@ -259,15 +264,15 @@ export default function AdminMagazinesDashboard() {
         const err =
           (magazinesPayload as { error?: string } | null)?.error ??
           `HTTP ${magazinesResponse.status}`;
-        parts.push(`Magazines (${magazinesResponse.status}): ${err}`);
+        parts.push(`المجلات (${magazinesResponse.status}): ${translateAdminApiMessage(err)}`);
       }
       if (!versionsResponse.ok) {
         const err =
           (versionsPayload as { error?: string } | null)?.error ??
           `HTTP ${versionsResponse.status}`;
-        parts.push(`Versions (${versionsResponse.status}): ${err}`);
+        parts.push(`الإصدارات (${versionsResponse.status}): ${translateAdminApiMessage(err)}`);
       }
-      throw new Error(`Failed to load dashboard data. ${parts.join(" · ")}`);
+      throw new Error(`تعذر تحميل بيانات لوحة المجلات. ${parts.join(" · ")}`);
     }
     setMagazines(magazinesPayload?.data?.items ?? []);
     setVersions(versionsPayload?.data ?? []);
@@ -279,7 +284,7 @@ export default function AdminMagazinesDashboard() {
         await loadData();
         const advisorsResponse = await fetch("/api/advisory-members?limit=100");
         const advisorsPayload = await readResponseJson(advisorsResponse);
-        if (!advisorsResponse.ok || !advisorsPayload?.success) throw new Error("Failed to load advisors");
+        if (!advisorsResponse.ok || !advisorsPayload?.success) throw new Error("تعذر تحميل قائمة المستشارين.");
         setGlobalAdvisors(
           (advisorsPayload?.data?.items ?? []).map((item: { id: number; name: string; title: string }) => ({
             id: item.id,
@@ -288,7 +293,7 @@ export default function AdminMagazinesDashboard() {
           })),
         );
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Failed to load data");
+        setError(translateAdminApiMessage(e instanceof Error ? e.message : c.loading));
       }
     })();
   }, []);
@@ -314,10 +319,14 @@ export default function AdminMagazinesDashboard() {
     setError(null);
     try {
       if (!editingId && !bannerFile) {
-        throw new Error("Upload a banner image (JPEG, PNG, or WebP).");
+        throw new Error(translateAdminApiMessage("Upload a banner image (JPEG, PNG, or WebP)."));
       }
       if (editingId && !magForm.image.trim() && !bannerFile) {
-        throw new Error("Upload a new banner or keep the existing one (re-open edit from the list).");
+        throw new Error(
+          translateAdminApiMessage(
+            "Upload a new banner or keep the existing one (re-open edit from the list).",
+          ),
+        );
       }
       const bannerUrl = await uploadBannerAndGetUrl(editingId ?? undefined);
       const uploadedPdfUrl = await uploadPdfAndGetUrl();
@@ -335,7 +344,7 @@ export default function AdminMagazinesDashboard() {
       });
       const responsePayload = await readResponseJson(response);
       if (!response.ok || !responsePayload?.success) {
-        throw new Error(formatApiFailureMessage(response, responsePayload, "Save failed"));
+        throw new Error(formatApiFailureMessage(response, responsePayload, translateAdminApiMessage("Save failed")));
       }
       setMagForm(emptyMagazineForm);
       setEditingId(null);
@@ -343,7 +352,7 @@ export default function AdminMagazinesDashboard() {
       setPdfFile(null);
       await loadData();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not save magazine");
+      setError(translateAdminApiMessage(e instanceof Error ? e.message : "Could not save magazine"));
     } finally {
       setBusy(false);
     }
@@ -375,15 +384,16 @@ export default function AdminMagazinesDashboard() {
   }
 
   async function removeMagazine(id: number) {
-    if (!confirm("Delete this magazine?")) return;
+    if (!confirm(ac.confirmDeleteMagazine)) return;
     setBusy(true);
     try {
       const response = await fetch(`/api/magazines/${id}`, { method: "DELETE" });
       const payload = await readResponseJson(response);
-      if (!response.ok || !payload?.success) throw new Error(payload?.error ?? "Delete failed");
+      if (!response.ok || !payload?.success)
+        throw new Error(translateAdminApiMessage(payload?.error ?? "Delete failed"));
       await loadData();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Delete failed");
+      setError(translateAdminApiMessage(e instanceof Error ? e.message : "Delete failed"));
     } finally {
       setBusy(false);
     }
@@ -408,28 +418,30 @@ export default function AdminMagazinesDashboard() {
         },
       );
       const resPayload = await readResponseJson(response);
-      if (!response.ok || !resPayload?.success) throw new Error(resPayload?.error ?? "Version save failed");
+      if (!response.ok || !resPayload?.success)
+        throw new Error(translateAdminApiMessage(resPayload?.error ?? "Version save failed"));
       setVersionForm(emptyVersionForm);
       setVersionPdfFile(null);
       setVersionPdfInputKey((k) => k + 1);
       await loadData();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Version save failed");
+      setError(translateAdminApiMessage(e instanceof Error ? e.message : "Version save failed"));
     } finally {
       setBusy(false);
     }
   }
 
   async function deleteVersion(id: number) {
-    if (!confirm("Delete this version?")) return;
+    if (!confirm(ac.confirmDeleteVersion)) return;
     setBusy(true);
     try {
       const response = await fetch(`/api/admin/magazine-versions/${id}`, { method: "DELETE" });
       const payload = await readResponseJson(response);
-      if (!response.ok || !payload?.success) throw new Error(payload?.error ?? "Delete failed");
+      if (!response.ok || !payload?.success)
+        throw new Error(translateAdminApiMessage(payload?.error ?? "Delete failed"));
       await loadData();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Version delete failed");
+      setError(translateAdminApiMessage(e instanceof Error ? e.message : "Delete failed"));
     } finally {
       setBusy(false);
     }
@@ -438,25 +450,25 @@ export default function AdminMagazinesDashboard() {
   return (
     <div className={styles.adminPage}>
       <header className={styles.adminHeader}>
-        <h1 className={styles.adminTitle}>Magazines Dashboard</h1>
-        <p className={styles.adminSubtitle}>Create, edit, and delete magazines with versions and advisor links.</p>
+        <h1 className={styles.adminTitle}>{ac.title}</h1>
+        <p className={styles.adminSectionExplainer}>{ac.explainer}</p>
       </header>
-      <section className={styles.adminStatusGrid} aria-label="Magazines overview">
+      <section className={styles.adminStatusGrid} aria-label={ac.overviewAria}>
         <div className={styles.adminStatusCard}>
-          <p className={styles.adminStatusLabel}>Total magazines</p>
+          <p className={styles.adminStatusLabel}>{ac.totalMagazines}</p>
           <p className={styles.adminStatusValue}>{magazines.length}</p>
         </div>
         <div className={styles.adminStatusCard}>
-          <p className={styles.adminStatusLabel}>Total versions</p>
+          <p className={styles.adminStatusLabel}>{ac.totalVersions}</p>
           <p className={styles.adminStatusValue}>{versions.length}</p>
         </div>
         <div className={styles.adminStatusCard}>
-          <p className={styles.adminStatusLabel}>Advisor options</p>
+          <p className={styles.adminStatusLabel}>{ac.advisorOptions}</p>
           <p className={styles.adminStatusValue}>{advisorOptions.length}</p>
         </div>
       </section>
 
-      <div className={styles.adminTabRow} role="tablist" aria-label="Magazines admin sections">
+      <div className={styles.adminTabRow} role="tablist" aria-label={ac.tablistAria}>
         <button
           type="button"
           role="tab"
@@ -467,7 +479,7 @@ export default function AdminMagazinesDashboard() {
             router.replace("/admin/magazines", { scroll: false });
           }}
         >
-          Magazines &amp; versions
+          {ac.tabMagazines}
         </button>
         <button
           type="button"
@@ -479,7 +491,7 @@ export default function AdminMagazinesDashboard() {
             router.replace("/admin/magazines?tab=researches", { scroll: false });
           }}
         >
-          Researches
+          {ac.tabResearches}
         </button>
       </div>
 
@@ -488,70 +500,76 @@ export default function AdminMagazinesDashboard() {
       <section className={styles.adminSection}>
         <div className={styles.adminSectionHeader}>
           <SectionIcon kind="edit" />
-          <h3 className={styles.adminSectionTitle}>{editingId ? `Edit magazine #${editingId}` : "Create new magazine"}</h3>
+          <h3 className={styles.adminSectionTitle}>
+            {editingId ? ac.editMagazine(editingId) : ac.createMagazine}
+          </h3>
         </div>
+        <p className={styles.adminSectionExplainer}>{ac.sectionCreateMagazineExplainer}</p>
         <form className={styles.adminForm} onSubmit={submitMagazine}>
-          <input className={styles.adminInput} placeholder="Magazine name" value={magForm.title} onChange={(e) => setMagForm((s) => ({ ...s, title: e.target.value }))} required />
-          <textarea className={styles.adminTextarea} placeholder="Description" value={magForm.description} onChange={(e) => setMagForm((s) => ({ ...s, description: e.target.value }))} required />
-          <input className={styles.adminInput} placeholder="Category" value={magForm.category} onChange={(e) => setMagForm((s) => ({ ...s, category: e.target.value }))} required />
+          <input className={styles.adminInput} placeholder={ac.placeholderTitle} value={magForm.title} onChange={(e) => setMagForm((s) => ({ ...s, title: e.target.value }))} required />
+          <textarea className={styles.adminTextarea} placeholder={ac.placeholderDescription} value={magForm.description} onChange={(e) => setMagForm((s) => ({ ...s, description: e.target.value }))} required />
+          <input className={styles.adminInput} placeholder={ac.placeholderCategory} value={magForm.category} onChange={(e) => setMagForm((s) => ({ ...s, category: e.target.value }))} required />
           <p className={styles.adminSubtitle}>
             {editingId && magForm.image.trim() ? (
               <>
-                Current banner:{" "}
+                {ac.bannerCurrent}{" "}
                 <a href={magForm.image} target="_blank" rel="noreferrer">
-                  Open image
+                  {c.openImage}
                 </a>
               </>
             ) : editingId ? (
-              "No banner on file; upload one below."
+              ac.bannerNoneEdit
             ) : (
-              "Upload a banner image (required for new magazines)."
+              ac.bannerRequiredNew
             )}
           </p>
           <input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => setBannerFile(e.target.files?.[0] ?? null)} />
-          {bannerFile ? <p className={styles.adminHint}>Selected: {bannerFile.name}</p> : null}
-          <input className={styles.adminInput} placeholder="ISSN" value={magForm.issn} onChange={(e) => setMagForm((s) => ({ ...s, issn: e.target.value }))} />
-          <input className={styles.adminInput} placeholder="Impact factor" value={magForm.impactFactor} onChange={(e) => setMagForm((s) => ({ ...s, impactFactor: e.target.value }))} />
-          <input className={styles.adminInput} placeholder="Current version" value={magForm.currentVersion} onChange={(e) => setMagForm((s) => ({ ...s, currentVersion: e.target.value }))} />
+          {bannerFile ? (
+            <p className={styles.adminHint}>
+              {c.selectedFile} {bannerFile.name}
+            </p>
+          ) : null}
+          <input className={styles.adminInput} placeholder={ac.placeholderIssn} value={magForm.issn} onChange={(e) => setMagForm((s) => ({ ...s, issn: e.target.value }))} />
+          <input className={styles.adminInput} placeholder={ac.placeholderImpact} value={magForm.impactFactor} onChange={(e) => setMagForm((s) => ({ ...s, impactFactor: e.target.value }))} />
+          <input className={styles.adminInput} placeholder={ac.placeholderCurrentVersion} value={magForm.currentVersion} onChange={(e) => setMagForm((s) => ({ ...s, currentVersion: e.target.value }))} />
           <input type="date" className={styles.adminInput} value={magForm.nextVersionRelease} onChange={(e) => setMagForm((s) => ({ ...s, nextVersionRelease: e.target.value }))} />
           <input type="file" accept="application/pdf" onChange={(e) => setPdfFile(e.target.files?.[0] ?? null)} />
           {pdfFile ? (
-            <p className={styles.adminSubtitle}>Selected PDF: {pdfFile.name}</p>
+            <p className={styles.adminSubtitle}>
+              {ac.pdfSelected} {pdfFile.name}
+            </p>
           ) : magForm.pdfUrl ? (
             <p className={styles.adminSubtitle}>
-              Current PDF:{" "}
+              {ac.pdfCurrent}{" "}
               <a href={magForm.pdfUrl} target="_blank" rel="noreferrer">
-                Open file
+                {c.openFile}
               </a>
             </p>
           ) : (
-            <p className={styles.adminSubtitle}>No PDF uploaded yet.</p>
+            <p className={styles.adminSubtitle}>{ac.pdfNone}</p>
           )}
-          <textarea className={styles.adminTextarea} placeholder="Publication preference" value={magForm.publicationPreference} onChange={(e) => setMagForm((s) => ({ ...s, publicationPreference: e.target.value }))} />
-          <textarea className={styles.adminTextarea} placeholder="Version message" value={magForm.versionMessage} onChange={(e) => setMagForm((s) => ({ ...s, versionMessage: e.target.value }))} />
-          <textarea className={styles.adminTextarea} placeholder="Certification" value={magForm.certification} onChange={(e) => setMagForm((s) => ({ ...s, certification: e.target.value }))} />
+          <textarea className={styles.adminTextarea} placeholder={ac.placeholderPublicationPref} value={magForm.publicationPreference} onChange={(e) => setMagForm((s) => ({ ...s, publicationPreference: e.target.value }))} />
+          <textarea className={styles.adminTextarea} placeholder={ac.placeholderVersionMessage} value={magForm.versionMessage} onChange={(e) => setMagForm((s) => ({ ...s, versionMessage: e.target.value }))} />
+          <textarea className={styles.adminTextarea} placeholder={ac.placeholderCertification} value={magForm.certification} onChange={(e) => setMagForm((s) => ({ ...s, certification: e.target.value }))} />
           <select
             className={styles.adminInput}
             value={advisorSource}
             onChange={(e) => setAdvisorSource(e.target.value as "global" | "attached" | "both")}
           >
-            <option value="global">Global advisors</option>
+            <option value="global">{ac.advisorSourceGlobal}</option>
             <option value="attached" disabled={!editingId}>
-              Attached advisors {editingId ? "" : "(available while editing)"}
+              {ac.advisorSourceAttached} {editingId ? "" : ac.advisorSourceAttachedDisabled}
             </option>
-            <option value="both">Both sources</option>
+            <option value="both">{ac.advisorSourceBoth}</option>
           </select>
           <div className={styles.adminSection}>
             <div className={styles.adminSectionHeader}>
               <SectionIcon kind="list" />
-              <h4 className={styles.adminSectionTitle}>Approved advisors</h4>
+              <h4 className={styles.adminSectionTitle}>{ac.approvedAdvisorsTitle}</h4>
             </div>
+            <p className={styles.adminSectionExplainer}>{ac.sectionApprovedAdvisorsExplainer}</p>
             {advisorOptions.length === 0 ? (
-              <p className={styles.adminEmpty}>
-                {editingId
-                  ? "No advisors available from selected source."
-                  : "No advisors available yet. Add advisors first, then select approvals."}
-              </p>
+              <p className={styles.adminEmpty}>{editingId ? ac.noAdvisorsEditing : ac.noAdvisorsNew}</p>
             ) : (
               <ul className={styles.adminList}>
                 {advisorOptions.map((advisor) => {
@@ -571,7 +589,7 @@ export default function AdminMagazinesDashboard() {
                             }))
                           }
                         />{" "}
-                        {advisor.name} - {advisor.title}
+                        {advisor.name} — {advisor.title}
                       </label>
                     </li>
                   );
@@ -579,17 +597,17 @@ export default function AdminMagazinesDashboard() {
               </ul>
             )}
             {editingId && magForm.approvedAdvisorIds.length === 0 && magForm.certification ? (
-              <p className={styles.adminEmpty}>No approving advisors selected for this magazine yet.</p>
+              <p className={styles.adminEmpty}>{ac.noApprovingYet}</p>
             ) : null}
           </div>
           {selectedAdvisorSummary.length > 0 ? (
             <p className={styles.adminSubtitle}>
-              Selected approvals: {selectedAdvisorSummary.map((advisor) => advisor.name).join(", ")}
+              {ac.selectedApprovals} {selectedAdvisorSummary.map((advisor) => advisor.name).join("، ")}
             </p>
           ) : null}
           <div className={styles.adminActions}>
             <button className={`${styles.adminButton} ${styles.adminButtonPrimary}`} type="submit" disabled={busy}>
-              {busy ? "Saving..." : editingId ? "Update magazine" : "Create magazine"}
+              {busy ? c.saving : editingId ? ac.submitUpdate : ac.submitCreate}
             </button>
             {editingId ? (
               <button
@@ -604,7 +622,7 @@ export default function AdminMagazinesDashboard() {
                   setAdvisorSource("both");
                 }}
               >
-                Cancel edit
+                {ac.cancelEdit}
               </button>
             ) : null}
           </div>
@@ -614,11 +632,12 @@ export default function AdminMagazinesDashboard() {
       <section className={styles.adminSection}>
         <div className={styles.adminSectionHeader}>
           <SectionIcon kind="list" />
-          <h3 className={styles.adminSectionTitle}>Magazines</h3>
+          <h3 className={styles.adminSectionTitle}>{ac.listTitle}</h3>
         </div>
+        <p className={styles.adminSectionExplainer}>{ac.sectionListExplainer}</p>
         <input
           className={styles.adminInput}
-          placeholder="Search magazines by name"
+          placeholder={ac.searchMagazines}
           value={magazineSearch}
           onChange={(e) => setMagazineSearch(e.target.value)}
         />
@@ -626,17 +645,29 @@ export default function AdminMagazinesDashboard() {
           {filteredMagazines.map((item) => (
             <li key={item.id} className={styles.adminListItem}>
               <span className={styles.adminListText}>
-                <strong>{item.title}</strong> - {item.category}
+                <strong>{item.title}</strong> — {item.category}
                 <br />
-                ISSN: {item.issn ?? "-"} | Current: {item.currentVersion ?? "-"}
+                {ac.issnLabel} {item.issn ?? "-"} | {ac.currentLabel} {item.currentVersion ?? "-"}
                 <br />
-                Approved advisors: {item.approvedAdvisors?.length ?? 0}
+                {ac.approvedCount} {item.approvedAdvisors?.length ?? 0}
               </span>
               <div className={styles.adminActions}>
-                <Link href={`/admin/magazines/${item.id}`} className={`${styles.adminButton} ${styles.adminButtonPrimary}`}>Manage advisors</Link>
-                <Link href={`/admin/magazines/${item.id}/publishing-conditions`} className={styles.adminButton}>Publishing conditions</Link>
-                <button type="button" className={styles.adminButton} onClick={() => startEdit(item)}>Edit</button>
-                <button type="button" className={`${styles.adminButton} ${styles.adminButtonDanger}`} onClick={() => removeMagazine(item.id)}>Delete</button>
+                <Link href={`/admin/magazines/${item.id}`} className={`${styles.adminButton} ${styles.adminButtonPrimary}`}>
+                  {ac.manageAdvisors}
+                </Link>
+                <Link href={`/admin/magazines/${item.id}/publishing-conditions`} className={styles.adminButton}>
+                  {ac.publishingConditions}
+                </Link>
+                <button type="button" className={styles.adminButton} onClick={() => startEdit(item)}>
+                  {c.edit}
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.adminButton} ${styles.adminButtonDanger}`}
+                  onClick={() => removeMagazine(item.id)}
+                >
+                  {c.delete}
+                </button>
               </div>
             </li>
           ))}
@@ -646,27 +677,32 @@ export default function AdminMagazinesDashboard() {
       <section className={styles.adminSection}>
         <div className={styles.adminSectionHeader}>
           <SectionIcon kind="release" />
-          <h3 className={styles.adminSectionTitle}>{versionForm.id ? "Edit version" : "Create version"}</h3>
+          <h3 className={styles.adminSectionTitle}>{versionForm.id ? ac.editVersion : ac.createVersion}</h3>
         </div>
+        <p className={styles.adminSectionExplainer}>{ac.sectionVersionFormExplainer}</p>
         <form className={styles.adminForm} onSubmit={submitVersion}>
           <select className={styles.adminInput} value={versionForm.magazineId} onChange={(e) => setVersionForm((s) => ({ ...s, magazineId: e.target.value }))} required>
-            <option value="">Select magazine</option>
-            {sortedMagazines.map((m) => (<option key={m.id} value={m.id}>{m.title}</option>))}
+            <option value="">{ac.selectMagazine}</option>
+            {sortedMagazines.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.title}
+              </option>
+            ))}
           </select>
-          <input className={styles.adminInput} placeholder="Version" value={versionForm.version} onChange={(e) => setVersionForm((s) => ({ ...s, version: e.target.value }))} required />
-          <input className={styles.adminInput} placeholder="Title" value={versionForm.title} onChange={(e) => setVersionForm((s) => ({ ...s, title: e.target.value }))} required />
+          <input className={styles.adminInput} placeholder={ac.placeholderVersionCode} value={versionForm.version} onChange={(e) => setVersionForm((s) => ({ ...s, version: e.target.value }))} required />
+          <input className={styles.adminInput} placeholder={ac.placeholderVersionTitle} value={versionForm.title} onChange={(e) => setVersionForm((s) => ({ ...s, title: e.target.value }))} required />
           <input type="datetime-local" className={styles.adminInput} value={versionForm.releaseDate} onChange={(e) => setVersionForm((s) => ({ ...s, releaseDate: e.target.value }))} required />
-          <input className={styles.adminInput} placeholder="Page count" value={versionForm.pageCount} onChange={(e) => setVersionForm((s) => ({ ...s, pageCount: e.target.value }))} />
+          <input className={styles.adminInput} placeholder={ac.placeholderPageCount} value={versionForm.pageCount} onChange={(e) => setVersionForm((s) => ({ ...s, pageCount: e.target.value }))} />
           <p className={styles.adminSubtitle}>
             {versionForm.pdfUrl.trim() ? (
               <>
-                Current issue PDF:{" "}
+                {ac.versionPdfCurrent}{" "}
                 <a href={versionForm.pdfUrl} target="_blank" rel="noreferrer">
-                  Open PDF
+                  {c.openPdf}
                 </a>
               </>
             ) : (
-              "No PDF on file for this version (optional)."
+              ac.versionPdfHint
             )}
           </p>
           <input
@@ -675,11 +711,15 @@ export default function AdminMagazinesDashboard() {
             accept="application/pdf"
             onChange={(e) => setVersionPdfFile(e.target.files?.[0] ?? null)}
           />
-          {versionPdfFile ? <p className={styles.adminHint}>Selected: {versionPdfFile.name}</p> : null}
-          <textarea className={styles.adminTextarea} placeholder="Notes" value={versionForm.notes} onChange={(e) => setVersionForm((s) => ({ ...s, notes: e.target.value }))} />
+          {versionPdfFile ? (
+            <p className={styles.adminHint}>
+              {c.selectedFile} {versionPdfFile.name}
+            </p>
+          ) : null}
+          <textarea className={styles.adminTextarea} placeholder={ac.placeholderNotes} value={versionForm.notes} onChange={(e) => setVersionForm((s) => ({ ...s, notes: e.target.value }))} />
           <div className={styles.adminActions}>
             <button className={`${styles.adminButton} ${styles.adminButtonPrimary}`} type="submit" disabled={busy}>
-              {versionForm.id ? "Update version" : "Create version"}
+              {versionForm.id ? ac.submitVersionUpdate : ac.submitVersionCreate}
             </button>
             {versionForm.id ? (
               <button
@@ -691,7 +731,7 @@ export default function AdminMagazinesDashboard() {
                   setVersionPdfInputKey((k) => k + 1);
                 }}
               >
-                Cancel
+                {c.cancel}
               </button>
             ) : null}
           </div>
@@ -701,11 +741,12 @@ export default function AdminMagazinesDashboard() {
       <section className={styles.adminSection}>
         <div className={styles.adminSectionHeader}>
           <SectionIcon kind="versions" />
-          <h3 className={styles.adminSectionTitle}>Versions</h3>
+          <h3 className={styles.adminSectionTitle}>{ac.versionsTitle}</h3>
         </div>
+        <p className={styles.adminSectionExplainer}>{ac.sectionVersionsExplainer}</p>
         <input
           className={styles.adminInput}
-          placeholder="Search versions by magazine name or version number"
+          placeholder={ac.searchVersions}
           value={versionSearch}
           onChange={(e) => setVersionSearch(e.target.value)}
         />
@@ -713,9 +754,9 @@ export default function AdminMagazinesDashboard() {
           {filteredVersions.map((item) => (
             <li key={item.id} className={styles.adminListItem}>
               <span className={styles.adminListText}>
-                <strong>{item.magazine?.title ?? `Magazine #${item.magazineId}`}</strong> - v{item.version}
+                <strong>{item.magazine?.title ?? ac.magazineFallback(item.magazineId)}</strong> — v{item.version}
                 <br />
-                {new Date(item.releaseDate).toLocaleString()}
+                {new Date(item.releaseDate).toLocaleString("ar")}
               </span>
               <div className={styles.adminActions}>
                 <button
@@ -729,7 +770,7 @@ export default function AdminMagazinesDashboard() {
                     );
                   }}
                 >
-                  Manage researches
+                  {ac.manageResearches}
                 </button>
                 <button
                   type="button"
@@ -749,9 +790,11 @@ export default function AdminMagazinesDashboard() {
                     });
                   }}
                 >
-                  Edit
+                  {c.edit}
                 </button>
-                <button type="button" className={`${styles.adminButton} ${styles.adminButtonDanger}`} onClick={() => deleteVersion(item.id)}>Delete</button>
+                <button type="button" className={`${styles.adminButton} ${styles.adminButtonDanger}`} onClick={() => deleteVersion(item.id)}>
+                  {c.delete}
+                </button>
               </div>
             </li>
           ))}

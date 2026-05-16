@@ -5,6 +5,8 @@ import { useParams } from "next/navigation";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import styles from "@/app/page.module.css";
 import { uploadMagazineAdvisorPhotoToStorage } from "@/lib/admin-client-upload";
+import { adminCopy } from "@/lib/admin/ar-copy";
+import { translateAdminApiMessage } from "@/lib/admin/api-error-ar";
 
 type Magazine = { id: number; title: string };
 type Advisor = { id: number; photoUrl: string; name: string; jobTitle: string };
@@ -17,6 +19,8 @@ function parseId(raw: string | undefined): number | null {
 }
 
 export default function AdminMagazinePublishingAdvisorsPage() {
+  const mp = adminCopy.magazineAdvisorsPage;
+  const c = adminCopy.common;
   const params = useParams();
   const magazineId = parseId(params.id as string | undefined);
 
@@ -28,7 +32,6 @@ export default function AdminMagazinePublishingAdvisorsPage() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [jobTitle, setJobTitle] = useState("");
-  /** Current photo URL when editing (from DB); not user-editable */
   const [existingPhotoUrl, setExistingPhotoUrl] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [fileInputKey, setFileInputKey] = useState(0);
@@ -45,7 +48,7 @@ export default function AdminMagazinePublishingAdvisorsPage() {
     const res = await fetch(`/api/admin/magazines/${magazineId}/advisors`);
     const payload = await res.json();
     if (!res.ok || !payload?.success) {
-      setLoadError(payload?.error ?? "Failed to load advisors");
+      setLoadError(translateAdminApiMessage(payload?.error ?? "Failed to load advisors"));
       return;
     }
     setAdvisors(payload.data ?? []);
@@ -61,20 +64,20 @@ export default function AdminMagazinePublishingAdvisorsPage() {
 
   useEffect(() => {
     if (!magazineId) {
-      setLoadError("Invalid magazine id");
+      setLoadError(mp.invalidIdPage);
       return;
     }
     (async () => {
       const mRes = await fetch(`/api/magazines/${magazineId}`);
       const mPayload = await mRes.json();
       if (!mRes.ok || !mPayload?.success) {
-        setLoadError(mPayload?.error ?? "Magazine not found");
+        setLoadError(translateAdminApiMessage(mPayload?.error ?? "Magazine not found"));
         return;
       }
       setMagazine({ id: mPayload.data.id, title: mPayload.data.title });
       await Promise.all([loadAdvisors(), loadMembers()]);
     })();
-  }, [magazineId, loadAdvisors, loadMembers]);
+  }, [magazineId, loadAdvisors, loadMembers, mp.invalidIdPage]);
 
   function resetForm() {
     setName("");
@@ -87,7 +90,7 @@ export default function AdminMagazinePublishingAdvisorsPage() {
   }
 
   async function handleRemove(advisorId: number) {
-    if (!magazineId || !confirm("Remove this advisor?")) return;
+    if (!magazineId || !confirm(mp.confirmRemove)) return;
     setBusy(true);
     try {
       const res = await fetch(`/api/admin/magazines/${magazineId}/advisors/${advisorId}`, {
@@ -95,7 +98,7 @@ export default function AdminMagazinePublishingAdvisorsPage() {
       });
       const payload = await res.json();
       if (!res.ok || !payload?.success) {
-        alert(payload?.error ?? "Delete failed");
+        alert(translateAdminApiMessage(payload?.error ?? "Delete failed"));
         return;
       }
       await loadAdvisors();
@@ -140,14 +143,14 @@ export default function AdminMagazinePublishingAdvisorsPage() {
       });
       const createPayload = await createRes.json();
       if (!createRes.ok || !createPayload?.success) {
-        setSubmitError(createPayload?.error ?? "Could not save advisor");
+        setSubmitError(translateAdminApiMessage(createPayload?.error ?? "Could not save advisor"));
         return;
       }
 
       resetForm();
       await loadAdvisors();
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : "Could not save advisor");
+      setSubmitError(translateAdminApiMessage(err instanceof Error ? err.message : "Could not save advisor"));
     } finally {
       setBusy(false);
     }
@@ -168,7 +171,7 @@ export default function AdminMagazinePublishingAdvisorsPage() {
       });
       const payload = await createRes.json();
       if (!createRes.ok || !payload?.success) {
-        setSubmitError(payload?.error ?? "Could not add selected advisor");
+        setSubmitError(translateAdminApiMessage(payload?.error ?? "Could not add selected advisor"));
         return;
       }
       setSelectedMemberId("");
@@ -181,7 +184,7 @@ export default function AdminMagazinePublishingAdvisorsPage() {
   if (!magazineId) {
     return (
       <div className={styles.adminPage}>
-        <p className={styles.adminError}>Invalid magazine id.</p>
+        <p className={styles.adminError}>{mp.invalidIdPage}</p>
       </div>
     );
   }
@@ -190,12 +193,11 @@ export default function AdminMagazinePublishingAdvisorsPage() {
     <div className={styles.adminPage}>
       <header className={styles.adminHeader}>
         <div className={styles.adminSubtitle}>
-          <Link href="/admin/magazines">? Magazines</Link>
+          <Link href="/admin/magazines">{c.backToMagazines}</Link>
         </div>
-        <h1 className={styles.adminTitle}>Magazine advisors</h1>
-        <p className={styles.adminSubtitle}>
-          {magazine ? magazine.title : loadError ? loadError : "Loading..."}
-        </p>
+        <h1 className={styles.adminTitle}>{mp.title}</h1>
+        <p className={styles.adminSectionExplainer}>{mp.explainer}</p>
+        <p className={styles.adminSubtitle}>{magazine ? magazine.title : loadError ? loadError : mp.loadingMagazine}</p>
       </header>
 
       {loadError && !magazine ? (
@@ -203,24 +205,33 @@ export default function AdminMagazinePublishingAdvisorsPage() {
       ) : (
         <>
           <section className={styles.adminSection}>
-            <h3 className={styles.adminSectionTitle}>Select from advisors list</h3>
+            <h3 className={styles.adminSectionTitle}>{mp.pickTitle}</h3>
+            <p className={styles.adminSectionExplainer}>{mp.sectionPickExplainer}</p>
             <div className={styles.adminForm}>
               <select className={styles.adminInput} value={selectedMemberId} onChange={(e) => setSelectedMemberId(e.target.value)}>
-                <option value="">Select advisor</option>
+                <option value="">{mp.selectAdvisor}</option>
                 {advisoryMembers.map((member) => (
-                  <option key={member.id} value={member.id}>{member.name} - {member.title}</option>
+                  <option key={member.id} value={member.id}>
+                    {member.name} — {member.title}
+                  </option>
                 ))}
               </select>
-              <button type="button" className={`${styles.adminButton} ${styles.adminButtonPrimary}`} disabled={!selectedMemberId || busy} onClick={addFromAdvisoryList}>
-                Add selected advisor
+              <button
+                type="button"
+                className={`${styles.adminButton} ${styles.adminButtonPrimary}`}
+                disabled={!selectedMemberId || busy}
+                onClick={addFromAdvisoryList}
+              >
+                {mp.addSelected}
               </button>
             </div>
           </section>
 
           <section className={styles.adminSection}>
-            <h3 className={styles.adminSectionTitle}>Current advisors</h3>
+            <h3 className={styles.adminSectionTitle}>{mp.currentTitle}</h3>
+            <p className={styles.adminSectionExplainer}>{mp.listExplainer}</p>
             {advisors.length === 0 ? (
-              <p className={styles.adminEmpty}>No advisors yet.</p>
+              <p className={styles.adminEmpty}>{mp.empty}</p>
             ) : (
               <ul className={styles.adminList}>
                 {advisors.map((a) => (
@@ -244,15 +255,10 @@ export default function AdminMagazinePublishingAdvisorsPage() {
                           setFileInputKey((k) => k + 1);
                         }}
                       >
-                        Edit
+                        {c.edit}
                       </button>
-                      <button
-                        type="button"
-                        className={`${styles.adminButton} ${styles.adminButtonDanger}`}
-                        disabled={busy}
-                        onClick={() => handleRemove(a.id)}
-                      >
-                        Remove
+                      <button type="button" className={`${styles.adminButton} ${styles.adminButtonDanger}`} disabled={busy} onClick={() => handleRemove(a.id)}>
+                        {c.remove}
                       </button>
                     </div>
                   </li>
@@ -262,55 +268,38 @@ export default function AdminMagazinePublishingAdvisorsPage() {
           </section>
 
           <section className={styles.adminSection}>
-            <h3 className={styles.adminSectionTitle}>{editingAdvisorId ? "Edit advisor" : "Add advisor"}</h3>
+            <h3 className={styles.adminSectionTitle}>{editingAdvisorId ? mp.editAdvisor : mp.addAdvisor}</h3>
+            <p className={styles.adminSectionExplainer}>{mp.formExplainer}</p>
             <form className={styles.adminForm} onSubmit={handleSubmit}>
-              <input
-                className={styles.adminInput}
-                placeholder="Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                minLength={2}
-              />
-              <textarea
-                className={styles.adminTextarea}
-                placeholder="Job title / affiliation"
-                value={jobTitle}
-                onChange={(e) => setJobTitle(e.target.value)}
-                required
-              />
+              <input className={styles.adminInput} placeholder={mp.placeholderName} value={name} onChange={(e) => setName(e.target.value)} required minLength={2} />
+              <textarea className={styles.adminTextarea} placeholder={mp.placeholderJob} value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} required />
               {editingAdvisorId && existingPhotoUrl.trim() ? (
                 <p className={styles.adminHint}>
-                  Current photo:{" "}
+                  {mp.photoHintEdit}{" "}
                   <a href={existingPhotoUrl} target="_blank" rel="noreferrer">
-                    Open image
-                  </a>{" "}
-                  — upload a new file below to replace it.
+                    {c.openImage}
+                  </a>
+                  {mp.photoReplaceHint}
                 </p>
               ) : !editingAdvisorId ? (
-                <p className={styles.adminHint}>Photo required: choose an image file below.</p>
+                <p className={styles.adminHint}>{mp.photoRequiredNew}</p>
               ) : (
-                <p className={styles.adminHint}>No photo on file; upload one below.</p>
+                <p className={styles.adminHint}>{mp.photoNoneEdit}</p>
               )}
-              <input
-                key={fileInputKey}
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-              />
-              {file ? <p className={styles.adminHint}>Selected: {file.name}</p> : null}
+              <input key={fileInputKey} type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+              {file ? (
+                <p className={styles.adminHint}>
+                  {c.selectedFile} {file.name}
+                </p>
+              ) : null}
               {submitError ? <p className={styles.adminError}>{submitError}</p> : null}
               <div className={styles.adminActions}>
-                <button
-                  type="submit"
-                  className={`${styles.adminButton} ${styles.adminButtonPrimary}`}
-                  disabled={busy}
-                >
-                  {busy ? "Working..." : editingAdvisorId ? "Update advisor" : "Add advisor"}
+                <button type="submit" className={`${styles.adminButton} ${styles.adminButtonPrimary}`} disabled={busy}>
+                  {busy ? c.working : editingAdvisorId ? mp.submitUpdateAdvisor : mp.submitAddAdvisor}
                 </button>
                 {editingAdvisorId ? (
                   <button type="button" className={styles.adminButton} onClick={resetForm}>
-                    Cancel
+                    {c.cancel}
                   </button>
                 ) : null}
               </div>

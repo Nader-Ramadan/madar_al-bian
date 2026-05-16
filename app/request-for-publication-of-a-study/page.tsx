@@ -28,7 +28,6 @@ export default function RequestPublicationPage() {
   const [magazineId, setMagazineId] = useState("");
   const [title, setTitle] = useState("");
   const [abstract, setAbstract] = useState("");
-  const [field, setField] = useState("");
   const [magazines, setMagazines] = useState<MagazineOption[]>([]);
   const [magazinesError, setMagazinesError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -69,7 +68,6 @@ export default function RequestPublicationPage() {
         authorEmail,
         title,
         abstract,
-        field: field.trim() || null,
         magazineId: mid != null && Number.isFinite(mid) ? mid : null,
       };
       const response = await fetch("/api/publication-requests", {
@@ -91,7 +89,6 @@ export default function RequestPublicationPage() {
       setMagazineId("");
       setTitle("");
       setAbstract("");
-      setField("");
     } catch {
       setMessage({ type: "err", text: "حدث خطأ أثناء الإرسال." });
     } finally {
@@ -173,17 +170,6 @@ export default function RequestPublicationPage() {
                 value={abstract}
                 onChange={(ev) => setAbstract(ev.target.value)}
                 rows={6}
-                style={inputStyle}
-              />
-            </div>
-            <div>
-              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
-                المجال (اختياري)
-              </label>
-              <input
-                value={field}
-                onChange={(ev) => setField(ev.target.value)}
-                type="text"
                 style={inputStyle}
               />
             </div>

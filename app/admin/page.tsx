@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import styles from "@/app/page.module.css";
+import { adminCopy } from "@/lib/admin/ar-copy";
 
 function DashboardIcon({ kind }: { kind: "magazine" | "advisor" | "approval" | "email" | "content" | "traffic" }) {
   const common = { className: styles.adminSectionIcon, viewBox: "0 0 24 24", fill: "none", "aria-hidden": true as const };
@@ -14,35 +15,34 @@ function DashboardIcon({ kind }: { kind: "magazine" | "advisor" | "approval" | "
 }
 
 export default function AdminDashboardPage() {
+  const dh = adminCopy.dashboardHome;
   const modules = [
-    { href: "/admin/magazines", title: "Magazines & Versions", desc: "Create magazines and manage version releases.", kind: "magazine" as const },
-    { href: "/admin/advisors", title: "Advisors", desc: "Add, edit, and remove advisory members.", kind: "advisor" as const },
-    { href: "/admin/approvals", title: "Publication Approvals", desc: "Review and approve publication requests.", kind: "approval" as const },
-    { href: "/admin/emails", title: "Email Center", desc: "Send operational and editorial emails.", kind: "email" as const },
-    { href: "/admin/content", title: "Content", desc: "Manage blogs, conferences, and fields.", kind: "content" as const },
-    { href: "/admin/traffic", title: "Traffic Analytics", desc: "Review magazine views and engagement.", kind: "traffic" as const },
+    { href: "/admin/magazines", title: dh.moduleMagazinesTitle, desc: dh.moduleMagazinesDesc, kind: "magazine" as const },
+    { href: "/admin/advisors", title: dh.moduleAdvisorsTitle, desc: dh.moduleAdvisorsDesc, kind: "advisor" as const },
+    { href: "/admin/approvals", title: dh.moduleApprovalsTitle, desc: dh.moduleApprovalsDesc, kind: "approval" as const },
+    { href: "/admin/emails", title: dh.moduleEmailsTitle, desc: dh.moduleEmailsDesc, kind: "email" as const },
+    { href: "/admin/content", title: dh.moduleContentTitle, desc: dh.moduleContentDesc, kind: "content" as const },
+    { href: "/admin/traffic", title: dh.moduleTrafficTitle, desc: dh.moduleTrafficDesc, kind: "traffic" as const },
   ];
 
   return (
     <div className={styles.adminPage}>
       <header className={styles.adminHeader}>
-        <h1 className={styles.adminTitle}>Workspace home</h1>
-        <p className={styles.adminSubtitle}>
-          Publishing workflows, people, and site content in one place.
-        </p>
+        <h1 className={styles.adminTitle}>{dh.title}</h1>
+        <p className={styles.adminSectionExplainer}>{dh.explainer}</p>
       </header>
-      <section className={styles.adminStatusGrid} aria-label="Dashboard status">
+      <section className={styles.adminStatusGrid} aria-label={dh.statusAria}>
         <div className={styles.adminStatusCard}>
-          <p className={styles.adminStatusLabel}>Core modules</p>
+          <p className={styles.adminStatusLabel}>{dh.coreModules}</p>
           <p className={styles.adminStatusValue}>{modules.length}</p>
         </div>
         <div className={styles.adminStatusCard}>
-          <p className={styles.adminStatusLabel}>Navigation coverage</p>
+          <p className={styles.adminStatusLabel}>{dh.navCoverage}</p>
           <p className={styles.adminStatusValue}>100%</p>
         </div>
         <div className={styles.adminStatusCard}>
-          <p className={styles.adminStatusLabel}>Current mode</p>
-          <p className={styles.adminStatusValue}>Operational</p>
+          <p className={styles.adminStatusLabel}>{dh.currentMode}</p>
+          <p className={styles.adminStatusValue}>{dh.operational}</p>
         </div>
       </section>
       <div className={styles.adminGrid}>
@@ -53,7 +53,7 @@ export default function AdminDashboardPage() {
             </div>
             <h3 className={styles.adminCardTitle}>{module.title}</h3>
             <p className={styles.adminCardText}>{module.desc}</p>
-            <span className={styles.adminCardFooter}>Open module &rarr;</span>
+            <span className={styles.adminCardFooter}>{dh.openModule}</span>
           </Link>
         ))}
       </div>

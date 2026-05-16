@@ -4,8 +4,9 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import styles from "@/app/page.module.css";
 import { uploadPdfFileToStorage } from "@/lib/admin-client-upload";
+import { adminCopy } from "@/lib/admin/ar-copy";
+import { translateAdminApiMessage } from "@/lib/admin/api-error-ar";
 
-/** Minimal fields returned by `/api/magazines` that we need */
 type Magazine = {
   id: number;
   title: string;
@@ -79,6 +80,8 @@ function VersionsSectionIcon() {
 }
 
 export default function MagazineResearchEditor() {
+  const re = adminCopy.researchEditor;
+  const c = adminCopy.common;
   const searchParams = useSearchParams();
   const [magazines, setMagazines] = useState<Magazine[]>([]);
   const [versions, setVersions] = useState<MagazineVersion[]>([]);
@@ -115,7 +118,7 @@ export default function MagazineResearchEditor() {
 
   useEffect(() => {
     loadMagazinesAndVersions().catch((e) =>
-      setError(e instanceof Error ? e.message : "Failed to load data"),
+      setError(translateAdminApiMessage(e instanceof Error ? e.message : "Failed to load data")),
     );
   }, []);
 
@@ -128,9 +131,7 @@ export default function MagazineResearchEditor() {
     if (!magazineExists) return;
     const versionId = Number(rawVersionId);
     if (!Number.isFinite(versionId)) return;
-    const versionExists = versions.some(
-      (v) => v.id === versionId && String(v.magazineId) === rawMagazineId,
-    );
+    const versionExists = versions.some((v) => v.id === versionId && String(v.magazineId) === rawMagazineId);
     if (!versionExists) return;
     if (researchPickMagazineId !== rawMagazineId) {
       setResearchPickMagazineId(rawMagazineId);
@@ -142,7 +143,7 @@ export default function MagazineResearchEditor() {
       setResearchPdfInputKey((k) => k + 1);
       void loadResearches(versionId).catch((err) => {
         setResearches([]);
-        setError(err instanceof Error ? err.message : "Failed to load researches");
+        setError(translateAdminApiMessage(err instanceof Error ? err.message : "Failed to load researches"));
       });
     }
   }, [magazines, versions, searchParams, researchPickMagazineId, researchPickVersionId]);
@@ -173,9 +174,7 @@ export default function MagazineResearchEditor() {
     setError(null);
     try {
       const base = normalizeResearchPayload(researchForm);
-      const pdfUrlFinal = researchPdfFile
-        ? await uploadPdfFileToStorage(researchPdfFile)
-        : base.pdfUrl;
+      const pdfUrlFinal = researchPdfFile ? await uploadPdfFileToStorage(researchPdfFile) : base.pdfUrl;
       const body = { ...base, pdfUrl: pdfUrlFinal };
       const url = researchForm.id
         ? `/api/admin/magazine-versions/${researchPickVersionId}/researches/${researchForm.id}`
@@ -192,7 +191,7 @@ export default function MagazineResearchEditor() {
       setResearchPdfInputKey((k) => k + 1);
       await loadResearches(researchPickVersionId);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Research save failed");
+      setError(translateAdminApiMessage(e instanceof Error ? e.message : "Research save failed"));
     } finally {
       setBusy(false);
     }
@@ -200,7 +199,7 @@ export default function MagazineResearchEditor() {
 
   async function deleteResearch(researchId: number) {
     if (researchPickVersionId == null) return;
-    if (!confirm("Delete this research entry?")) return;
+    if (!confirm(re.confirmDelete)) return;
     setBusy(true);
     try {
       const response = await fetch(`/api/admin/magazine-versions/${researchPickVersionId}/researches/${researchId}`, {
@@ -210,23 +209,26 @@ export default function MagazineResearchEditor() {
       if (!response.ok || !payload?.success) throw new Error(payload?.error ?? "Delete failed");
       await loadResearches(researchPickVersionId);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Delete failed");
+      setError(translateAdminApiMessage(e instanceof Error ? e.message : "Delete failed"));
     } finally {
       setBusy(false);
     }
   }
+
+  const versionCtx = versions.find((v) => v.id === researchPickVersionId);
 
   return (
     <>
       <section className={styles.adminSection}>
         <div className={styles.adminSectionHeader}>
           <VersionsSectionIcon />
-          <h3 className={styles.adminSectionTitle}>Magazine researches</h3>
+          <h3 className={styles.adminSectionTitle}>{re.title}</h3>
         </div>
-        <p className={styles.adminSubtitle}>Choose a magazine and version, then add or edit research entries.</p>
+        <p className={styles.adminSectionExplainer}>{re.sectionPickerExplainer}</p>
+        <p className={styles.adminSubtitle}>{re.pickerHint}</p>
         <select
           className={styles.adminInput}
-          aria-label="Magazine for researches"
+          aria-label={adminCopy.magazines.ariaMagazinePicker}
           value={researchPickMagazineId}
           onChange={(e) => {
             const mid = e.target.value;
@@ -238,7 +240,7 @@ export default function MagazineResearchEditor() {
             setResearchPdfInputKey((k) => k + 1);
           }}
         >
-          <option value="">Select magazine</option>
+          <option value="">{re.selectMagazine}</option>
           {sortedMagazines.map((m) => (
             <option key={m.id} value={m.id}>
               {m.title}
@@ -247,7 +249,7 @@ export default function MagazineResearchEditor() {
         </select>
         <select
           className={styles.adminInput}
-          aria-label="Version for researches"
+          aria-label={adminCopy.magazines.ariaVersionPicker}
           value={researchPickVersionId ?? ""}
           disabled={!researchPickMagazineId || versionsForResearchPicker.length === 0}
           onChange={(e) => {
@@ -265,16 +267,16 @@ export default function MagazineResearchEditor() {
             setResearchPickVersionId(vid);
             void loadResearches(vid).catch((err) => {
               setResearches([]);
-              setError(err instanceof Error ? err.message : "Failed to load researches");
+              setError(translateAdminApiMessage(err instanceof Error ? err.message : "Failed to load researches"));
             });
           }}
         >
           <option value="">
             {!researchPickMagazineId
-              ? "Select a magazine first"
+              ? re.selectMagazineFirst
               : versionsForResearchPicker.length === 0
-                ? "No versions for this magazine"
-                : "Select version"}
+                ? re.noVersions
+                : re.selectVersion}
           </option>
           {versionsForResearchPicker.map((v) => (
             <option key={v.id} value={v.id}>
@@ -289,91 +291,79 @@ export default function MagazineResearchEditor() {
           <div className={styles.adminSectionHeader}>
             <VersionsSectionIcon />
             <h3 className={styles.adminSectionTitle}>
-              Researches for version #{researchPickVersionId}
-              {versions.find((v) => v.id === researchPickVersionId)?.magazine?.title
-                ? ` (${versions.find((v) => v.id === researchPickVersionId)?.magazine?.title})`
-                : null}
+              {re.researchesForVersion(researchPickVersionId, versionCtx?.magazine?.title)}
             </h3>
           </div>
           <p className={styles.adminSubtitle}>
-            Public hub:{" "}
+            {re.publicHub}{" "}
             {(() => {
               const ctx = versions.find((v) => v.id === researchPickVersionId);
               const mid = ctx?.magazineId;
               if (!mid) return <span>—</span>;
               return (
                 <a href={`/magazines/${mid}/versions/${researchPickVersionId}`} target="_blank" rel="noreferrer">
-                  Open version page
+                  {re.openVersionPage}
                 </a>
               );
             })()}
           </p>
-          <p className={styles.adminHint}>
-            To edit: choose <strong>Edit</strong> on a research row to load it into the form, change fields, then click{" "}
-            <strong>Update research</strong>. Use <strong>Cancel edit</strong> to clear the form without saving.
-          </p>
+          <p className={styles.adminHint}>{re.formHint}</p>
           <form className={styles.adminForm} onSubmit={submitResearch}>
             <input
               className={styles.adminInput}
-              placeholder="Researcher names (comma-separated)"
+              placeholder={re.placeholderResearchers}
               value={researchForm.researcherNames}
               onChange={(e) => setResearchForm((s) => ({ ...s, researcherNames: e.target.value }))}
               required
             />
             <input
               className={styles.adminInput}
-              placeholder="Research title"
+              placeholder={re.placeholderResearchTitle}
               value={researchForm.title}
               onChange={(e) => setResearchForm((s) => ({ ...s, title: e.target.value }))}
               required
             />
             <input
               className={styles.adminInput}
-              placeholder="External research page URL"
+              placeholder={re.placeholderUrl}
               value={researchForm.externalUrl}
               onChange={(e) => setResearchForm((s) => ({ ...s, externalUrl: e.target.value }))}
               required
             />
             <textarea
               className={styles.adminTextarea}
-              placeholder="Summary (optional, shown on site)"
+              placeholder={re.placeholderSummary}
               value={researchForm.summary}
               onChange={(e) => setResearchForm((s) => ({ ...s, summary: e.target.value }))}
             />
             <input
               className={styles.adminInput}
-              placeholder="Keywords (comma-separated, shown as tags on site)"
+              placeholder={re.placeholderKeywords}
               value={researchForm.keywords}
               onChange={(e) => setResearchForm((s) => ({ ...s, keywords: e.target.value }))}
             />
             <p className={styles.adminSubtitle}>
               {researchForm.pdfUrl.trim() ? (
                 <>
-                  Current PDF:{" "}
+                  {re.pdfCurrent}{" "}
                   <a href={researchForm.pdfUrl} target="_blank" rel="noreferrer">
-                    Open PDF
+                    {c.openPdf}
                   </a>
                 </>
               ) : (
-                "No PDF on file (optional)."
+                re.pdfNone
               )}
             </p>
-            <input
-              key={researchPdfInputKey}
-              type="file"
-              accept="application/pdf"
-              onChange={(e) => setResearchPdfFile(e.target.files?.[0] ?? null)}
-            />
-            {researchPdfFile ? <p className={styles.adminHint}>Selected: {researchPdfFile.name}</p> : null}
-            <input
-              className={styles.adminInput}
-              placeholder="Sort order"
-              value={researchForm.sortOrder}
-              onChange={(e) => setResearchForm((s) => ({ ...s, sortOrder: e.target.value }))}
-            />
+            <input key={researchPdfInputKey} type="file" accept="application/pdf" onChange={(e) => setResearchPdfFile(e.target.files?.[0] ?? null)} />
+            {researchPdfFile ? (
+              <p className={styles.adminHint}>
+                {c.selectedFile} {researchPdfFile.name}
+              </p>
+            ) : null}
+            <input className={styles.adminInput} placeholder={re.placeholderSort} value={researchForm.sortOrder} onChange={(e) => setResearchForm((s) => ({ ...s, sortOrder: e.target.value }))} />
             <div className={styles.adminActions}>
               <button className={`${styles.adminButton} ${styles.adminButtonPrimary}`} type="submit" disabled={busy}>
-                {researchForm.id ? "Update research" : "Add research"}
+                {researchForm.id ? re.updateResearch : re.addResearch}
               </button>
               {researchForm.id ? (
                 <button
@@ -385,7 +375,7 @@ export default function MagazineResearchEditor() {
                     setResearchPdfInputKey((k) => k + 1);
                   }}
                 >
-                  Cancel edit
+                  {c.cancelEdit}
                 </button>
               ) : null}
             </div>
@@ -395,9 +385,7 @@ export default function MagazineResearchEditor() {
               <li
                 key={r.id}
                 className={
-                  researchForm.id === r.id
-                    ? `${styles.adminListItem} ${styles.adminListItemEditing}`
-                    : styles.adminListItem
+                  researchForm.id === r.id ? `${styles.adminListItem} ${styles.adminListItemEditing}` : styles.adminListItem
                 }
               >
                 <span className={styles.adminListText}>
@@ -413,9 +401,7 @@ export default function MagazineResearchEditor() {
                   <button
                     type="button"
                     className={
-                      researchForm.id === r.id
-                        ? `${styles.adminButton} ${styles.adminButtonPrimary}`
-                        : styles.adminButton
+                      researchForm.id === r.id ? `${styles.adminButton} ${styles.adminButtonPrimary}` : styles.adminButton
                     }
                     onClick={() => {
                       setResearchPdfFile(null);
@@ -432,10 +418,10 @@ export default function MagazineResearchEditor() {
                       });
                     }}
                   >
-                    Edit
+                    {c.edit}
                   </button>
                   <button type="button" className={`${styles.adminButton} ${styles.adminButtonDanger}`} onClick={() => void deleteResearch(r.id)}>
-                    Delete
+                    {c.delete}
                   </button>
                 </div>
               </li>

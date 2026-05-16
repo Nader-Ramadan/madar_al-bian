@@ -172,37 +172,8 @@ a {
   justify-content: center;
 }
 
-.nav-links__login {
-  margin-inline-start: auto;
-}
-
 .nav-links__push {
   margin-inline-start: auto;
-}
-
-.nav-login-pill {
-  padding: 0.55rem 1.35rem !important;
-  border-radius: 9999px !important;
-  background: #ffffff;
-  color: #0a0a0a !important;
-  font-weight: 600;
-  font-size: 0.92rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  transition:
-    background-color 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
-}
-
-.nav-login-pill:hover {
-  background: #fafafa;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transform: translateY(-1px);
-}
-
-.nav-login-pill:active {
-  transform: translateY(0);
 }
 
 .nav-logout-button {
@@ -239,13 +210,10 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nav-login-pill,
   .nav-logout-button {
     transition: none !important;
   }
 
-  .nav-login-pill:hover,
-  .nav-login-pill:active,
   .nav-logout-button:hover,
   .nav-logout-button:active {
     transform: none !important;
@@ -299,18 +267,10 @@ a {
     font-size: 0.9rem;
   }
 
-  .nav-links__login,
   .nav-links__push {
     margin-inline-start: 0;
     width: 100%;
   }
-
-  .nav-links__login .nav-login-pill {
-    width: 100%;
-    min-height: 44px;
-    justify-content: center;
-  }
-
   .nav-links li .nav-logout-button {
     width: 100%;
     min-height: 44px;

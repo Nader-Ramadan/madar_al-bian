@@ -1,7 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import styles from '@/app/page.module.css';
+import { useEffect, useState } from "react";
+import styles from "@/app/page.module.css";
+import { adminCopy } from "@/lib/admin/ar-copy";
+import { translateAdminApiMessage } from "@/lib/admin/api-error-ar";
 
 interface TrafficStats {
   magazineId: number;
@@ -12,18 +14,19 @@ interface TrafficStats {
 }
 
 export default function MagazineTrafficDashboard() {
+  const td = adminCopy.trafficDashboard;
   const [stats, setStats] = useState<TrafficStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   const fetchTraffic = async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
-      if (startDate) params.append('startDate', startDate);
-      if (endDate) params.append('endDate', endDate);
+      if (startDate) params.append("startDate", startDate);
+      if (endDate) params.append("endDate", endDate);
 
       const response = await fetch(`/api/magazines/traffic?${params.toString()}`);
       const result = await response.json();
@@ -31,10 +34,10 @@ export default function MagazineTrafficDashboard() {
       if (result.success) {
         setStats(result.data.stats);
       } else {
-        setError('Failed to fetch traffic data');
+        setError(translateAdminApiMessage("Failed to fetch traffic data"));
       }
     } catch (err) {
-      setError('Error fetching traffic data');
+      setError(translateAdminApiMessage("Error fetching traffic data"));
       console.error(err);
     } finally {
       setLoading(false);
@@ -56,39 +59,29 @@ export default function MagazineTrafficDashboard() {
   return (
     <section className={styles.container}>
       <header className={styles.trafficHeader}>
-        <h1 className={styles.trafficTitle}>Magazine Traffic Dashboard</h1>
-        <p className={styles.trafficSubtitle}>
-          Track engagement, compare interactions, and filter by date range.
-        </p>
+        <h1 className={styles.trafficTitle}>{td.title}</h1>
+        <p className={styles.adminSectionExplainer}>{td.explainer}</p>
       </header>
 
       <section className={styles.filterCard}>
         <div className={styles.filterSection}>
           <div>
-            <label htmlFor="startDate">Start Date:</label>
-            <input
-              id="startDate"
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
+            <label htmlFor="startDate">{td.startDate}</label>
+            <input id="startDate" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
           </div>
 
           <div>
-            <label htmlFor="endDate">End Date:</label>
-            <input
-              id="endDate"
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
+            <label htmlFor="endDate">{td.endDate}</label>
+            <input id="endDate" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
           </div>
 
-          <button onClick={handleFilter}>Apply Filter</button>
+          <button type="button" onClick={handleFilter}>
+            {td.applyFilter}
+          </button>
         </div>
       </section>
 
-      {loading && <p className={styles.stateCard}>Loading traffic data...</p>}
+      {loading && <p className={styles.stateCard}>{td.loading}</p>}
       {error && <p className={styles.errorStateCard}>{error}</p>}
 
       {hasStats && (
@@ -97,23 +90,21 @@ export default function MagazineTrafficDashboard() {
             <table className={styles.trafficTable}>
               <thead>
                 <tr>
-                  <th>Magazine Title</th>
-                  <th>Views</th>
-                  <th>Downloads</th>
-                  <th>Shares</th>
-                  <th>Total Interactions</th>
+                  <th>{td.colMagazine}</th>
+                  <th>{td.colViews}</th>
+                  <th>{td.colDownloads}</th>
+                  <th>{td.colShares}</th>
+                  <th>{td.colTotal}</th>
                 </tr>
               </thead>
               <tbody>
                 {stats.map((stat) => (
                   <tr key={stat.magazineId}>
-                    <td data-label="Magazine Title">{stat.magazineTitle}</td>
-                    <td data-label="Views">{stat.views}</td>
-                    <td data-label="Downloads">{stat.downloads}</td>
-                    <td data-label="Shares">{stat.shares}</td>
-                    <td data-label="Total Interactions">
-                      {stat.views + stat.downloads + stat.shares}
-                    </td>
+                    <td data-label={td.colMagazine}>{stat.magazineTitle}</td>
+                    <td data-label={td.colViews}>{stat.views}</td>
+                    <td data-label={td.colDownloads}>{stat.downloads}</td>
+                    <td data-label={td.colShares}>{stat.shares}</td>
+                    <td data-label={td.colTotal}>{stat.views + stat.downloads + stat.shares}</td>
                   </tr>
                 ))}
               </tbody>
@@ -122,11 +113,7 @@ export default function MagazineTrafficDashboard() {
         </section>
       )}
 
-      {hasNoStats && (
-        <p className={styles.stateCard}>
-          No traffic data available for this range.
-        </p>
-      )}
+      {hasNoStats && <p className={styles.stateCard}>{td.emptyRange}</p>}
     </section>
   );
 }

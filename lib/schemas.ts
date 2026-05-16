@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { PUBLISHING_CONDITION_ICON_KEYS } from "@/lib/publishing-condition-icons";
 
-/** S3/CDN absolute URL or local public path `/uploads/...` from STORAGE_DRIVER=local. */
+/** HTTPS URL (e.g. Cloudinary) or legacy local path `/uploads/...`. */
 export function storageHttpUrlOrUploadsPathSchema(maxLen: number) {
   return z.union([
     z.string().url().max(maxLen),

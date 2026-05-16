@@ -1,9 +1,10 @@
-import MagazineTrafficDashboard from '@/app/components/magazine-traffic-dashboard';
-import styles from '@/app/page.module.css';
+import MagazineTrafficDashboard from "@/app/components/magazine-traffic-dashboard";
+import styles from "@/app/page.module.css";
+import { adminCopy } from "@/lib/admin/ar-copy";
 
 export const metadata = {
-  title: 'Magazine Traffic Analytics',
-  description: 'View and manage magazine traffic statistics',
+  title: adminCopy.trafficPage.metaTitle,
+  description: adminCopy.trafficPage.metaDescription,
 };
 
 export default function TrafficPage() {

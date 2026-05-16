@@ -11,6 +11,8 @@ import {
   isPublishingConditionIconKey,
   type PublishingConditionIconKey,
 } from "@/lib/publishing-condition-icons";
+import { adminCopy } from "@/lib/admin/ar-copy";
+import { translateAdminApiMessage } from "@/lib/admin/api-error-ar";
 
 type Magazine = { id: number; title: string };
 
@@ -54,6 +56,8 @@ async function readResponseJson(response: Response) {
 }
 
 export default function AdminMagazinePublishingConditionsPage() {
+  const pc = adminCopy.publishingConditionsPage;
+  const c = adminCopy.common;
   const params = useParams();
   const magazineId = parseId(params.id as string | undefined);
 
@@ -70,7 +74,7 @@ export default function AdminMagazinePublishingConditionsPage() {
     const response = await fetch(`/api/admin/magazines/${magazineId}/publishing-conditions`);
     const payload = await readResponseJson(response);
     if (!response.ok || !payload?.success) {
-      setLoadError(payload?.error ?? "Failed to load publishing conditions");
+      setLoadError(translateAdminApiMessage(payload?.error ?? "Failed to load publishing conditions"));
       return;
     }
     setTabs(payload.data ?? []);
@@ -79,14 +83,14 @@ export default function AdminMagazinePublishingConditionsPage() {
 
   useEffect(() => {
     if (!magazineId) {
-      setLoadError("Invalid magazine id");
+      setLoadError(adminCopy.magazineAdvisorsPage.invalidIdPage);
       return;
     }
     (async () => {
       const response = await fetch(`/api/magazines/${magazineId}`);
       const payload = await readResponseJson(response);
       if (!response.ok || !payload?.success) {
-        setLoadError(payload?.error ?? "Magazine not found");
+        setLoadError(translateAdminApiMessage(payload?.error ?? "Magazine not found"));
         return;
       }
       setMagazine({ id: payload.data.id, title: payload.data.title });
@@ -133,13 +137,13 @@ export default function AdminMagazinePublishingConditionsPage() {
       });
       const responsePayload = await readResponseJson(response);
       if (!response.ok || !responsePayload?.success) {
-        setSubmitError(responsePayload?.error ?? "Could not save publishing condition");
+        setSubmitError(translateAdminApiMessage(responsePayload?.error ?? "Could not save publishing condition"));
         return;
       }
       resetForm();
       await loadTabs();
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : "Could not save publishing condition");
+      setSubmitError(translateAdminApiMessage(err instanceof Error ? err.message : "Could not save publishing condition"));
     } finally {
       setBusy(false);
     }
@@ -147,16 +151,15 @@ export default function AdminMagazinePublishingConditionsPage() {
 
   async function handleDelete(tabId: number) {
     if (!magazineId) return;
-    if (!confirm("Delete this publishing condition tab?")) return;
+    if (!confirm(pc.confirmDelete)) return;
     setBusy(true);
     try {
-      const response = await fetch(
-        `/api/admin/magazines/${magazineId}/publishing-conditions/${tabId}`,
-        { method: "DELETE" },
-      );
+      const response = await fetch(`/api/admin/magazines/${magazineId}/publishing-conditions/${tabId}`, {
+        method: "DELETE",
+      });
       const payload = await readResponseJson(response);
       if (!response.ok || !payload?.success) {
-        alert(payload?.error ?? "Delete failed");
+        alert(translateAdminApiMessage(payload?.error ?? "Delete failed"));
         return;
       }
       if (editingId === tabId) resetForm();
@@ -169,7 +172,7 @@ export default function AdminMagazinePublishingConditionsPage() {
   if (!magazineId) {
     return (
       <div className={styles.adminPage}>
-        <p className={styles.adminError}>Invalid magazine id.</p>
+        <p className={styles.adminError}>{adminCopy.magazineAdvisorsPage.invalidIdPage}</p>
       </div>
     );
   }
@@ -178,21 +181,16 @@ export default function AdminMagazinePublishingConditionsPage() {
     <div className={styles.adminPage}>
       <header className={styles.adminHeader}>
         <div className={styles.adminSubtitle}>
-          <Link href="/admin/magazines">← Magazines</Link>
+          <Link href="/admin/magazines">{c.backToMagazines}</Link>
         </div>
-        <h1 className={styles.adminTitle}>Publishing conditions</h1>
-        <p className={styles.adminSubtitle}>
-          {magazine ? magazine.title : loadError ? loadError : "Loading…"}
-        </p>
+        <h1 className={styles.adminTitle}>{pc.title}</h1>
+        <p className={styles.adminSectionExplainer}>{pc.explainer}</p>
+        <p className={styles.adminSubtitle}>{magazine ? magazine.title : loadError ? loadError : c.loading}</p>
         {magazine ? (
           <p className={styles.adminSubtitle}>
-            Public page:{" "}
-            <a
-              href={`/magazines/${magazine.id}/publishing-conditions`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Open in new tab
+            {pc.publicExplainer}{" "}
+            <a href={`/magazines/${magazine.id}/publishing-conditions`} target="_blank" rel="noreferrer">
+              {c.openInNewTab}
             </a>
           </p>
         ) : null}
@@ -203,17 +201,14 @@ export default function AdminMagazinePublishingConditionsPage() {
       ) : (
         <>
           <section className={styles.adminSection}>
-            <h3 className={styles.adminSectionTitle}>Current tabs</h3>
+            <h3 className={styles.adminSectionTitle}>{pc.currentTabsTitle}</h3>
+            <p className={styles.adminSectionExplainer}>{pc.tabsListExplainer}</p>
             {tabs.length === 0 ? (
-              <p className={styles.adminEmpty}>No tabs yet — add the first one below.</p>
+              <p className={styles.adminEmpty}>{pc.emptyTabs}</p>
             ) : (
               <ul className={styles.adminList}>
                 {tabs.map((tab) => {
-                  const safeIcon: PublishingConditionIconKey = isPublishingConditionIconKey(
-                    tab.iconKey,
-                  )
-                    ? tab.iconKey
-                    : "clipboard";
+                  const safeIcon: PublishingConditionIconKey = isPublishingConditionIconKey(tab.iconKey) ? tab.iconKey : "clipboard";
                   const iconLabel = PUBLISHING_CONDITION_ICON_LABELS_AR[safeIcon];
                   const preview = tab.body.length > 140 ? `${tab.body.slice(0, 140)}…` : tab.body;
                   return (
@@ -226,13 +221,7 @@ export default function AdminMagazinePublishingConditionsPage() {
                       }
                     >
                       <span className={styles.adminListText}>
-                        <span
-                          style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: "0.5rem",
-                          }}
-                        >
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
                           <span
                             style={{
                               width: "1.5rem",
@@ -250,35 +239,17 @@ export default function AdminMagazinePublishingConditionsPage() {
                         </span>
                         <br />
                         <span style={{ fontSize: "0.85rem", color: "#5c6e90" }}>
-                          Icon: {iconLabel} ({safeIcon}) · Sort: {tab.sortOrder}
+                          {c.iconLabel} {iconLabel} ({safeIcon}) · {c.sortLabel} {tab.sortOrder}
                         </span>
                         <br />
-                        <span
-                          style={{
-                            fontSize: "0.88rem",
-                            color: "#5c6e90",
-                            whiteSpace: "pre-wrap",
-                          }}
-                        >
-                          {preview}
-                        </span>
+                        <span style={{ fontSize: "0.88rem", color: "#5c6e90", whiteSpace: "pre-wrap" }}>{preview}</span>
                       </span>
                       <div className={styles.adminActions}>
-                        <button
-                          type="button"
-                          className={styles.adminButton}
-                          disabled={busy}
-                          onClick={() => startEdit(tab)}
-                        >
-                          Edit
+                        <button type="button" className={styles.adminButton} disabled={busy} onClick={() => startEdit(tab)}>
+                          {c.edit}
                         </button>
-                        <button
-                          type="button"
-                          className={`${styles.adminButton} ${styles.adminButtonDanger}`}
-                          disabled={busy}
-                          onClick={() => handleDelete(tab.id)}
-                        >
-                          Remove
+                        <button type="button" className={`${styles.adminButton} ${styles.adminButtonDanger}`} disabled={busy} onClick={() => handleDelete(tab.id)}>
+                          {c.remove}
                         </button>
                       </div>
                     </li>
@@ -289,13 +260,12 @@ export default function AdminMagazinePublishingConditionsPage() {
           </section>
 
           <section className={styles.adminSection}>
-            <h3 className={styles.adminSectionTitle}>
-              {editingId ? "Edit tab" : "Add tab"}
-            </h3>
+            <h3 className={styles.adminSectionTitle}>{editingId ? pc.editTab : pc.addTab}</h3>
+            <p className={styles.adminSectionExplainer}>{pc.formExplainer}</p>
             <form className={styles.adminForm} onSubmit={handleSubmit}>
               <input
                 className={styles.adminInput}
-                placeholder="Tab title (Arabic, e.g. شروط المؤلف)"
+                placeholder={pc.placeholderTabTitle}
                 value={form.title}
                 onChange={(e) => setForm((s) => ({ ...s, title: e.target.value }))}
                 required
@@ -304,7 +274,7 @@ export default function AdminMagazinePublishingConditionsPage() {
               />
               <textarea
                 className={styles.adminTextarea}
-                placeholder="Tab content (Arabic). Separate paragraphs with a blank line."
+                placeholder={pc.placeholderTabBody}
                 value={form.body}
                 onChange={(e) => setForm((s) => ({ ...s, body: e.target.value }))}
                 required
@@ -329,26 +299,15 @@ export default function AdminMagazinePublishingConditionsPage() {
                   </option>
                 ))}
               </select>
-              <input
-                className={styles.adminInput}
-                type="number"
-                min={0}
-                placeholder="Sort order (0 first)"
-                value={form.sortOrder}
-                onChange={(e) => setForm((s) => ({ ...s, sortOrder: e.target.value }))}
-              />
+              <input className={styles.adminInput} type="number" min={0} placeholder={pc.placeholderSort} value={form.sortOrder} onChange={(e) => setForm((s) => ({ ...s, sortOrder: e.target.value }))} />
               {submitError ? <p className={styles.adminError}>{submitError}</p> : null}
               <div className={styles.adminActions}>
-                <button
-                  type="submit"
-                  className={`${styles.adminButton} ${styles.adminButtonPrimary}`}
-                  disabled={busy}
-                >
-                  {busy ? "Working…" : editingId ? "Update tab" : "Add tab"}
+                <button type="submit" className={`${styles.adminButton} ${styles.adminButtonPrimary}`} disabled={busy}>
+                  {busy ? pc.submitWorking : editingId ? pc.submitUpdate : pc.submitAdd}
                 </button>
                 {editingId ? (
                   <button type="button" className={styles.adminButton} onClick={resetForm}>
-                    Cancel
+                    {c.cancel}
                   </button>
                 ) : null}
               </div>
