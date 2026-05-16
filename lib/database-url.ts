@@ -27,8 +27,11 @@ function warnIfDatabaseUrlOverridesDbVars(): void {
 export function applyMysqlUrlDefaults(url: string): string {
   if (!url.startsWith("mysql://")) return url;
   const additions: string[] = [];
-  if (!/[?&]connect_timeout=/.test(url)) additions.push("connect_timeout=30");
-  if (!/[?&]pool_timeout=/.test(url)) additions.push("pool_timeout=30");
+  if (!/[?&]connect_timeout=/.test(url)) additions.push("connect_timeout=60");
+  if (!/[?&]pool_timeout=/.test(url)) additions.push("pool_timeout=60");
+  if (!/[?&]socket_timeout=/.test(url)) additions.push("socket_timeout=60");
+  // Hostinger shared MySQL: keep pool small to avoid max_connections during dev hot reload.
+  if (!/[?&]connection_limit=/.test(url)) additions.push("connection_limit=5");
   if (additions.length === 0) return url;
   const sep = url.includes("?") ? "&" : "?";
   return `${url}${sep}${additions.join("&")}`;

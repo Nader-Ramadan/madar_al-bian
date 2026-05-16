@@ -61,7 +61,7 @@ function magazinesLoadErrorMessage(err: unknown): string {
     msg.includes("ECONNREFUSED") ||
     msg.includes("ETIMEDOUT")
   ) {
-    return `تعذر تحميل المجلات: Cannot reach the database server. Check DATABASE_URL, firewall, and Remote MySQL access. تحقق من الاتصال بقاعدة البيانات على Hostinger.`;
+    return `تعذر تحميل المجلات: Cannot reach the database server (P1001). From your PC: in Hostinger hPanel enable Remote MySQL and add your current public IP. On the server: use the MySQL host shown in hPanel and restart the Node app. Also check firewall/VPN.`;
   }
 
   if (
@@ -81,14 +81,36 @@ function magazinesLoadErrorMessage(err: unknown): string {
   return `تعذر تحميل المجلات (خطأ من الخادم).${codeHint} تحقق من اتصال قاعدة البيانات وإعدادات DATABASE_URL أو DB_HOST و DB_USER و DB_PASSWORD و DB_NAME ثم أعد تشغيل الخادم. إذا كان لديك DATABASE_URL و DB_* معاً، DATABASE_URL هو المستخدم — احذف القيمة الخاطئة أو صححها.`;
 }
 
+function isTransientDbReachabilityError(err: unknown): boolean {
+  const code = prismaErrorCode(err);
+  const msg = err instanceof Error ? err.message : String(err);
+  return (
+    code === "P1001" ||
+    msg.includes("P1001") ||
+    msg.includes("Can't reach database server") ||
+    msg.includes("ECONNREFUSED") ||
+    msg.includes("ETIMEDOUT")
+  );
+}
+
+async function fetchMagazineRows(limit: number) {
+  return prisma.magazine.findMany({
+    take: limit,
+    orderBy: { id: "desc" },
+  });
+}
+
 export async function loadMagazineCardsForPage(
   limit = 100,
 ): Promise<{ items: MagazineCard[]; error: string | null }> {
   try {
-    const rows = await prisma.magazine.findMany({
-      take: limit,
-      orderBy: { id: "desc" },
-    });
+    let rows;
+    try {
+      rows = await fetchMagazineRows(limit);
+    } catch (first) {
+      if (!isTransientDbReachabilityError(first)) throw first;
+      rows = await fetchMagazineRows(limit);
+    }
     return { items: rows.map(toCard), error: null };
   } catch (err) {
     console.error("[magazines page] prisma", err);

@@ -999,21 +999,12 @@
   width: 100%;
   height: 200px;
   background: linear-gradient(135deg, #d4b376 0%, #c6a664 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   position: relative;
   overflow: hidden;
 }
 
-.memberImageBackground {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    135deg,
-    rgba(198, 166, 100, 0.8) 0%,
-    rgba(212, 179, 118, 0.8) 100%
-  );
+.memberPhoto {
+  object-fit: cover;
 }
 
 .memberBadge {
