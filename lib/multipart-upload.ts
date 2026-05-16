@@ -17,6 +17,8 @@ export function isLikelyPdf(file: File): boolean {
   return file.name.toLowerCase().endsWith(".pdf");
 }
 
+export { isLikelyWordDocument, MAX_WORD_DOCUMENT_BYTES } from "@/lib/word-document";
+
 export function requireMultipartContentType(request: NextRequest): boolean {
   const hdr = request.headers.get("content-type") || "";
   return hdr.includes("multipart/form-data");

@@ -184,6 +184,10 @@ export const adminCopy = {
     statusApproved: "معتمد",
     statusRejected: "مرفوض",
     statusLabel: "الحالة:",
+    downloadWord: "تحميل ملف Word",
+    noAttachment: "لا يوجد ملف مرفق",
+    submittedAt: "تاريخ الإرسال:",
+    abstractLabel: "الملخص:",
   },
 
   emailsPage: {

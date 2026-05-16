@@ -13,9 +13,28 @@ type PublicationRequest = {
   field?: string | null;
   magazineId?: number | null;
   magazine?: { id: number; title: string } | null;
+  documentUrl?: string | null;
+  documentFilename?: string | null;
   reviewNotes?: string | null;
   status: "PENDING" | "APPROVED" | "REJECTED";
+  createdAt: string;
 };
+
+function formatSubmittedAt(iso: string) {
+  try {
+    return new Intl.DateTimeFormat("ar-EG", { dateStyle: "medium", timeStyle: "short" }).format(
+      new Date(iso),
+    );
+  } catch {
+    return iso;
+  }
+}
+
+function abstractExcerpt(text: string, max = 160) {
+  const t = text.trim();
+  if (t.length <= max) return t;
+  return `${t.slice(0, max)}…`;
+}
 
 function statusLabelAr(status: PublicationRequest["status"]) {
   const ap = adminCopy.approvalsPage;
@@ -84,6 +103,26 @@ export default function AdminApprovalsPage() {
                     </>
                   ) : null}
                   {ap.statusLabel} {statusLabelAr(item.status)}
+                  <br />
+                  {ap.submittedAt} {formatSubmittedAt(item.createdAt)}
+                  <br />
+                  {ap.abstractLabel} {abstractExcerpt(item.abstract)}
+                  <br />
+                  {item.documentUrl ? (
+                    <a
+                      href={`/api/admin/publication-requests/${item.id}/document`}
+                      className={styles.adminButton}
+                      style={{ display: "inline-flex", marginTop: "0.5rem" }}
+                      download={item.documentFilename ?? undefined}
+                    >
+                      {ap.downloadWord}
+                      {item.documentFilename ? ` (${item.documentFilename})` : ""}
+                    </a>
+                  ) : (
+                    <span style={{ display: "block", marginTop: "0.5rem", opacity: 0.75 }}>
+                      {ap.noAttachment}
+                    </span>
+                  )}
                 </span>
                 <div className={styles.adminForm} style={{ minWidth: 300 }}>
                   <textarea

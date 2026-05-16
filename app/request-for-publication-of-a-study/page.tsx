@@ -1,7 +1,8 @@
 "use client";
 
-import { type CSSProperties, FormEvent, useEffect, useState } from "react";
+import { type ChangeEvent, type CSSProperties, type FormEvent, useEffect, useRef, useState } from "react";
 import styles from "@/app/page.module.css";
+import { isLikelyWordDocument, MAX_WORD_DOCUMENT_BYTES } from "@/lib/word-document";
 
 const rtlSection = {
   padding: "4rem 2rem",
@@ -20,6 +21,9 @@ const inputStyle: CSSProperties = {
   color: "var(--text-primary)",
 };
 
+const WORD_ACCEPT =
+  ".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
 type MagazineOption = { id: number; title: string };
 
 export default function RequestPublicationPage() {
@@ -28,6 +32,9 @@ export default function RequestPublicationPage() {
   const [magazineId, setMagazineId] = useState("");
   const [title, setTitle] = useState("");
   const [abstract, setAbstract] = useState("");
+  const [wordFile, setWordFile] = useState<File | null>(null);
+  const [fileInputKey, setFileInputKey] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [magazines, setMagazines] = useState<MagazineOption[]>([]);
   const [magazinesError, setMagazinesError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -57,23 +64,42 @@ export default function RequestPublicationPage() {
     };
   }, []);
 
+  const onFileChange = (ev: ChangeEvent<HTMLInputElement>) => {
+    const file = ev.target.files?.[0] ?? null;
+    setWordFile(file);
+    setMessage(null);
+  };
+
   const submit = async (e: FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setMessage(null);
+
+    if (!wordFile) {
+      setMessage({ type: "err", text: "يرجى إرفاق ملف الدراسة بصيغة Word." });
+      return;
+    }
+    if (!isLikelyWordDocument(wordFile)) {
+      setMessage({ type: "err", text: "يُسمح فقط بملفات Word (.doc أو .docx)." });
+      return;
+    }
+    if (wordFile.size > MAX_WORD_DOCUMENT_BYTES) {
+      setMessage({ type: "err", text: "حجم الملف كبير جداً (الحد الأقصى 15 ميجابايت)." });
+      return;
+    }
+
+    setLoading(true);
     try {
-      const mid = magazineId.trim() === "" ? null : Number.parseInt(magazineId, 10);
-      const body = {
-        authorName,
-        authorEmail,
-        title,
-        abstract,
-        magazineId: mid != null && Number.isFinite(mid) ? mid : null,
-      };
+      const fd = new FormData();
+      fd.append("authorName", authorName);
+      fd.append("authorEmail", authorEmail);
+      fd.append("title", title);
+      fd.append("abstract", abstract);
+      if (magazineId.trim() !== "") fd.append("magazineId", magazineId.trim());
+      fd.append("file", wordFile);
+
       const response = await fetch("/api/publication-requests", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: fd,
       });
       const payload = await response.json().catch(() => ({ parseError: true }));
       if (!(payload as { success?: boolean }).success) {
@@ -89,6 +115,9 @@ export default function RequestPublicationPage() {
       setMagazineId("");
       setTitle("");
       setAbstract("");
+      setWordFile(null);
+      setFileInputKey((k) => k + 1);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     } catch {
       setMessage({ type: "err", text: "حدث خطأ أثناء الإرسال." });
     } finally {
@@ -111,7 +140,8 @@ export default function RequestPublicationPage() {
             طلب نشر دراسة
           </h1>
           <p style={{ fontSize: "1.1rem", lineHeight: 1.7, color: "var(--text-muted)", marginBottom: "2rem" }}>
-            املأ النموذج أدناه. يجب أن يكون الملخص ٢٠ حرفاً على الأقل كما هو مطلوب في النظام.
+            املأ النموذج أدناه وأرفق ملف الدراسة بصيغة Word فقط (.doc أو .docx). يجب أن يكون الملخص ٢٠
+            حرفاً على الأقل.
           </p>
           <form style={{ display: "grid", gap: "1.25rem" }} onSubmit={submit}>
             <div>
@@ -172,6 +202,24 @@ export default function RequestPublicationPage() {
                 rows={6}
                 style={inputStyle}
               />
+            </div>
+            <div>
+              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
+                ملف الدراسة (Word فقط)
+              </label>
+              <input
+                key={fileInputKey}
+                ref={fileInputRef}
+                required
+                type="file"
+                accept={WORD_ACCEPT}
+                onChange={onFileChange}
+                style={inputStyle}
+              />
+              <p style={{ marginTop: "0.35rem", fontSize: "0.85rem", color: "var(--text-muted)" }}>
+                الصيغ المسموحة: .doc و .docx فقط — الحد الأقصى 15 ميجابايت.
+                {wordFile ? ` الملف المحدد: ${wordFile.name}` : null}
+              </p>
             </div>
             <button
               type="submit"

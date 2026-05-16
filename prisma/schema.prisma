@@ -187,8 +187,11 @@ model PublicationRequest {
   title          String            @db.VarChar(255)
   abstract       String            @db.Text
   field          String?           @db.VarChar(255)
-  magazineId     Int?
-  status         PublicationStatus @default(PENDING)
+  magazineId         Int?
+  documentUrl        String?           @db.VarChar(2048)
+  documentFilename   String?           @db.VarChar(255)
+  documentSize       Int?
+  status             PublicationStatus @default(PENDING)
   reviewNotes    String?           @db.Text
   reviewedById   Int?
   createdAt      DateTime          @default(now())
