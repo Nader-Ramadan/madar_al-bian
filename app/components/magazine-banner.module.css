@@ -48,9 +48,9 @@
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
+  align-items: start;
   gap: clamp(1.5rem, 4vw, 3rem);
-  min-height: min(380px, 52vh);
+  min-height: unset;
 }
 
 .textCol {
@@ -87,25 +87,29 @@
 
 .description {
   margin: 0;
-  max-width: 52ch;
+  max-width: 100%;
+  width: 100%;
   font-size: clamp(0.95rem, 1.1vw, 1.05rem);
   line-height: 1.75;
   font-weight: 500;
   color: color-mix(in srgb, var(--foreground) 88%, transparent);
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 5;
-  overflow: hidden;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .descriptionMuted {
   margin: 0;
-  max-width: 52ch;
+  max-width: 100%;
+  width: 100%;
   font-size: clamp(0.95rem, 1.1vw, 1.05rem);
   line-height: 1.75;
   font-weight: 500;
   color: color-mix(in srgb, var(--foreground) 72%, transparent);
   font-style: italic;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .accentLine {
@@ -160,7 +164,7 @@
 
   .description,
   .descriptionMuted {
-    max-width: 42rem;
+    max-width: 100%;
     margin-inline: auto;
   }
 

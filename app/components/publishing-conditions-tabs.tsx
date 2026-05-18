@@ -124,7 +124,7 @@ export default function PublishingConditionsTabs({ tabs }: Props) {
               <span className={styles.mobilePillIcon}>
                 <PublishingConditionIcon iconKey={tab.iconKey} />
               </span>
-              <span>{tab.title}</span>
+              <span className={styles.mobilePillText}>{tab.title}</span>
             </button>
           );
         })}

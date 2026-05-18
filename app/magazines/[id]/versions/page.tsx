@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { parseMagazineId } from "@/lib/magazine-id";
+import { textDirectionAttrs } from "@/lib/text-direction";
 import styles from "../../../magazine-versions-archive.module.css";
 
 function formatReleaseDate(d: Date): string {
@@ -131,8 +132,12 @@ export default async function MagazineVersionsArchivePage({
             ← العودة للمجلة
           </Link>
           <div className={styles.headerBlock}>
-            <h1 className={styles.pageTitle}>إصدارات المجلة</h1>
-            <p className={styles.subtitle}>{baseMagazine.title}</p>
+            <h1 className={styles.pageTitle} dir="rtl" lang="ar">
+              إصدارات المجلة
+            </h1>
+            <p className={styles.subtitle} {...textDirectionAttrs(baseMagazine.title)}>
+              {baseMagazine.title}
+            </p>
           </div>
         </div>
 
@@ -148,7 +153,9 @@ export default async function MagazineVersionsArchivePage({
                     <div className={styles.badgeRow}>
                       {isLatest ? <span className={styles.latestBadge}>أحدث إصدار</span> : null}
                     </div>
-                    <h2 className={styles.issueTitle}>{v.title}</h2>
+                    <h2 className={styles.issueTitle} {...textDirectionAttrs(v.title)}>
+                      {v.title}
+                    </h2>
                     <p className={styles.dateLine}>{formatReleaseDate(v.releaseDate)}</p>
                     {v.notes?.trim() ? <p className={styles.notes}>{v.notes.trim()}</p> : null}
                     <div className={styles.versionResearchRow}>

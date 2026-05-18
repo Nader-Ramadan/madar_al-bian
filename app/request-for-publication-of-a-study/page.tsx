@@ -1,25 +1,13 @@
 "use client";
 
-import { type ChangeEvent, type CSSProperties, type FormEvent, useEffect, useRef, useState } from "react";
-import styles from "@/app/page.module.css";
+import { type ChangeEvent, type FormEvent, useEffect, useRef, useState } from "react";
+import layout from "@/app/page.module.css";
+import staticStyles from "@/app/static-page.module.css";
+import {
+  ABSTRACT_MIN_WORDS_MESSAGE,
+  meetsMinAbstractWords,
+} from "@/lib/publication-request-abstract";
 import { isLikelyWordDocument, MAX_WORD_DOCUMENT_BYTES } from "@/lib/word-document";
-
-const rtlSection = {
-  padding: "4rem 2rem",
-  maxWidth: "800px",
-  margin: "0 auto",
-  textAlign: "right" as const,
-  direction: "rtl" as const,
-};
-
-const inputStyle: CSSProperties = {
-  width: "100%",
-  padding: "0.75rem",
-  border: "1px solid var(--border-light)",
-  borderRadius: "0.5rem",
-  background: "var(--card-bg)",
-  color: "var(--text-primary)",
-};
 
 const WORD_ACCEPT =
   ".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
@@ -86,6 +74,10 @@ export default function RequestPublicationPage() {
       setMessage({ type: "err", text: "حجم الملف كبير جداً (الحد الأقصى 15 ميجابايت)." });
       return;
     }
+    if (!meetsMinAbstractWords(abstract)) {
+      setMessage({ type: "err", text: ABSTRACT_MIN_WORDS_MESSAGE });
+      return;
+    }
 
     setLoading(true);
     try {
@@ -126,50 +118,50 @@ export default function RequestPublicationPage() {
   };
 
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <section style={rtlSection}>
-          <h1
-            style={{
-              fontSize: "2.25rem",
-              fontWeight: 900,
-              color: "var(--secondary-color)",
-              marginBottom: "1rem",
-            }}
-          >
-            طلب نشر دراسة
-          </h1>
-          <p style={{ fontSize: "1.1rem", lineHeight: 1.7, color: "var(--text-muted)", marginBottom: "2rem" }}>
-            املأ النموذج أدناه وأرفق ملف الدراسة بصيغة Word فقط (.doc أو .docx). يجب أن يكون الملخص ٢٠
-            حرفاً على الأقل.
+    <div className={layout.page}>
+      <main className={layout.main}>
+        <section className={staticStyles.shell}>
+          <h1 className={staticStyles.title}>طلب نشر دراسة</h1>
+          <p className={staticStyles.lead}>
+            املأ النموذج أدناه وأرفق ملف الدراسة بصيغة Word فقط (.doc أو .docx). يجب أن يكون الملخص ٢٠٠
+            كلمة على الأقل.
           </p>
-          <form style={{ display: "grid", gap: "1.25rem" }} onSubmit={submit}>
-            <div>
-              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>اسم المؤلف</label>
+          <form className={staticStyles.form} onSubmit={submit}>
+            <div className={staticStyles.field}>
+              <label className={staticStyles.label} htmlFor="pub-author">
+                اسم المؤلف
+              </label>
               <input
+                id="pub-author"
                 required
                 value={authorName}
                 onChange={(ev) => setAuthorName(ev.target.value)}
                 type="text"
-                style={inputStyle}
+                className={staticStyles.input}
               />
             </div>
-            <div>
-              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>البريد الإلكتروني</label>
+            <div className={staticStyles.field}>
+              <label className={staticStyles.label} htmlFor="pub-email">
+                البريد الإلكتروني
+              </label>
               <input
+                id="pub-email"
                 required
                 value={authorEmail}
                 onChange={(ev) => setAuthorEmail(ev.target.value)}
                 type="email"
-                style={inputStyle}
+                className={staticStyles.input}
               />
             </div>
-            <div>
-              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>المجلة</label>
+            <div className={staticStyles.field}>
+              <label className={staticStyles.label} htmlFor="pub-magazine">
+                المجلة
+              </label>
               <select
+                id="pub-magazine"
                 value={magazineId}
                 onChange={(ev) => setMagazineId(ev.target.value)}
-                style={inputStyle}
+                className={staticStyles.select}
               >
                 <option value="">— اختر المجلة (اختياري) —</option>
                 {magazines.map((m) => (
@@ -179,71 +171,63 @@ export default function RequestPublicationPage() {
                 ))}
               </select>
               {magazinesError ? (
-                <p style={{ marginTop: "0.35rem", fontSize: "0.85rem", color: "crimson" }}>{magazinesError}</p>
+                <p className={`${staticStyles.hint} ${staticStyles.hintError}`}>{magazinesError}</p>
               ) : null}
             </div>
-            <div>
-              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>عنوان الدراسة</label>
+            <div className={staticStyles.field}>
+              <label className={staticStyles.label} htmlFor="pub-title">
+                عنوان الدراسة
+              </label>
               <input
+                id="pub-title"
                 required
                 value={title}
                 onChange={(ev) => setTitle(ev.target.value)}
                 type="text"
-                style={inputStyle}
+                className={staticStyles.input}
               />
             </div>
-            <div>
-              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>الملخص</label>
+            <div className={staticStyles.field}>
+              <label className={staticStyles.label} htmlFor="pub-abstract">
+                الملخص
+              </label>
               <textarea
+                id="pub-abstract"
                 required
-                minLength={20}
                 value={abstract}
                 onChange={(ev) => setAbstract(ev.target.value)}
                 rows={6}
-                style={inputStyle}
+                className={staticStyles.textarea}
               />
             </div>
-            <div>
-              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
+            <div className={staticStyles.field}>
+              <label className={staticStyles.label} htmlFor="pub-file">
                 ملف الدراسة (Word فقط)
               </label>
               <input
                 key={fileInputKey}
+                id="pub-file"
                 ref={fileInputRef}
                 required
                 type="file"
                 accept={WORD_ACCEPT}
                 onChange={onFileChange}
-                style={inputStyle}
+                className={staticStyles.input}
               />
-              <p style={{ marginTop: "0.35rem", fontSize: "0.85rem", color: "var(--text-muted)" }}>
+              <p className={staticStyles.hint}>
                 الصيغ المسموحة: .doc و .docx فقط — الحد الأقصى 15 ميجابايت.
                 {wordFile ? ` الملف المحدد: ${wordFile.name}` : null}
               </p>
             </div>
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                background: "var(--primary-color)",
-                color: "var(--secondary-color)",
-                padding: "1rem 2rem",
-                border: "none",
-                borderRadius: "0.5rem",
-                fontWeight: "bold",
-                cursor: loading ? "wait" : "pointer",
-              }}
-            >
+            <button type="submit" disabled={loading} className={staticStyles.staticSubmit}>
               {loading ? "جاري الإرسال…" : "إرسال الطلب"}
             </button>
           </form>
           {message ? (
             <p
-              style={{
-                marginTop: "1.25rem",
-                color: message.type === "ok" ? "green" : "crimson",
-                fontWeight: 600,
-              }}
+              className={`${staticStyles.message} ${
+                message.type === "ok" ? staticStyles.messageOk : staticStyles.messageErr
+              }`}
             >
               {message.text}
             </p>

@@ -124,7 +124,7 @@ export default function AdminApprovalsPage() {
                     </span>
                   )}
                 </span>
-                <div className={styles.adminForm} style={{ minWidth: 300 }}>
+                <div className={`${styles.adminForm} ${styles.adminFormInList}`}>
                   <textarea
                     className={styles.adminTextarea}
                     placeholder={ap.placeholderNotes}

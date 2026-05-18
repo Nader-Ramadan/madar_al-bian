@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { parseMagazineId } from "@/lib/magazine-id";
+import { textDirectionAttrs } from "@/lib/text-direction";
 import styles from "../../../../magazine-versions-archive.module.css";
 
 export async function generateMetadata({
@@ -41,6 +42,9 @@ export default async function MagazineVersionHubPage({
   });
   if (!version) notFound();
 
+  const versionTitleDir = textDirectionAttrs(version.title);
+  const magazineTitleDir = textDirectionAttrs(version.magazine.title);
+
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
@@ -53,9 +57,12 @@ export default async function MagazineVersionHubPage({
           </Link>
         </div>
         <div className={styles.headerBlock}>
-          <h1 className={styles.pageTitle}>{version.title}</h1>
+          <h1 className={styles.pageTitle} {...versionTitleDir}>
+            {version.title}
+          </h1>
           <p className={styles.subtitle}>
-            {version.magazine.title} — إصدار {version.version}
+            <span {...magazineTitleDir}>{version.magazine.title}</span> — إصدار{" "}
+            {version.version}
           </p>
         </div>
 
@@ -65,7 +72,7 @@ export default async function MagazineVersionHubPage({
           <div className={styles.researchList}>
             {version.researches.map((r) => (
               <article key={r.id} className={styles.researchCard}>
-                <h2 className={styles.researchCardTitle}>
+                <h2 className={styles.researchCardTitle} {...textDirectionAttrs(r.title)}>
                   <Link
                     href={`/magazines/${magazineId}/versions/${versionId}/research/${r.id}`}
                     className={styles.researchCardTitleLink}

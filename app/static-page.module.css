@@ -1,0 +1,157 @@
+.shell {
+  width: 100%;
+  max-width: min(800px, 100%);
+  margin: 0 auto;
+  padding: clamp(1.5rem, 4vw, 4rem) clamp(0.75rem, 3vw, 2rem);
+  text-align: right;
+  direction: rtl;
+  box-sizing: border-box;
+}
+
+.title {
+  margin: 0 0 1rem;
+  font-size: clamp(1.5rem, 5vw, 2.25rem);
+  font-weight: 900;
+  color: var(--secondary-color);
+  line-height: 1.25;
+}
+
+.lead {
+  margin: 0 0 2rem;
+  font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+.prose {
+  margin: 0;
+  font-size: clamp(0.95rem, 2.2vw, 1.05rem);
+  line-height: 1.8;
+  color: var(--text-muted);
+}
+
+.prose a {
+  color: var(--primary-color);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-weight: 700;
+  color: var(--text-heading);
+  font-size: 0.95rem;
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--border-light);
+  border-radius: 0.5rem;
+  background: var(--card-bg);
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 8rem;
+}
+
+.hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.hintError {
+  color: #b42318;
+}
+
+.staticSubmit {
+  justify-self: start;
+  background: var(--primary-color);
+  color: var(--secondary-color);
+  padding: 0.85rem 1.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.staticSubmit:disabled {
+  cursor: wait;
+  opacity: 0.75;
+}
+
+.staticSubmit:hover:not(:disabled) {
+  background: var(--primary-color-dark, #b9984d);
+}
+
+.message {
+  margin: 1.25rem 0 0;
+  font-weight: 600;
+}
+
+.messageOk {
+  color: #15803d;
+}
+
+.messageErr {
+  color: #b42318;
+}
+
+.infoCard {
+  margin-top: clamp(2rem, 5vw, 3rem);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  background: var(--secondary-color);
+  color: var(--foreground-light);
+  border-radius: 1rem;
+}
+
+.infoCard h3 {
+  margin: 0 0 1rem;
+  font-size: 1.15rem;
+}
+
+.infoCard p {
+  margin: 0 0 0.5rem;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.infoCard p:last-child {
+  margin-bottom: 0;
+}
+
+.infoCard a {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .shell {
+    padding: 1.25rem 0.75rem 2rem;
+  }
+
+  .staticSubmit {
+    width: 100%;
+    justify-self: stretch;
+    text-align: center;
+  }
+}

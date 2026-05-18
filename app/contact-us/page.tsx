@@ -1,39 +1,52 @@
 import type { Metadata } from "next";
-import styles from "../page.module.css";
+import layout from "../page.module.css";
+import staticStyles from "../static-page.module.css";
 
 export const metadata: Metadata = {
   title: "Contact Us",
-};  
+};
 
 export default function ContactUsPage() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <section style={{padding: '4rem 2rem', maxWidth: '800px', margin: '0 auto', textAlign: 'right' as const, direction: 'rtl' as const}}>
-          <h1 style={{fontSize: '3rem', fontWeight: '900', color: 'var(--secondary-color)', marginBottom: '1rem'}}>اتصل بنا</h1>
-          <p style={{fontSize: '1.2rem', lineHeight: '1.6', color: 'var(--text-muted)', marginBottom: '2rem'}}>
+    <div className={layout.page}>
+      <main className={layout.main}>
+        <section className={staticStyles.shell}>
+          <h1 className={staticStyles.title}>اتصل بنا</h1>
+          <p className={staticStyles.lead}>
             نحن هنا لمساعدتك في رحلتك البحثية. تواصل معنا للاستفسارات أو طلبات النشر.
           </p>
-          <form style={{display: 'grid', gap: '1.5rem'}}>
-            <div>
-              <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: 'bold'}}>الاسم</label>
-              <input type="text" style={{width: '100%', padding: '0.75rem', border: '1px solid var(--border-light)', borderRadius: '0.5rem'}} />
+          <form className={staticStyles.form}>
+            <div className={staticStyles.field}>
+              <label className={staticStyles.label} htmlFor="contact-name">
+                الاسم
+              </label>
+              <input id="contact-name" type="text" className={staticStyles.input} />
             </div>
-            <div>
-              <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: 'bold'}}>البريد الإلكتروني</label>
-              <input type="email" style={{width: '100%', padding: '0.75rem', border: '1px solid var(--border-light)', borderRadius: '0.5rem'}} />
+            <div className={staticStyles.field}>
+              <label className={staticStyles.label} htmlFor="contact-email">
+                البريد الإلكتروني
+              </label>
+              <input id="contact-email" type="email" className={staticStyles.input} />
             </div>
-            <div>
-              <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: 'bold'}}>الرسالة</label>
-              <textarea rows={5} style={{width: '100%', padding: '0.75rem', border: '1px solid var(--border-light)', borderRadius: '0.5rem'}}></textarea>
+            <div className={staticStyles.field}>
+              <label className={staticStyles.label} htmlFor="contact-message">
+                الرسالة
+              </label>
+              <textarea id="contact-message" rows={5} className={staticStyles.textarea} />
             </div>
-            <button type="submit" style={{background: 'var(--primary-color)', color: 'var(--secondary-color)', padding: '1rem 2rem', border: 'none', borderRadius: '0.5rem', fontWeight: 'bold', cursor: 'pointer'}}>إرسال الرسالة</button>
+            <button type="submit" className={staticStyles.staticSubmit}>
+              إرسال الرسالة
+            </button>
           </form>
-          <div style={{marginTop: '3rem', padding: '2rem', background: 'var(--secondary-color)', color: 'white', borderRadius: '1rem'}}>
-            <h3 style={{marginBottom: '1rem'}}>معلومات التواصل</h3>
+          <div className={staticStyles.infoCard}>
+            <h3>معلومات التواصل</h3>
             <p>العنوان: ٢٠٣ شارع ماونتن فيو، الجيزة</p>
-            <p>الهاتف: ٠٠٢ +١٠٦٦٢٢٣٣٩٩</p>
-            <p>البريد: info@madar-albian.com</p>
+            <p>
+              الهاتف: <a href="tel:+201066223399">٠٠٢ +١٠٦٦٢٢٣٣٩٩</a>
+            </p>
+            <p>
+              البريد: <a href="mailto:info@madar-albian.com">info@madar-albian.com</a>
+            </p>
           </div>
         </section>
       </main>

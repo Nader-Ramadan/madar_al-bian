@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { parseMagazineId } from "@/lib/magazine-id";
 import { splitResearchKeywords } from "@/lib/research-keywords";
+import { textDirectionAttrs } from "@/lib/text-direction";
 import styles from "../../../../../../magazine-versions-archive.module.css";
 
 export async function generateMetadata({
@@ -55,6 +56,9 @@ export default async function MagazineVersionResearchDetailPage({
   const keywordItems = splitResearchKeywords(research.keywords);
   const summaryText = research.summary?.trim() ?? "";
   const pdfHref = research.pdfUrl?.trim() ?? "";
+  const researchTitleDir = textDirectionAttrs(research.title);
+  const versionTitleDir = textDirectionAttrs(research.magazineVersion.title);
+  const magazineTitleDir = textDirectionAttrs(research.magazineVersion.magazine.title);
 
   return (
     <div className={styles.page}>
@@ -69,11 +73,16 @@ export default async function MagazineVersionResearchDetailPage({
         </div>
         <div className={styles.headerBlock}>
           <p className={styles.subtitle}>
-            {research.magazineVersion.magazine.title} — {research.magazineVersion.title} (إصدار{" "}
+            <span {...magazineTitleDir}>{research.magazineVersion.magazine.title}</span> —{" "}
+            <span {...versionTitleDir}>{research.magazineVersion.title}</span> (إصدار{" "}
             {research.magazineVersion.version})
           </p>
-          <h1 className={styles.pageTitle}>{research.title}</h1>
-          <p className={styles.researchMeta}>{research.researcherNames}</p>
+          <h1 className={styles.pageTitle} {...researchTitleDir}>
+            {research.title}
+          </h1>
+          <p className={styles.researchMeta} {...textDirectionAttrs(research.researcherNames)}>
+            {research.researcherNames}
+          </p>
         </div>
 
         <article className={styles.researchArticleSheet}>

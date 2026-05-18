@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ABSTRACT_MIN_WORDS_MESSAGE, meetsMinAbstractWords } from "@/lib/publication-request-abstract";
 import { PUBLISHING_CONDITION_ICON_KEYS } from "@/lib/publishing-condition-icons";
 
 /** HTTPS URL (e.g. Cloudinary) or legacy local path `/uploads/...`. */
@@ -133,7 +134,7 @@ export const publicationRequestSchema = z.object({
   authorName: z.string().min(2).max(255),
   authorEmail: z.string().email(),
   title: z.string().min(2).max(255),
-  abstract: z.string().min(20),
+  abstract: z.string().refine(meetsMinAbstractWords, { message: ABSTRACT_MIN_WORDS_MESSAGE }),
   field: z.string().max(255).optional().nullable(),
   magazineId: z.number().int().positive().optional().nullable(),
 });

@@ -120,7 +120,7 @@
 /* Two-column layout */
 .layout {
   display: grid;
-  grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
   gap: 1.5rem;
   margin-top: 1.75rem;
   align-items: start;
@@ -173,8 +173,8 @@
 .tabButton {
   appearance: none;
   display: flex;
-  align-items: center;
-  gap: 0.7rem;
+  align-items: flex-start;
+  gap: 0.65rem;
   padding: 0.7rem 0.85rem;
   width: 100%;
   border: 1px solid transparent;
@@ -182,7 +182,8 @@
   background: transparent;
   color: var(--text-heading);
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
+  line-height: 1.4;
   text-align: start;
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
@@ -208,7 +209,7 @@
 .tabButtonActive::before {
   content: "";
   position: absolute;
-  inset-block: 0.55rem;
+  inset-block: 0.65rem;
   inset-inline-end: 0.25rem;
   width: 4px;
   border-radius: 999px;
@@ -217,6 +218,8 @@
 
 .tabIcon {
   flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 0.05rem;
   width: 2.1rem;
   height: 2.1rem;
   display: inline-flex;
@@ -235,14 +238,17 @@
 .tabLabel {
   flex: 1;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  line-height: 1.45;
 }
 
 .tabIndex {
   flex-shrink: 0;
-  font-size: 0.8rem;
+  align-self: flex-start;
+  margin-top: 0.1rem;
+  font-size: 0.78rem;
   font-weight: 800;
   color: var(--text-muted);
   font-feature-settings: "tnum";
@@ -252,32 +258,49 @@
   color: var(--secondary-color);
 }
 
-/* Mobile tab strip — pill bar with horizontal scroll */
+/* Mobile tab strip — wrapped pill grid */
 .mobileTabBar {
   display: none;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: flex-start;
   gap: 0.5rem;
-  overflow-x: auto;
-  padding: 0.4rem 0.1rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem;
   margin-top: 1.5rem;
-  scroll-snap-type: x proximity;
-  -webkit-overflow-scrolling: touch;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 0.95rem;
+  box-shadow: 0 4px 14px var(--shadow-light);
 }
 
 .mobilePill {
   appearance: none;
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.45rem;
-  padding: 0.5rem 0.95rem;
-  border-radius: 999px;
-  background: var(--card-bg);
+  flex: 1 1 calc(50% - 0.25rem);
+  min-width: min(100%, 9.5rem);
+  max-width: 100%;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.65rem;
+  background: var(--foreground-light);
   border: 1px solid var(--border-light);
   color: var(--text-heading);
   font-weight: 700;
-  font-size: 0.9rem;
-  white-space: nowrap;
+  font-size: clamp(0.78rem, 2.8vw, 0.88rem);
+  line-height: 1.4;
+  text-align: start;
+  white-space: normal;
+  word-break: break-word;
   cursor: pointer;
-  scroll-snap-align: start;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.mobilePill:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--secondary-color) 65%, transparent);
+  outline-offset: 2px;
 }
 
 .mobilePillActive {
@@ -287,8 +310,21 @@
 }
 
 .mobilePillIcon {
-  width: 1rem;
-  height: 1rem;
+  flex-shrink: 0;
+  width: 1.05rem;
+  height: 1.05rem;
+  margin-top: 0.1rem;
+}
+
+.mobilePillIcon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.mobilePillText {
+  flex: 1;
+  min-width: 0;
 }
 
 /* Panel */
@@ -431,5 +467,30 @@
 
   .panel {
     padding: 1.25rem 1.15rem 1.4rem;
+  }
+
+  .mobileTabBar {
+    padding: 0.45rem;
+    gap: 0.4rem;
+  }
+
+  .mobilePill {
+    flex: 1 1 100%;
+    min-width: 0;
+    font-size: 0.82rem;
+    padding: 0.5rem 0.65rem;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 900px) {
+  .mobilePill {
+    flex: 1 1 calc(50% - 0.25rem);
+  }
+}
+
+@media (min-width: 640px) and (max-width: 900px) {
+  .mobilePill {
+    flex: 1 1 calc(33.333% - 0.34rem);
+    min-width: min(100%, 8.5rem);
   }
 }

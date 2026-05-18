@@ -8,12 +8,13 @@ import {
   requireMultipartContentType,
   uploadMultipartFileToCloudinary,
 } from "@/lib/multipart-upload";
+import { ABSTRACT_MIN_WORDS_MESSAGE, meetsMinAbstractWords } from "@/lib/publication-request-abstract";
 
 const publicationRequestFormSchema = z.object({
   authorName: z.string().min(2).max(255),
   authorEmail: z.string().email(),
   title: z.string().min(2).max(255),
-  abstract: z.string().min(20),
+  abstract: z.string().refine(meetsMinAbstractWords, { message: ABSTRACT_MIN_WORDS_MESSAGE }),
   magazineId: z.number().int().positive().optional().nullable(),
 });
 

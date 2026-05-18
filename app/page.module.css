@@ -560,7 +560,7 @@
 }
 
 .faqItem.open .faqAnswer {
-  max-height: 150px;
+  max-height: 2000px;
   padding: 0 1.2rem 1rem;
 }
 
@@ -1993,7 +1993,7 @@
   }
 
   .faqItem.open .faqAnswer {
-    max-height: 250px;
+    max-height: 2000px;
     padding: 0 1rem 0.75rem;
   }
 
@@ -2147,12 +2147,15 @@
   }
 
   .expertiseGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap: 0.75rem;
   }
 
   .expertiseCard {
-    min-width: 80px;
+    min-width: 0;
+    width: 100%;
+    max-width: 20rem;
+    margin-inline: auto;
     padding: 0.8rem 0.5rem;
   }
 
@@ -3701,54 +3704,6 @@
   font-size: 0.9rem;
 }
 
-@media (max-width: 1024px) {
-  .adminShell {
-    grid-template-columns: 230px minmax(0, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .adminShell {
-    grid-template-columns: 1fr;
-  }
-
-  .adminSidebar {
-    position: static;
-  }
-
-  .adminNav {
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  }
-
-  .adminListItem {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-@media (max-width: 480px) {
-  .adminShell,
-  .loginPage {
-    padding: 0.7rem;
-  }
-
-  .adminPage,
-  .adminSidebar,
-  .loginCard {
-    border-radius: 16px;
-    padding: 0.85rem;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .adminCard,
-  .adminButton,
-  .adminNavLink {
-    transition: none !important;
-    transform: none !important;
-  }
-}
-
 /* ===================================================
    ADMIN DASHBOARD UI REFRESH (professional + responsive)
    =================================================== */
@@ -3948,6 +3903,11 @@
   gap: 0.7rem;
 }
 
+.adminFormInList {
+  min-width: 0;
+  width: 100%;
+}
+
 .adminInput,
 .adminTextarea {
   border: 1px solid var(--border-light);
@@ -4117,6 +4077,12 @@
     align-items: stretch;
   }
 
+  .adminListItem .adminForm,
+  .adminFormInList {
+    min-width: 0;
+    width: 100%;
+  }
+
   .adminActions {
     width: 100%;
   }
@@ -4124,11 +4090,31 @@
   .adminActions > * {
     flex: 1;
   }
+
+  .tableScroller {
+    margin-inline: -0.25rem;
+    padding-inline: 0.25rem;
+  }
+
+  .trafficTable th,
+  .trafficTable td {
+    font-size: 0.82rem;
+    padding: 0.65rem 0.75rem;
+  }
 }
 
 @media (max-width: 540px) {
   .adminShell {
     padding: 0.7rem;
+  }
+
+  .loginPage {
+    padding: 0.75rem;
+  }
+
+  .loginCard {
+    padding: 1rem 0.9rem 1.15rem;
+    border-radius: 16px;
   }
 
   .adminPage,

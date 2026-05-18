@@ -900,10 +900,34 @@ a {
 }
 
 @media (max-width: 768px) {
-  a,
-  button {
+  button,
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"],
+  .nav-toggle,
+  .footerSocials a,
+  .adminNavLink,
+  .adminButton,
+  .faqQuestion,
+  .publishResearchButton,
+  .hero .button,
+  .staticSubmit {
     min-height: 44px;
     min-width: 44px;
+  }
+
+  .footerNav a,
+  .footerContactItem a {
+    min-height: unset;
+    min-width: unset;
+    padding-block: 0.35rem;
+    display: inline-block;
+  }
+
+  .nav-links a {
+    min-height: 44px;
+    min-width: unset;
+    width: 100%;
   }
 
   body {
