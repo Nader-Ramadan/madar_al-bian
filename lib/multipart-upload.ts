@@ -33,13 +33,14 @@ export function getUploadFileFromFormData(
   if (raw == null || typeof raw === "string") return null;
   if (!(raw instanceof Blob) || raw.size === 0) return null;
   if (raw instanceof File) return raw;
-  const named = raw as Blob & { name?: string };
+  const blob: Blob = raw;
+  const named = blob as Blob & { name?: string };
   const name =
     typeof named.name === "string" && named.name.trim() !== ""
       ? named.name
       : "document.docx";
-  return new File([raw], name, {
-    type: raw.type || "application/octet-stream",
+  return new File([blob], name, {
+    type: blob.type || "application/octet-stream",
   });
 }
 

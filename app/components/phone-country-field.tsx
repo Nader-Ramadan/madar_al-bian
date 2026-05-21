@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import {
   countryFlagImageUrl,
   DEFAULT_PHONE_COUNTRY_ISO,
@@ -89,7 +89,7 @@ export default function PhoneCountryField({
         setOpen(false);
       }
     };
-    const onKeyDown = (ev: KeyboardEvent) => {
+    const onKeyDown = (ev: globalThis.KeyboardEvent) => {
       if (ev.key === "Escape") setOpen(false);
     };
     document.addEventListener("mousedown", onPointerDown);
@@ -100,7 +100,7 @@ export default function PhoneCountryField({
     };
   }, [open]);
 
-  const onTriggerKeyDown = (ev: KeyboardEvent<HTMLButtonElement>) => {
+  const onTriggerKeyDown = (ev: ReactKeyboardEvent<HTMLButtonElement>) => {
     if (ev.key === "Enter" || ev.key === " ") {
       ev.preventDefault();
       setOpen((v) => !v);

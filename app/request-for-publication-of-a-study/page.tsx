@@ -355,7 +355,6 @@ export default function RequestPublicationPage() {
                         type="file"
                         accept={WORD_ACCEPT}
                         onChange={onFileChange}
-                        onInput={onFileChange}
                         className={staticStyles.input}
                       />
                       <p className={staticStyles.hint}>
