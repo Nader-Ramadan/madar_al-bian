@@ -24,11 +24,28 @@ export function requireMultipartContentType(request: NextRequest): boolean {
   return hdr.includes("multipart/form-data");
 }
 
+/** Normalize FormData upload entries (File, Blob, or Node/undici variants). */
+export function getUploadFileFromFormData(
+  form: FormData,
+  field = "file",
+): File | null {
+  const raw = form.get(field);
+  if (raw == null || typeof raw === "string") return null;
+  if (!(raw instanceof Blob) || raw.size === 0) return null;
+  if (raw instanceof File) return raw;
+  const named = raw as Blob & { name?: string };
+  const name =
+    typeof named.name === "string" && named.name.trim() !== ""
+      ? named.name
+      : "document.docx";
+  return new File([raw], name, {
+    type: raw.type || "application/octet-stream",
+  });
+}
+
 export async function parseMultipartFile(request: NextRequest): Promise<File | null> {
   const form = await request.formData();
-  const file = form.get("file");
-  if (!(file instanceof File) || file.size === 0) return null;
-  return file;
+  return getUploadFileFromFormData(form, "file");
 }
 
 export async function uploadMultipartFileToCloudinary(

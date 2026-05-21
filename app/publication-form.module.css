@@ -1,0 +1,51 @@
+/* Publication request form — card body layout (journal cards from magazine-journal.module.css) */
+
+.form {
+  margin: 0;
+}
+
+.introCard {
+  margin-bottom: 1.5rem;
+}
+
+/* One card per row (override journal 2-column grid) */
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.formCardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formIntroText {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--text-primary);
+}
+
+.submitRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+
+.formMessage {
+  margin: 0;
+  font-weight: 600;
+  flex: 1 1 100%;
+}
+
+@media (max-width: 480px) {
+  .submitRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

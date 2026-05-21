@@ -9,6 +9,7 @@ type PublicationRequest = {
   title: string;
   authorName: string;
   authorEmail: string;
+  authorPhone?: string | null;
   abstract: string;
   field?: string | null;
   magazineId?: number | null;
@@ -96,6 +97,13 @@ export default function AdminApprovalsPage() {
                 <span className={styles.adminListText}>
                   <strong>{item.title}</strong> — {item.authorName} ({item.authorEmail})
                   <br />
+                  {item.authorPhone ? (
+                    <>
+                      {ap.phoneLabel}{" "}
+                      <a href={`tel:${item.authorPhone.replace(/\s/g, "")}`}>{item.authorPhone}</a>
+                      <br />
+                    </>
+                  ) : null}
                   {item.magazine ? (
                     <>
                       المجلة: <strong>{item.magazine.title}</strong>

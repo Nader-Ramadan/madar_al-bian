@@ -188,6 +188,7 @@ export const adminCopy = {
     noAttachment: "لا يوجد ملف مرفق",
     submittedAt: "تاريخ الإرسال:",
     abstractLabel: "الملخص:",
+    phoneLabel: "الهاتف:",
   },
 
   emailsPage: {

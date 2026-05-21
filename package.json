@@ -6,6 +6,7 @@
     "node": ">=20.11.0"
   },
   "scripts": {
+    "predev": "prisma generate",
     "dev": "next dev --webpack",
     "dev:turbo": "next dev",
     "dev:clean": "npm run clean:next && npm run dev",
@@ -17,7 +18,8 @@
     "lint": "eslint",
     "check:db-env": "node scripts/check-db-env.mjs",
     "verify:db-prisma": "npm run check:db-env && npx prisma migrate status",
-    "verify:magazines-api": "node scripts/verify-magazines-api.mjs"
+    "verify:magazines-api": "node scripts/verify-magazines-api.mjs",
+    "verify:site": "node scripts/verify-site-deployment.mjs"
   },
   "dependencies": {
     "@prisma/adapter-mariadb": "^7.8.0",

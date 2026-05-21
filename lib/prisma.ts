@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import { PrismaClient } from "@prisma/client";
 import { resolveDatabaseUrl } from "@/lib/database-url";
 
@@ -5,7 +7,19 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
   /** Last datasource URL used to build `prisma` (dev-only invalidation). */
   prismaResolvedUrl?: string;
+  /** Fingerprint of generated client — invalidate after `prisma generate`. */
+  prismaClientGenId?: string;
 };
+
+function prismaClientGenerationId(): string {
+  const clientIndex = path.join(process.cwd(), "node_modules", ".prisma", "client", "index.js");
+  try {
+    const stat = fs.statSync(clientIndex);
+    return `${stat.mtimeMs}-${stat.size}`;
+  } catch {
+    return "missing";
+  }
+}
 
 function createPrismaClient(url: string): PrismaClient {
   return new PrismaClient({
@@ -16,17 +30,21 @@ function createPrismaClient(url: string): PrismaClient {
 
 function getPrisma(): PrismaClient {
   const url = resolveDatabaseUrl();
-  if (
+  const genId = prismaClientGenerationId();
+  const staleUrl =
     process.env.NODE_ENV === "development" &&
     globalForPrisma.prisma != null &&
-    globalForPrisma.prismaResolvedUrl !== url
-  ) {
-    void globalForPrisma.prisma.$disconnect().catch(() => {});
+    globalForPrisma.prismaResolvedUrl !== url;
+  const staleClient =
+    globalForPrisma.prisma != null && globalForPrisma.prismaClientGenId !== genId;
+  if (staleUrl || staleClient) {
+    void globalForPrisma.prisma?.$disconnect().catch(() => {});
     globalForPrisma.prisma = undefined;
   }
   if (!globalForPrisma.prisma) {
     globalForPrisma.prisma = createPrismaClient(url);
     globalForPrisma.prismaResolvedUrl = url;
+    globalForPrisma.prismaClientGenId = genId;
   }
   return globalForPrisma.prisma;
 }

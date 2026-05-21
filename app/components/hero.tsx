@@ -7,15 +7,16 @@ import styles from "../page.module.css";
 function Hero() {
   return (
     <section className={styles.hero} aria-labelledby="hero-heading">
-      <Image
-        src="/images/banner.png"
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        className={styles.heroBgImage}
-        aria-hidden
-      />
+      <div className={styles.heroMedia} aria-hidden>
+        <Image
+          src="/images/banner.png"
+          alt=""
+          fill
+          priority
+          sizes="(max-width: 768px) 100vw, 100vw"
+          className={styles.heroBgImage}
+        />
+      </div>
       <h1 id="hero-heading" className={styles.visuallyHidden}>
         مؤسسة مدار البيان للنشر العلمي
       </h1>

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ABSTRACT_MIN_WORDS_MESSAGE, meetsMinAbstractWords } from "@/lib/publication-request-abstract";
+import { validateAndComposeAuthorPhone } from "@/lib/phone-countries";
 import { PUBLISHING_CONDITION_ICON_KEYS } from "@/lib/publishing-condition-icons";
 
 /** HTTPS URL (e.g. Cloudinary) or legacy local path `/uploads/...`. */
@@ -130,14 +131,64 @@ export const contentImageUploadPresignSchema = z.object({
   size: z.number().int().positive().max(8 * 1024 * 1024),
 });
 
+export const authorPhoneSchema = z
+  .string()
+  .min(10)
+  .max(32)
+  .regex(/^\+[1-9]\d{7,14}$/, "صيغة رقم الهاتف غير صالحة");
+
+export const publicationRequestPhoneFieldsSchema = z.object({
+  authorPhoneCountry: z.string().trim().length(2),
+  authorPhoneNational: z.string().trim().min(1).max(20),
+});
+
+export function composePublicationRequestPhone(
+  countryIso: string,
+  nationalRaw: string,
+): { authorPhone: string } | { error: string } {
+  const result = validateAndComposeAuthorPhone(countryIso, nationalRaw);
+  if (!result.ok) return { error: result.message };
+  return { authorPhone: result.authorPhone };
+}
+
 export const publicationRequestSchema = z.object({
   authorName: z.string().min(2).max(255),
   authorEmail: z.string().email(),
+  authorPhone: authorPhoneSchema.optional().nullable(),
   title: z.string().min(2).max(255),
   abstract: z.string().refine(meetsMinAbstractWords, { message: ABSTRACT_MIN_WORDS_MESSAGE }),
   field: z.string().max(255).optional().nullable(),
   magazineId: z.number().int().positive().optional().nullable(),
 });
+
+export const publicationRequestFormSchema = z
+  .object({
+    authorName: z.string().min(2).max(255),
+    authorEmail: z.string().email(),
+    authorPhoneCountry: z.string().trim().length(2),
+    authorPhoneNational: z.string().trim().min(1).max(20),
+    title: z.string().min(2).max(255),
+    abstract: z.string().refine(meetsMinAbstractWords, { message: ABSTRACT_MIN_WORDS_MESSAGE }),
+    magazineId: z.number().int().positive().optional().nullable(),
+  })
+  .superRefine((data, ctx) => {
+    const phone = composePublicationRequestPhone(data.authorPhoneCountry, data.authorPhoneNational);
+    if ("error" in phone) {
+      ctx.addIssue({
+        code: "custom",
+        message: phone.error,
+        path: ["authorPhoneNational"],
+      });
+    }
+  })
+  .transform((data) => {
+    const phone = composePublicationRequestPhone(data.authorPhoneCountry, data.authorPhoneNational);
+    if ("error" in phone) {
+      throw new Error(phone.error);
+    }
+    const { authorPhoneCountry: _c, authorPhoneNational: _n, ...rest } = data;
+    return { ...rest, authorPhone: phone.authorPhone };
+  });
 
 export const publicationStatusSchema = z.object({
   status: z.enum(["PENDING", "APPROVED", "REJECTED"]),

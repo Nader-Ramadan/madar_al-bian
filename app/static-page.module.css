@@ -81,6 +81,147 @@
   color: #b42318;
 }
 
+.textareaInvalid {
+  border-color: #c45c5c;
+  box-shadow: 0 0 0 1px color-mix(in srgb, #b42318 25%, transparent);
+}
+
+.wordCountHint {
+  font-weight: 600;
+}
+
+.wordCountLow {
+  color: #b42318;
+}
+
+.wordCountOk {
+  color: #15803d;
+}
+
+.phoneRow {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 10fr);
+  gap: 0.65rem;
+  align-items: stretch;
+}
+
+.phoneCountryPicker {
+  position: relative;
+  min-width: 0;
+}
+
+.phoneCountryPickerOpen {
+  z-index: 20;
+}
+
+.phoneCountryTrigger {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--border-light);
+  border-radius: 0.5rem;
+  background: var(--card-bg);
+  color: var(--text-primary);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  min-height: 2.75rem;
+}
+
+.phoneCountryTrigger:hover {
+  border-color: color-mix(in srgb, var(--secondary-color) 35%, var(--border-light));
+}
+
+.phoneCountryTrigger:focus-visible {
+  outline: 2px solid var(--secondary-color);
+  outline-offset: 2px;
+}
+
+.phoneFlagImg {
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 2px;
+  display: block;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--text-primary) 12%, transparent);
+}
+
+.phoneCountryOptionText {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.phoneCountryChevron {
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  opacity: 0.65;
+  margin-inline-start: auto;
+}
+
+.phoneCountryPickerOpen .phoneCountryChevron {
+  transform: rotate(180deg);
+}
+
+.phoneCountryList {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-inline-end: auto;
+  top: calc(100% + 0.35rem);
+  width: min(18rem, calc(100vw - 2rem));
+  min-width: max(100%, 12rem);
+  margin: 0;
+  padding: 0.35rem 0;
+  list-style: none;
+  max-height: min(16rem, 50vh);
+  overflow-y: auto;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 24px var(--shadow-light);
+  z-index: 30;
+}
+
+.phoneCountryOption {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.85rem;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.phoneCountryOption:hover,
+.phoneCountryOption:focus-visible {
+  background: color-mix(in srgb, var(--secondary-color) 8%, var(--card-bg));
+  outline: none;
+}
+
+.phoneCountryOption:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--secondary-color);
+}
+
+.phoneCountryOptionSelected {
+  background: color-mix(in srgb, var(--primary-color) 18%, var(--card-bg));
+  font-weight: 700;
+}
+
+.phoneNationalInput {
+  min-width: 0;
+}
+
 .staticSubmit {
   justify-self: start;
   background: var(--primary-color);
@@ -147,6 +288,10 @@
 @media (max-width: 480px) {
   .shell {
     padding: 1.25rem 0.75rem 2rem;
+  }
+
+  .phoneRow {
+    grid-template-columns: 1fr;
   }
 
   .staticSubmit {

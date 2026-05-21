@@ -21,28 +21,51 @@
   --hero-pad-block: 2rem;
   --hero-pad-inline: 1.5rem;
   --hero-btn-nudge: 1.35rem;
+  --hero-banner-aspect: 3417 / 1501;
+  --hero-aspect: 21 / 9;
+  --hero-min-h: clamp(280px, 32vw, 520px);
+  --hero-max-h: 640px;
+  --hero-object-position: center center;
   position: relative;
   width: 100%;
-  min-height: clamp(320px, 55vh, 640px);
+  aspect-ratio: var(--hero-aspect);
+  min-height: var(--hero-min-h);
+  max-height: var(--hero-max-h);
   background-color: var(--secondary-color, #0a3f62);
   padding: var(--hero-pad-block) var(--hero-pad-inline);
   overflow: hidden;
 }
 
-.heroBgImage {
+.hero::after {
+  content: "";
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--secondary-color, #0a3f62) 55%, transparent) 0%,
+    color-mix(in srgb, var(--secondary-color, #0a3f62) 18%, transparent) 42%,
+    transparent 72%
+  );
+}
+
+.heroMedia {
+  position: absolute;
+  inset: 0;
   z-index: 0;
+  overflow: hidden;
+}
+
+.heroBgImage {
+  object-fit: cover;
+  object-position: var(--hero-object-position);
   pointer-events: none;
 }
 
 .heroInner {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   left: 50%;
   right: auto;
   bottom: calc(var(--hero-pad-block) + var(--hero-btn-nudge));
@@ -1723,6 +1746,13 @@
 }
 
 @media (max-width: 1024px) {
+  .hero {
+    --hero-aspect: var(--hero-banner-aspect);
+    --hero-min-h: auto;
+    --hero-max-h: none;
+    --hero-object-position: center center;
+  }
+
   .conferenceCard {
     grid-template-columns: 1fr;
   }
@@ -1808,6 +1838,18 @@
 }
 
 /* ===================================================
+   WIDE DESKTOP — cap hero height on ultra-wide viewports
+   =================================================== */
+@media (min-width: 1400px) {
+  .hero {
+    --hero-aspect: 21 / 8;
+    --hero-min-h: clamp(300px, 28vw, 520px);
+    --hero-max-h: 580px;
+    --hero-object-position: center center;
+  }
+}
+
+/* ===================================================
    COMPREHENSIVE RESPONSIVE DESIGN FOR ALL SECTIONS
    =================================================== */
 
@@ -1830,24 +1872,18 @@
   .hero {
     --hero-pad-block: 1.5rem;
     --hero-pad-inline: 1rem;
-    --hero-btn-nudge: 1.55rem;
+    --hero-btn-nudge: 1.65rem;
+    --hero-aspect: var(--hero-banner-aspect);
+    --hero-min-h: auto;
+    --hero-max-h: none;
+    --hero-object-position: center center;
     width: 100%;
-    min-height: clamp(210px, min(56vw, 48vh), 440px);
     padding: var(--hero-pad-block) var(--hero-pad-inline);
   }
 
   .hero .button {
     padding: 0.55rem 1.35rem;
     font-size: 0.88rem;
-  }
-
-  .heroBgImage {
-    object-fit: cover;
-    object-position: center 30%;
-  }
-
-  .hero {
-    min-height: clamp(320px, 55vh, 640px);
   }
 
   .lineLeft,
@@ -2115,15 +2151,13 @@
   .hero {
     --hero-pad-block: 1.25rem;
     --hero-pad-inline: 1rem;
-    --hero-btn-nudge: 1.75rem;
+    --hero-btn-nudge: 2rem;
+    --hero-aspect: var(--hero-banner-aspect);
+    --hero-min-h: auto;
+    --hero-max-h: none;
+    --hero-object-position: center center;
     width: 100%;
-    min-height: clamp(190px, min(62vw, 42vh), 320px);
     padding: var(--hero-pad-block) var(--hero-pad-inline);
-  }
-
-  .heroBgImage {
-    object-fit: cover;
-    object-position: center 22%;
   }
 
   .hero .button {
