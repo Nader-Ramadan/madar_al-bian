@@ -34,6 +34,49 @@ export function buildCloudinaryFolder(...segments: string[]): string {
   return parts.join("/");
 }
 
+export function isCloudinaryDeliveryUrl(url: string): boolean {
+  try {
+    return new URL(url.trim()).hostname.includes("cloudinary.com");
+  } catch {
+    return false;
+  }
+}
+
+/** Sanitize a name for Cloudinary fl_attachment (dots are parsed as format flags). */
+function attachmentFlagFilename(filename: string, defaultName: string): string {
+  let safe = filename
+    .replace(/[^a-zA-Z0-9._\u0600-\u06FF-]/g, "_")
+    .replace(/\./g, "_")
+    .replace(/_+/g, "_")
+    .trim();
+  if (!safe) {
+    safe = defaultName
+      .replace(/[^a-zA-Z0-9._\u0600-\u06FF-]/g, "_")
+      .replace(/\./g, "_")
+      .replace(/_+/g, "_")
+      .trim();
+  }
+  return safe || "document_pdf";
+}
+
+/** Safe filename for fl_attachment; uses `_pdf` suffix (no dots — Cloudinary treats `.pdf` as a format flag). */
+export function sanitizePdfDownloadFilename(name: string, fallback: string): string {
+  let safe = attachmentFlagFilename(name, fallback);
+  if (!safe.toLowerCase().endsWith("_pdf")) {
+    safe = `${safe.replace(/_?pdf$/i, "")}_pdf`;
+  }
+  return safe;
+}
+
+/** Cloudinary delivery URL with attachment flag so browsers save with the correct name/type. */
+export function cloudinaryAttachmentUrl(secureUrl: string, filename: string): string {
+  const trimmed = secureUrl.trim();
+  if (!trimmed || !isCloudinaryDeliveryUrl(trimmed)) return trimmed;
+  if (!trimmed.includes("/upload/") || trimmed.includes("fl_attachment:")) return trimmed;
+  const safe = attachmentFlagFilename(filename, "document_pdf");
+  return trimmed.replace("/upload/", `/upload/fl_attachment:${safe}/`);
+}
+
 export async function uploadBuffer(
   buffer: Buffer,
   options: {

@@ -107,6 +107,10 @@ export default async function MagazinePage({ params }: { params: Promise<{ id: s
         versionCount={magazineRecord.versionCount}
         magazineId={magazineRecord.id}
         publishingConditionsCount={magazineRecord._count.publishingConditionTabs}
+        contactPhone={magazineRecord.contactPhone}
+        contactPhoneTel={magazineRecord.contactPhoneTel}
+        contactEmail={magazineRecord.contactEmail}
+        contactAddress={magazineRecord.contactAddress}
       />
       <MagazineVersions
         magazineId={magazineRecord.id}

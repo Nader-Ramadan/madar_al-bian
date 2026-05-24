@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { parseMagazineId } from "@/lib/magazine-id";
+import { cloudinaryAttachmentUrl, sanitizePdfDownloadFilename } from "@/lib/cloudinary";
 import { splitResearchKeywords } from "@/lib/research-keywords";
 import { textDirectionAttrs } from "@/lib/text-direction";
 import styles from "../../../../../../magazine-versions-archive.module.css";
@@ -55,7 +56,13 @@ export default async function MagazineVersionResearchDetailPage({
 
   const keywordItems = splitResearchKeywords(research.keywords);
   const summaryText = research.summary?.trim() ?? "";
-  const pdfHref = research.pdfUrl?.trim() ?? "";
+  const pdfRaw = research.pdfUrl?.trim() ?? "";
+  const pdfHref = pdfRaw
+    ? cloudinaryAttachmentUrl(
+        pdfRaw,
+        sanitizePdfDownloadFilename(`research-${research.id}`, "research.pdf"),
+      )
+    : "";
   const researchTitleDir = textDirectionAttrs(research.title);
   const versionTitleDir = textDirectionAttrs(research.magazineVersion.title);
   const magazineTitleDir = textDirectionAttrs(research.magazineVersion.magazine.title);

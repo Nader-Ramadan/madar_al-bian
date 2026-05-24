@@ -100,6 +100,13 @@ export const adminCopy = {
     placeholderPublicationPref: "تفضيلات النشر",
     placeholderVersionMessage: "رسالة الإصدار",
     placeholderCertification: "الاعتماد أو الشهادة",
+    contactSectionTitle: "معلومات التواصل",
+    contactSectionExplainer:
+      "اختياري: اترك الحقول فارغة لعرض بيانات التواصل الافتراضية للموقع على صفحة المجلة.",
+    placeholderContactPhone: "هاتف (عرض) — مثال: ٠٠٢ +١٠٦٦٢٢٣٣٩٩",
+    placeholderContactPhoneTel: "هاتف (للاتصال — E.164، اختياري) — مثال: +201066223399",
+    placeholderContactEmail: "البريد الإلكتروني",
+    placeholderContactAddress: "العنوان",
     advisorSourceGlobal: "قائمة المستشارين العامة",
     advisorSourceAttached: "مستشارو هذه المجلة",
     advisorSourceAttachedDisabled: "(متاح أثناء التحرير)",

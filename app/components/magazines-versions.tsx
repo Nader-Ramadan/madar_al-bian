@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cloudinaryAttachmentUrl, sanitizePdfDownloadFilename } from "@/lib/cloudinary";
 import styles from "../magazine-journal.module.css";
 
 export type MagazineVersionItem = {
@@ -16,6 +17,13 @@ type MagazineVersionsProps = {
 };
 
 export default function MagazineVersions({ magazineId, versions, pdfUrl }: MagazineVersionsProps) {
+  const magazinePdfHref = pdfUrl
+    ? cloudinaryAttachmentUrl(
+        pdfUrl,
+        sanitizePdfDownloadFilename(`magazine-${magazineId}`, "magazine.pdf"),
+      )
+    : null;
+
   return (
     <section className={styles.versionsWrap}>
       <div className={`${styles.inner} ${styles.versionsSection}`}>
@@ -55,9 +63,9 @@ export default function MagazineVersions({ magazineId, versions, pdfUrl }: Magaz
           </div>
         </div>
 
-        {pdfUrl ? (
+        {magazinePdfHref ? (
           <p className={styles.versionPdfNote}>
-            <a href={pdfUrl} target="_blank" rel="noopener noreferrer">
+            <a href={magazinePdfHref} target="_blank" rel="noopener noreferrer">
               تحميل المجلة (PDF)
             </a>
           </p>

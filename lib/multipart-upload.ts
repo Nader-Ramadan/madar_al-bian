@@ -51,13 +51,13 @@ export async function parseMultipartFile(request: NextRequest): Promise<File | n
 
 export async function uploadMultipartFileToCloudinary(
   file: File,
-  options: { folder: string; resourceType: CloudinaryResourceType },
+  options: { folder: string; resourceType: CloudinaryResourceType; filename?: string },
 ): Promise<string> {
   const buffer = Buffer.from(await file.arrayBuffer());
   const uploadOpts: UploadToStorageOptions = {
     folder: options.folder,
     resourceType: options.resourceType,
-    filename: file.name,
+    filename: options.filename ?? file.name,
   };
   return uploadFileToStorage(buffer, uploadOpts);
 }

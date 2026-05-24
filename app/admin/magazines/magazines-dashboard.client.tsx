@@ -26,6 +26,10 @@ type Magazine = {
   publicationPreference: string | null;
   versionMessage: string | null;
   certification: string | null;
+  contactPhone: string | null;
+  contactPhoneTel: string | null;
+  contactEmail: string | null;
+  contactAddress: string | null;
   advisorsApproved: boolean;
   approvedAdvisors?: Array<{
     advisoryMemberId: number;
@@ -59,6 +63,10 @@ type MagazineFormState = {
   publicationPreference: string;
   versionMessage: string;
   certification: string;
+  contactPhone: string;
+  contactPhoneTel: string;
+  contactEmail: string;
+  contactAddress: string;
   approvedAdvisorIds: number[];
 };
 
@@ -100,6 +108,10 @@ const emptyMagazineForm: MagazineFormState = {
   publicationPreference: "",
   versionMessage: "",
   certification: "",
+  contactPhone: "",
+  contactPhoneTel: "",
+  contactEmail: "",
+  contactAddress: "",
   approvedAdvisorIds: [],
 };
 
@@ -132,6 +144,10 @@ function normalizeMagazinePayload(form: MagazineFormState) {
     publicationPreference: form.publicationPreference.trim() || null,
     versionMessage: form.versionMessage.trim() || null,
     certification: form.certification.trim() || null,
+    contactPhone: form.contactPhone.trim() || null,
+    contactPhoneTel: form.contactPhoneTel.trim() || null,
+    contactEmail: form.contactEmail.trim() || null,
+    contactAddress: form.contactAddress.trim() || null,
     approvedAdvisorIds: form.approvedAdvisorIds,
   };
 }
@@ -375,6 +391,10 @@ export default function AdminMagazinesDashboard() {
       publicationPreference: magazine.publicationPreference ?? "",
       versionMessage: magazine.versionMessage ?? "",
       certification: magazine.certification ?? "",
+      contactPhone: magazine.contactPhone ?? "",
+      contactPhoneTel: magazine.contactPhoneTel ?? "",
+      contactEmail: magazine.contactEmail ?? "",
+      contactAddress: magazine.contactAddress ?? "",
       approvedAdvisorIds,
     });
     setPdfFile(null);
@@ -551,6 +571,38 @@ export default function AdminMagazinesDashboard() {
           <textarea className={styles.adminTextarea} placeholder={ac.placeholderPublicationPref} value={magForm.publicationPreference} onChange={(e) => setMagForm((s) => ({ ...s, publicationPreference: e.target.value }))} />
           <textarea className={styles.adminTextarea} placeholder={ac.placeholderVersionMessage} value={magForm.versionMessage} onChange={(e) => setMagForm((s) => ({ ...s, versionMessage: e.target.value }))} />
           <textarea className={styles.adminTextarea} placeholder={ac.placeholderCertification} value={magForm.certification} onChange={(e) => setMagForm((s) => ({ ...s, certification: e.target.value }))} />
+          <div className={styles.adminSection}>
+            <div className={styles.adminSectionHeader}>
+              <SectionIcon kind="list" />
+              <h4 className={styles.adminSectionTitle}>{ac.contactSectionTitle}</h4>
+            </div>
+            <p className={styles.adminSectionExplainer}>{ac.contactSectionExplainer}</p>
+            <input
+              className={styles.adminInput}
+              placeholder={ac.placeholderContactPhone}
+              value={magForm.contactPhone}
+              onChange={(e) => setMagForm((s) => ({ ...s, contactPhone: e.target.value }))}
+            />
+            <input
+              className={styles.adminInput}
+              placeholder={ac.placeholderContactPhoneTel}
+              value={magForm.contactPhoneTel}
+              onChange={(e) => setMagForm((s) => ({ ...s, contactPhoneTel: e.target.value }))}
+            />
+            <input
+              type="email"
+              className={styles.adminInput}
+              placeholder={ac.placeholderContactEmail}
+              value={magForm.contactEmail}
+              onChange={(e) => setMagForm((s) => ({ ...s, contactEmail: e.target.value }))}
+            />
+            <textarea
+              className={styles.adminTextarea}
+              placeholder={ac.placeholderContactAddress}
+              value={magForm.contactAddress}
+              onChange={(e) => setMagForm((s) => ({ ...s, contactAddress: e.target.value }))}
+            />
+          </div>
           <select
             className={styles.adminInput}
             value={advisorSource}

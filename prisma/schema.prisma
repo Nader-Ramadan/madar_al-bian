@@ -87,6 +87,10 @@ model Magazine {
   publicationPreference  String?   @db.Text
   versionMessage         String?   @db.Text
   certification          String?   @db.Text
+  contactPhone           String?   @db.VarChar(120)
+  contactPhoneTel        String?   @db.VarChar(50)
+  contactEmail           String?   @db.VarChar(255)
+  contactAddress         String?   @db.Text
   advisorsApproved       Boolean   @default(false)
   versionCount           Int       @default(0)
   createdAt              DateTime  @default(now())

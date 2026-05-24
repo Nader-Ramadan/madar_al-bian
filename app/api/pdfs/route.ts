@@ -58,11 +58,15 @@ export async function PUT(request: NextRequest) {
   if (!isLikelyPdf(file)) return fail("Only PDF files are allowed", 400);
 
   try {
-    const safeName = file.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9._-]/g, "") || "document.pdf";
-    const folder = `pdfs/${Date.now()}-${safeName}`;
+    let safeName = file.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9._-]/g, "");
+    if (!safeName || !safeName.toLowerCase().endsWith(".pdf")) {
+      safeName = "document.pdf";
+    }
+    const folder = `pdfs/${Date.now()}`;
     const fileUrl = await uploadMultipartFileToCloudinary(file, {
       folder,
       resourceType: "raw",
+      filename: safeName,
     });
     return ok({
       key: folder,

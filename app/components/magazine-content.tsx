@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { resolveMagazineContact } from "@/lib/magazine-contact-defaults";
 import MagazinePublishingAdvisors, {
   type MagazinePublishingAdvisorItem,
 } from "./magazine-publishing-advisors";
@@ -19,6 +20,10 @@ export type MagazineJournalContentProps = {
   versionCount: number;
   magazineId?: number;
   publishingConditionsCount?: number;
+  contactPhone?: string | null;
+  contactPhoneTel?: string | null;
+  contactEmail?: string | null;
+  contactAddress?: string | null;
 };
 
 function formatNextRelease(iso: string | null): string {
@@ -154,8 +159,18 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
     publishingAdvisors,
     magazineId,
     publishingConditionsCount = 0,
+    contactPhone,
+    contactPhoneTel,
+    contactEmail,
+    contactAddress,
   } = props;
   const showPublishingConditionsCta = magazineId != null && publishingConditionsCount > 0;
+  const contact = resolveMagazineContact({
+    contactPhone,
+    contactPhoneTel,
+    contactEmail,
+    contactAddress,
+  });
 
   const vision =
     publicationPreference?.trim() ||
@@ -265,21 +280,25 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
                 <IconPhone />
                 <div>
                   <div className={styles.quickLabel}>الهاتف</div>
-                  <a href="tel:+201066223399">٠٠٢ +١٠٦٦٢٢٣٣٩٩</a>
+                  {contact.phoneHref ? (
+                    <a href={contact.phoneHref}>{contact.phone}</a>
+                  ) : (
+                    <span>{contact.phone}</span>
+                  )}
                 </div>
               </div>
               <div className={styles.contactRow}>
                 <IconMail />
                 <div>
                   <div className={styles.quickLabel}>البريد</div>
-                  <a href="mailto:info@madar-albian.com">info@madar-albian.com</a>
+                  <a href={contact.emailHref}>{contact.email}</a>
                 </div>
               </div>
               <div className={styles.contactRow}>
                 <IconMap />
                 <div>
                   <div className={styles.quickLabel}>العنوان</div>
-                  <span>٢٠٣ شارع ماونتن فيو، الجيزة، جمهورية مصر العربية</span>
+                  <span>{contact.address}</span>
                 </div>
               </div>
             </div>

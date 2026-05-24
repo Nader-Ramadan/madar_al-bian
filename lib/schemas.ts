@@ -30,6 +30,13 @@ export const magazineSchema = z.object({
   publicationPreference: z.string().optional().nullable(),
   versionMessage: z.string().optional().nullable(),
   certification: z.string().optional().nullable(),
+  contactPhone: z.string().max(120).optional().nullable(),
+  contactPhoneTel: z.string().max(50).optional().nullable(),
+  contactEmail: z
+    .union([z.string().email().max(255), z.literal(""), z.null()])
+    .optional()
+    .transform((v) => (v === "" ? null : v)),
+  contactAddress: z.string().optional().nullable(),
   advisorsApproved: z.boolean().optional(),
   approvedAdvisorIds: z.array(z.number().int().positive()).optional().default([]),
   versionCount: z.number().int().min(0).optional(),

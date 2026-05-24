@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { cloudinaryAttachmentUrl, sanitizePdfDownloadFilename } from "@/lib/cloudinary";
 import { parseMagazineId } from "@/lib/magazine-id";
 import { textDirectionAttrs } from "@/lib/text-direction";
 import styles from "../../../magazine-versions-archive.module.css";
@@ -39,20 +40,29 @@ function isMissingVersionColumnError(err: unknown): boolean {
 function PagesColumn({
   pageCount,
   pdfUrl,
+  versionId,
 }: {
   pageCount: number | null;
   pdfUrl: string | null;
+  versionId: number;
 }) {
-  if (pageCount != null && pdfUrl) {
+  const pdfHref = pdfUrl
+    ? cloudinaryAttachmentUrl(
+        pdfUrl,
+        sanitizePdfDownloadFilename(`version-${versionId}`, "version.pdf"),
+      )
+    : null;
+
+  if (pageCount != null && pdfHref) {
     return (
-      <a href={pdfUrl} className={styles.pagesLink} target="_blank" rel="noopener noreferrer">
+      <a href={pdfHref} className={styles.pagesLink} target="_blank" rel="noopener noreferrer">
         عدد الأوراق ({pageCount})
       </a>
     );
   }
-  if (pdfUrl) {
+  if (pdfHref) {
     return (
-      <a href={pdfUrl} className={styles.pagesLink} target="_blank" rel="noopener noreferrer">
+      <a href={pdfHref} className={styles.pagesLink} target="_blank" rel="noopener noreferrer">
         تحميل PDF
       </a>
     );
@@ -165,7 +175,7 @@ export default async function MagazineVersionsArchivePage({
                     </div>
                   </div>
                   <div className={styles.side}>
-                    <PagesColumn pageCount={v.pageCount} pdfUrl={v.pdfUrl} />
+                    <PagesColumn pageCount={v.pageCount} pdfUrl={v.pdfUrl} versionId={v.id} />
                   </div>
                 </article>
               );
