@@ -73,12 +73,18 @@ model Session {
   @@map("sessions")
 }
 
+enum MagazineLanguage {
+  AR
+  EN
+}
+
 model Magazine {
-  id                     Int       @id @default(autoincrement())
-  title                  String    @db.VarChar(255)
-  description            String    @db.Text
-  image                  String    @db.VarChar(2048)
-  category               String    @db.VarChar(100)
+  id                     Int               @id @default(autoincrement())
+  title                  String            @db.VarChar(255)
+  description            String            @db.Text
+  image                  String            @db.VarChar(2048)
+  category               String            @db.VarChar(100)
+  language               MagazineLanguage  @default(AR)
   pdfUrl                 String?   @db.VarChar(500)
   issn                   String?   @db.VarChar(32)
   impactFactor           Decimal?  @db.Decimal(6, 3)
@@ -250,13 +256,15 @@ model Conference {
 }
 
 model AdvisoryMember {
-  id    Int     @id @default(autoincrement())
-  name  String  @db.VarChar(255)
-  title String  @db.VarChar(255)
-  image String? @db.VarChar(2048)
-  bio   String? @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                   Int      @id @default(autoincrement())
+  name                 String   @db.VarChar(255)
+  title                String   @db.VarChar(255)
+  image                String?  @db.VarChar(2048)
+  bio                  String?  @db.Text
+  featuredOnCommittee  Boolean  @default(false) @map("featured_on_committee")
+  committeeSortOrder   Int      @default(0) @map("committee_sort_order")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
   approvedForMagazines MagazineApprovedAdvisor[]
 
   @@map("advisory_committee_members")

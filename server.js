@@ -59,29 +59,6 @@ if (!fs.existsSync(prismaClientIndex)) {
 
 const hostname = process.env.HOSTNAME || "0.0.0.0";
 
-// #region agent log
-fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
-  method: "POST",
-  headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" },
-  body: JSON.stringify({
-    sessionId: "51cdae",
-    runId: "pre-fix",
-    hypothesisId: "H2",
-    location: "server.js:startup",
-    message: "server.js spawning next start",
-    data: {
-      port,
-      hostname,
-      hasBuildId: fs.existsSync(buildIdPath),
-      hasNextBin: fs.existsSync(nextBin),
-      hasPrismaClient: fs.existsSync(prismaClientIndex),
-      nodeEnv: process.env.NODE_ENV ?? null,
-    },
-    timestamp: Date.now(),
-  }),
-}).catch(() => {});
-// #endregion
-
 const child = spawn(
   process.execPath,
   [nextBin, "start", "-H", hostname, "-p", String(port)],
@@ -93,21 +70,6 @@ const child = spawn(
 );
 
 child.on("exit", (code, signal) => {
-  // #region agent log
-  fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" },
-    body: JSON.stringify({
-      sessionId: "51cdae",
-      runId: "pre-fix",
-      hypothesisId: "H2",
-      location: "server.js:child-exit",
-      message: "next child process exited",
-      data: { code, signal },
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
   if (signal) process.kill(process.pid, signal);
   process.exit(code === null ? 1 : code);
 });

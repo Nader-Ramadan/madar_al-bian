@@ -7,6 +7,22 @@ import { UserRole } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
+  const featuredOnly =
+    searchParams.get("featured") === "1" || searchParams.get("committee") === "1";
+
+  if (featuredOnly) {
+    const items = await prisma.advisoryMember.findMany({
+      where: { featuredOnCommittee: true },
+      orderBy: [{ committeeSortOrder: "asc" }, { id: "asc" }],
+      take: 100,
+    });
+    const total = items.length;
+    return ok({
+      items,
+      pagination: { page: 1, limit: total, total, totalPages: total > 0 ? 1 : 0 },
+    });
+  }
+
   const parsedQuery = paginationSchema.safeParse({
     page: searchParams.get("page") ?? 1,
     limit: searchParams.get("limit") ?? 12,

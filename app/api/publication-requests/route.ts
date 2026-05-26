@@ -32,31 +32,6 @@ export async function POST(request: NextRequest) {
   const form = await request.formData();
   const rawFile = form.get("file");
   const file = getUploadFileFromFormData(form, "file");
-  // #region agent log
-  fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" },
-    body: JSON.stringify({
-      sessionId: "51cdae",
-      runId: "pre-fix",
-      hypothesisId: "H2",
-      location: "app/api/publication-requests/route.ts:POST",
-      message: "multipart file parse",
-      data: {
-        hasFile: !!file,
-        rawType: rawFile == null ? "null" : typeof rawFile,
-        rawCtor: rawFile && typeof rawFile === "object" ? (rawFile as object).constructor?.name : null,
-        rawSize: rawFile && typeof rawFile === "object" && "size" in rawFile ? (rawFile as Blob).size : null,
-        isFileInstance: rawFile instanceof File,
-        isBlobInstance: rawFile instanceof Blob,
-        fileName: file?.name ?? null,
-        fileSize: file?.size ?? null,
-        formKeys: [...form.keys()],
-      },
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
   if (!file) {
     const emptyBlob =
       rawFile != null &&
@@ -115,25 +90,8 @@ export async function POST(request: NextRequest) {
     return fail(message, 500);
   }
 
-  // #region agent log
-  fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" },
-    body: JSON.stringify({
-      sessionId: "51cdae",
-      runId: "pre-fix",
-      hypothesisId: "H4",
-      location: "app/api/publication-requests/route.ts:POST",
-      message: "creating publication request",
-      data: { magazineId: data.magazineId, documentUrlLen: documentUrl.length },
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
-
-  let created;
   try {
-    created = await prisma.publicationRequest.create({
+    const created = await prisma.publicationRequest.create({
       data: {
         authorName: data.authorName,
         authorEmail: data.authorEmail,
@@ -146,23 +104,9 @@ export async function POST(request: NextRequest) {
         documentSize: file.size,
       },
     });
+    return ok(created, { status: 201 });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
-    // #region agent log
-    fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" },
-      body: JSON.stringify({
-        sessionId: "51cdae",
-        runId: "pre-fix",
-        hypothesisId: "H4",
-        location: "app/api/publication-requests/route.ts:POST",
-        message: "prisma create failed",
-        data: { errorSnippet: msg.slice(0, 200) },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
     if (msg.includes("Unknown argument `authorPhone`")) {
       return fail(
         "عميل Prisma غير متزامن مع المخطط. أوقف npm run dev بالكامل، ثم شغّل: npx prisma generate (يجب أن ينجح بدون EPERM)، ثم npm run dev. على Hostinger: npx prisma generate && npx prisma migrate deploy ثم Restart.",
@@ -172,22 +116,4 @@ export async function POST(request: NextRequest) {
     console.error("[publication-requests] create failed:", error);
     return fail("تعذر حفظ الطلب في قاعدة البيانات. حاول لاحقاً أو تواصل مع الدعم.", 500);
   }
-
-  // #region agent log
-  fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" },
-    body: JSON.stringify({
-      sessionId: "51cdae",
-      runId: "post-fix",
-      hypothesisId: "H4",
-      location: "app/api/publication-requests/route.ts:POST",
-      message: "publication request created",
-      data: { id: created.id, hasAuthorPhone: created.authorPhone != null },
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
-
-  return ok(created, { status: 201 });
 }

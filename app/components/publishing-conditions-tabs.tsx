@@ -6,6 +6,7 @@ import {
   PublishingConditionIcon,
   type PublishingConditionIconKey,
 } from "@/lib/publishing-condition-icons";
+import type { MagazineUiCopy } from "@/lib/magazine-ui-copy";
 
 export type PublishingConditionTabItem = {
   id: number;
@@ -16,9 +17,10 @@ export type PublishingConditionTabItem = {
 
 type Props = {
   tabs: PublishingConditionTabItem[];
+  copy: MagazineUiCopy;
 };
 
-export default function PublishingConditionsTabs({ tabs }: Props) {
+export default function PublishingConditionsTabs({ tabs, copy }: Props) {
   const baseId = useId();
   const [activeIndex, setActiveIndex] = useState(0);
   const safeTabs = useMemo(() => tabs.filter(Boolean), [tabs]);
@@ -26,10 +28,8 @@ export default function PublishingConditionsTabs({ tabs }: Props) {
   if (safeTabs.length === 0) {
     return (
       <div className={styles.empty}>
-        <h3 className={styles.emptyTitle}>لا توجد أقسام بعد</h3>
-        <p className={styles.emptyText}>
-          سيتم نشر شروط النشر لهذه المجلة قريبًا. يمكن للمحرر إضافة الأقسام من لوحة التحكم.
-        </p>
+        <h3 className={styles.emptyTitle}>{copy.publishingConditionsTabs.emptyTitle}</h3>
+        <p className={styles.emptyText}>{copy.publishingConditionsTabs.emptyText}</p>
       </div>
     );
   }
@@ -76,10 +76,10 @@ export default function PublishingConditionsTabs({ tabs }: Props) {
         className={styles.tabList}
         role="tablist"
         aria-orientation="vertical"
-        aria-label="أقسام شروط النشر"
+        aria-label={copy.publishingConditionsTabs.tablistLabel}
       >
         <li className={styles.tabListHeader}>
-          <span>الأقسام</span>
+          <span>{copy.publishingConditionsTabs.sectionsHeader}</span>
           <span className={styles.tabListHeaderCount}>{safeTabs.length}</span>
         </li>
         {safeTabs.map((tab, index) => {
@@ -110,7 +110,7 @@ export default function PublishingConditionsTabs({ tabs }: Props) {
         })}
       </ul>
 
-      <nav className={styles.mobileTabBar} aria-label="أقسام شروط النشر (موبايل)">
+      <nav className={styles.mobileTabBar} aria-label={copy.publishingConditionsTabs.mobileTablistLabel}>
         {safeTabs.map((tab, index) => {
           const isActive = index === activeIndex;
           return (
@@ -144,7 +144,10 @@ export default function PublishingConditionsTabs({ tabs }: Props) {
             <h2 className={styles.panelTitle}>{active.title}</h2>
             <div className={styles.panelMetaRow}>
               <span className={styles.panelMetaPill}>
-                القسم {String(activeIndex + 1).padStart(2, "0")} / {String(safeTabs.length).padStart(2, "0")}
+                {copy.publishingConditionsTabs.sectionMeta(
+                  String(activeIndex + 1).padStart(2, "0"),
+                  String(safeTabs.length).padStart(2, "0"),
+                )}
               </span>
             </div>
           </div>

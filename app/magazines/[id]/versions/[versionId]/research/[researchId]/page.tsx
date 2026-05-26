@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getMagazinePageContext } from "@/lib/magazine-page-context";
 import { prisma } from "@/lib/prisma";
 import { parseMagazineId } from "@/lib/magazine-id";
-import { cloudinaryAttachmentUrl, sanitizePdfDownloadFilename } from "@/lib/cloudinary";
+import { pdfDownloadPath, sanitizePdfFilename } from "@/lib/pdf-download";
 import { splitResearchKeywords } from "@/lib/research-keywords";
 import { textDirectionAttrs } from "@/lib/text-direction";
 import styles from "../../../../../../magazine-versions-archive.module.css";
@@ -18,11 +19,13 @@ export async function generateMetadata({
   const versionId = parseMagazineId(rawVer);
   const researchId = parseMagazineId(rawRes);
   if (!magazineId || !versionId || !researchId) return { title: "بحث" };
+  const ctx = await getMagazinePageContext(magazineId);
   const research = await prisma.magazineVersionResearch.findFirst({
     where: { id: researchId, magazineVersionId: versionId, magazineVersion: { magazineId } },
     select: { title: true },
   });
-  return { title: research?.title ?? "بحث" };
+  const fallback = ctx?.copy.meta.research ?? "بحث";
+  return { title: research?.title ?? fallback };
 }
 
 export default async function MagazineVersionResearchDetailPage({
@@ -35,6 +38,9 @@ export default async function MagazineVersionResearchDetailPage({
   const versionId = parseMagazineId(rawVer);
   const researchId = parseMagazineId(rawRes);
   if (!magazineId || !versionId || !researchId) notFound();
+
+  const ctx = await getMagazinePageContext(magazineId);
+  if (!ctx) notFound();
 
   const research = await prisma.magazineVersionResearch.findFirst({
     where: {
@@ -54,15 +60,12 @@ export default async function MagazineVersionResearchDetailPage({
   });
   if (!research) notFound();
 
+  const { copy } = ctx;
   const keywordItems = splitResearchKeywords(research.keywords);
   const summaryText = research.summary?.trim() ?? "";
-  const pdfRaw = research.pdfUrl?.trim() ?? "";
-  const pdfHref = pdfRaw
-    ? cloudinaryAttachmentUrl(
-        pdfRaw,
-        sanitizePdfDownloadFilename(`research-${research.id}`, "research.pdf"),
-      )
-    : "";
+  const hasPdf = Boolean(research.pdfUrl?.trim());
+  const pdfHref = hasPdf ? pdfDownloadPath("research", research.id) : "";
+  const pdfDownloadName = sanitizePdfFilename(`research-${research.id}`, "research.pdf");
   const researchTitleDir = textDirectionAttrs(research.title);
   const versionTitleDir = textDirectionAttrs(research.magazineVersion.title);
   const magazineTitleDir = textDirectionAttrs(research.magazineVersion.magazine.title);
@@ -72,17 +75,17 @@ export default async function MagazineVersionResearchDetailPage({
       <div className={styles.inner}>
         <div className={styles.topBar}>
           <Link href={`/magazines/${magazineId}/versions/${versionId}`} className={styles.backLink}>
-            ← العودة لقائمة البحوث
+            {copy.research.backToResearches}
           </Link>
           <Link href={`/magazines/${magazineId}`} className={styles.backLink}>
-            المجلة
+            {copy.research.magazine}
           </Link>
         </div>
         <div className={styles.headerBlock}>
           <p className={styles.subtitle}>
             <span {...magazineTitleDir}>{research.magazineVersion.magazine.title}</span> —{" "}
-            <span {...versionTitleDir}>{research.magazineVersion.title}</span> (إصدار{" "}
-            {research.magazineVersion.version})
+            <span {...versionTitleDir}>{research.magazineVersion.title}</span> (
+            {copy.research.issueLabel(research.magazineVersion.version)})
           </p>
           <h1 className={styles.pageTitle} {...researchTitleDir}>
             {research.title}
@@ -95,7 +98,7 @@ export default async function MagazineVersionResearchDetailPage({
         <article className={styles.researchArticleSheet}>
           <section aria-labelledby="research-summary-heading">
             <h2 id="research-summary-heading" className={styles.researchSummaryTitle}>
-              الملخص
+              {copy.research.summary}
             </h2>
             <div className={styles.researchSummaryPanel}>
               {summaryText ? (
@@ -103,14 +106,14 @@ export default async function MagazineVersionResearchDetailPage({
                   <p className={styles.researchSummaryText}>{summaryText}</p>
                 </div>
               ) : (
-                <p className={styles.researchEmptyNote}>لم يُضف ملخص لهذا البحث بعد.</p>
+                <p className={styles.researchEmptyNote}>{copy.research.noSummary}</p>
               )}
             </div>
           </section>
 
           <section className={styles.researchKeywordsSection} aria-labelledby="research-keywords-heading">
             <h2 id="research-keywords-heading" className={styles.researchKeywordsHeading}>
-              :الكلمات المفتاحية
+              {copy.research.keywords}
             </h2>
             {keywordItems.length > 0 ? (
               <div dir="ltr" className={styles.researchKeywordChipsWrap}>
@@ -123,18 +126,18 @@ export default async function MagazineVersionResearchDetailPage({
                 </ul>
               </div>
             ) : (
-              <p className={styles.researchEmptyNote}>لا توجد كلمات مفتاحية مسجّلة لهذا البحث.</p>
+              <p className={styles.researchEmptyNote}>{copy.research.noKeywords}</p>
             )}
           </section>
 
           <div className={styles.researchArticleActions}>
             {pdfHref ? (
-              <a className={styles.pdfButton} href={pdfHref} target="_blank" rel="noopener noreferrer">
-                تحميل البحث (PDF)
+              <a className={styles.pdfButton} href={pdfHref} download={pdfDownloadName}>
+                {copy.research.downloadPdf}
               </a>
             ) : null}
             <a className={styles.externalButton} href={research.externalUrl} target="_blank" rel="noopener noreferrer">
-              فتح صفحة البحث الأصلية
+              {copy.research.externalLink}
             </a>
           </div>
         </article>

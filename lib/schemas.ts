@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ABSTRACT_MIN_WORDS_MESSAGE, meetsMinAbstractWords } from "@/lib/publication-request-abstract";
+import { ABSTRACT_MAX_WORDS_MESSAGE, withinAbstractWordLimit } from "@/lib/publication-request-abstract";
 import { validateAndComposeAuthorPhone } from "@/lib/phone-countries";
 import { PUBLISHING_CONDITION_ICON_KEYS } from "@/lib/publishing-condition-icons";
 
@@ -22,6 +22,7 @@ export const magazineSchema = z.object({
   description: z.string().min(5),
   image: z.string().min(1).max(2048),
   category: z.string().min(2).max(100),
+  language: z.enum(["AR", "EN"]).optional().default("AR"),
   pdfUrl: z.union([storageHttpUrlOrUploadsPathSchema(2048), z.null()]).optional(),
   issn: z.string().max(32).optional().nullable(),
   impactFactor: z.coerce.number().finite().optional().nullable(),
@@ -66,6 +67,10 @@ export const advisoryMemberSchema = z.object({
     .union([storageHttpUrlOrUploadsPathSchema(2048), z.literal(""), z.null()])
     .optional(),
   bio: z.union([z.string().max(4000), z.literal(""), z.null()]).optional(),
+});
+
+export const advisoryCommitteeDisplaySchema = z.object({
+  memberIds: z.array(z.number().int().positive()).default([]),
 });
 
 export const fieldSchema = z.object({
@@ -163,7 +168,7 @@ export const publicationRequestSchema = z.object({
   authorEmail: z.string().email(),
   authorPhone: authorPhoneSchema.optional().nullable(),
   title: z.string().min(2).max(255),
-  abstract: z.string().refine(meetsMinAbstractWords, { message: ABSTRACT_MIN_WORDS_MESSAGE }),
+  abstract: z.string().refine(withinAbstractWordLimit, { message: ABSTRACT_MAX_WORDS_MESSAGE }),
   field: z.string().max(255).optional().nullable(),
   magazineId: z.number().int().positive().optional().nullable(),
 });
@@ -175,7 +180,7 @@ export const publicationRequestFormSchema = z
     authorPhoneCountry: z.string().trim().length(2),
     authorPhoneNational: z.string().trim().min(1).max(20),
     title: z.string().min(2).max(255),
-    abstract: z.string().refine(meetsMinAbstractWords, { message: ABSTRACT_MIN_WORDS_MESSAGE }),
+    abstract: z.string().refine(withinAbstractWordLimit, { message: ABSTRACT_MAX_WORDS_MESSAGE }),
     magazineId: z.number().int().positive().optional().nullable(),
   })
   .superRefine((data, ctx) => {

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import styles from "@/app/page.module.css";
 import { adminCopy } from "@/lib/admin/ar-copy";
+import { sanitizeWordFilename } from "@/lib/word-filename";
 
 type PublicationRequest = {
   id: number;
@@ -81,6 +82,22 @@ export default function AdminApprovalsPage() {
     }
   };
 
+  const deleteRequest = async (id: number, title: string) => {
+    if (!confirm(`${ap.confirmDeleteRequest}\n\n«${title}»`)) return;
+    setBusy(true);
+    try {
+      const response = await fetch(`/api/admin/publication-requests/${id}`, { method: "DELETE" });
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null);
+        alert((payload as { error?: string } | null)?.error ?? "فشل الحذف");
+        return;
+      }
+      await refresh();
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <div className={styles.adminPage}>
       <header className={styles.adminHeader}>
@@ -121,7 +138,7 @@ export default function AdminApprovalsPage() {
                       href={`/api/admin/publication-requests/${item.id}/document`}
                       className={styles.adminButton}
                       style={{ display: "inline-flex", marginTop: "0.5rem" }}
-                      download={item.documentFilename ?? undefined}
+                      download={sanitizeWordFilename(item.documentFilename ?? "", "study.docx")}
                     >
                       {ap.downloadWord}
                       {item.documentFilename ? ` (${item.documentFilename})` : ""}
@@ -155,6 +172,14 @@ export default function AdminApprovalsPage() {
                       onClick={() => updateStatus(item.id, "REJECTED")}
                     >
                       {ap.reject}
+                    </button>
+                    <button
+                      type="button"
+                      className={`${styles.adminButton} ${styles.adminButtonDanger}`}
+                      disabled={busy}
+                      onClick={() => deleteRequest(item.id, item.title)}
+                    >
+                      {ap.deleteRequest}
                     </button>
                   </div>
                 </div>

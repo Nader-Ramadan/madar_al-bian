@@ -12,10 +12,10 @@ import {
   IconUpload,
 } from "@/app/components/publication-form-icons";
 import {
-  ABSTRACT_MIN_WORDS_MESSAGE,
+  ABSTRACT_MAX_WORDS_MESSAGE,
   countAbstractWords,
-  meetsMinAbstractWords,
-  MIN_ABSTRACT_WORDS,
+  withinAbstractWordLimit,
+  MAX_ABSTRACT_WORDS,
 } from "@/lib/publication-request-abstract";
 import PhoneCountryField from "@/app/components/phone-country-field";
 import { DEFAULT_PHONE_COUNTRY_ISO } from "@/lib/phone-countries";
@@ -43,7 +43,7 @@ export default function RequestPublicationPage() {
   const [message, setMessage] = useState<{ type: "ok" | "err"; text: string } | null>(null);
 
   const abstractWordCount = countAbstractWords(abstract);
-  const abstractMeetsMin = meetsMinAbstractWords(abstract);
+  const abstractWithinLimit = withinAbstractWordLimit(abstract);
 
   useEffect(() => {
     let cancelled = false;
@@ -73,25 +73,6 @@ export default function RequestPublicationPage() {
     const file = ev.target.files?.[0] ?? null;
     setWordFile(file);
     setMessage(null);
-    // #region agent log
-    fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" },
-      body: JSON.stringify({
-        sessionId: "51cdae",
-        runId: "pre-fix",
-        hypothesisId: "H3",
-        location: "request-for-publication-of-a-study/page.tsx:onFileChange",
-        message: "file input changed",
-        data: {
-          hasFile: !!file,
-          fileName: file?.name ?? null,
-          fileSize: file?.size ?? null,
-        },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
   };
 
   const submit = async (e: FormEvent) => {
@@ -120,8 +101,8 @@ export default function RequestPublicationPage() {
       setMessage({ type: "err", text: "حجم الملف كبير جداً (الحد الأقصى 15 ميجابايت)." });
       return;
     }
-    if (!meetsMinAbstractWords(abstract)) {
-      setMessage({ type: "err", text: ABSTRACT_MIN_WORDS_MESSAGE });
+    if (!withinAbstractWordLimit(abstract)) {
+      setMessage({ type: "err", text: ABSTRACT_MAX_WORDS_MESSAGE });
       return;
     }
 
@@ -136,29 +117,6 @@ export default function RequestPublicationPage() {
       fd.append("abstract", abstract);
       if (magazineId.trim() !== "") fd.append("magazineId", magazineId.trim());
       fd.append("file", fileToSend, fileToSend.name);
-
-      // #region agent log
-      fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" },
-        body: JSON.stringify({
-          sessionId: "51cdae",
-          runId: "pre-fix",
-          hypothesisId: "H1",
-          location: "request-for-publication-of-a-study/page.tsx:submit",
-          message: "client submit with file",
-          data: {
-            fileName: fileToSend.name,
-            fileSize: fileToSend.size,
-            fileType: fileToSend.type,
-            stateHadFile: !!wordFile,
-            inputHadFile: !!fileFromInput,
-            formHasFile: fd.has("file"),
-          },
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-      // #endregion
 
       const response = await fetch("/api/publication-requests", {
         method: "POST",
@@ -206,8 +164,8 @@ export default function RequestPublicationPage() {
               </div>
               <div className={`${journalStyles.cardBody} ${formStyles.formCardBody}`}>
                 <p className={formStyles.formIntroText}>
-                  املأ النموذج أدناه وأرفق ملف الدراسة بصيغة Word فقط (.doc أو .docx). يجب أن يكون
-                  الملخص {MIN_ABSTRACT_WORDS} كلمة على الأقل.
+                  املأ النموذج أدناه وأرفق ملف الدراسة بصيغة Word فقط (.doc أو .docx). يجب ألا
+                  يتجاوز الملخص {MAX_ABSTRACT_WORDS} كلمة.
                 </p>
               </div>
             </article>
@@ -316,20 +274,20 @@ export default function RequestPublicationPage() {
                         }}
                         rows={8}
                         className={`${staticStyles.textarea} ${
-                          abstract.trim() && !abstractMeetsMin ? staticStyles.textareaInvalid : ""
+                          abstract.trim() && !abstractWithinLimit ? staticStyles.textareaInvalid : ""
                         }`}
-                        aria-invalid={abstract.trim().length > 0 && !abstractMeetsMin}
+                        aria-invalid={abstract.trim().length > 0 && !abstractWithinLimit}
                         aria-describedby="pub-abstract-hint"
                       />
                       <p
                         id="pub-abstract-hint"
                         className={`${staticStyles.hint} ${staticStyles.wordCountHint} ${
-                          abstractMeetsMin ? staticStyles.wordCountOk : staticStyles.wordCountLow
+                          abstractWithinLimit ? staticStyles.wordCountOk : staticStyles.wordCountLow
                         }`}
                       >
-                        {abstractWordCount} / {MIN_ABSTRACT_WORDS} كلمة — الحد الأدنى{" "}
-                        {MIN_ABSTRACT_WORDS} كلمة مطلوب للإرسال.
-                        {abstractMeetsMin ? " ✓" : null}
+                        {abstractWordCount} / {MAX_ABSTRACT_WORDS} كلمة — الحد الأقصى{" "}
+                        {MAX_ABSTRACT_WORDS} كلمة.
+                        {abstract.trim() && abstractWithinLimit ? " ✓" : null}
                       </p>
                     </div>
                   </div>
@@ -365,7 +323,7 @@ export default function RequestPublicationPage() {
                     <div className={formStyles.submitRow}>
                       <button
                         type="submit"
-                        disabled={loading || !abstractMeetsMin}
+                        disabled={loading || !abstractWithinLimit}
                         className={staticStyles.staticSubmit}
                       >
                         {loading ? "جاري الإرسال…" : "إرسال الطلب"}

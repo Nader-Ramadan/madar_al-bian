@@ -5,7 +5,7 @@
 import { File } from "node:buffer";
 
 const base = (process.env.SITE_URL || "http://localhost:3000").replace(/\/$/, "");
-const words = Array.from({ length: 210 }, (_, i) => `word${i + 1}`).join(" ");
+const words = Array.from({ length: 200 }, (_, i) => `word${i + 1}`).join(" ");
 
 const file = new File(
   [Buffer.from("PK fake docx content for test")],

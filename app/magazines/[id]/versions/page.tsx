@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getMagazinePageContext } from "@/lib/magazine-page-context";
+import { pdfDownloadPath, sanitizePdfFilename } from "@/lib/pdf-download";
+import type { MagazineUiCopy } from "@/lib/magazine-ui-copy";
 import { prisma } from "@/lib/prisma";
-import { cloudinaryAttachmentUrl, sanitizePdfDownloadFilename } from "@/lib/cloudinary";
 import { parseMagazineId } from "@/lib/magazine-id";
 import { textDirectionAttrs } from "@/lib/text-direction";
 import styles from "../../../magazine-versions-archive.module.css";
 
-function formatReleaseDate(d: Date): string {
-  return new Intl.DateTimeFormat("ar-EG", {
+function formatReleaseDate(d: Date, dateLocale: string): string {
+  return new Intl.DateTimeFormat(dateLocale, {
     calendar: "gregory",
     day: "numeric",
     month: "long",
@@ -41,36 +43,34 @@ function PagesColumn({
   pageCount,
   pdfUrl,
   versionId,
+  copy,
 }: {
   pageCount: number | null;
   pdfUrl: string | null;
   versionId: number;
+  copy: MagazineUiCopy;
 }) {
-  const pdfHref = pdfUrl
-    ? cloudinaryAttachmentUrl(
-        pdfUrl,
-        sanitizePdfDownloadFilename(`version-${versionId}`, "version.pdf"),
-      )
-    : null;
+  const pdfHref = pdfUrl?.trim() ? pdfDownloadPath("version", versionId) : null;
+  const pdfDownloadName = sanitizePdfFilename(`version-${versionId}`, "version.pdf");
 
   if (pageCount != null && pdfHref) {
     return (
-      <a href={pdfHref} className={styles.pagesLink} target="_blank" rel="noopener noreferrer">
-        عدد الأوراق ({pageCount})
+      <a href={pdfHref} className={styles.pagesLink} download={pdfDownloadName}>
+        {copy.archive.pageCountLink(pageCount)}
       </a>
     );
   }
   if (pdfHref) {
     return (
-      <a href={pdfHref} className={styles.pagesLink} target="_blank" rel="noopener noreferrer">
-        تحميل PDF
+      <a href={pdfHref} className={styles.pagesLink} download={pdfDownloadName}>
+        {copy.archive.downloadPdf}
       </a>
     );
   }
   if (pageCount != null) {
-    return <span className={styles.pagesPlain}>عدد الأوراق ({pageCount})</span>;
+    return <span className={styles.pagesPlain}>{copy.archive.pageCountPlain(pageCount)}</span>;
   }
-  return <span className={styles.pagesMuted}>غير محدد</span>;
+  return <span className={styles.pagesMuted}>{copy.archive.unspecified}</span>;
 }
 
 export async function generateMetadata({
@@ -81,12 +81,14 @@ export async function generateMetadata({
   const { id: raw } = await params;
   const magazineId = parseMagazineId(raw);
   if (!magazineId) return { title: "إصدارات المجلة" };
+  const ctx = await getMagazinePageContext(magazineId);
   const magazine = await prisma.magazine.findUnique({
     where: { id: magazineId },
     select: { title: true },
   });
-  if (!magazine) return { title: "إصدارات المجلة" };
-  return { title: `إصدارات المجلة | ${magazine.title}` };
+  const fallback = ctx?.copy.meta.versionsArchive ?? "إصدارات المجلة";
+  if (!magazine) return { title: fallback };
+  return { title: `${fallback} | ${magazine.title}` };
 }
 
 export default async function MagazineVersionsArchivePage({
@@ -97,6 +99,9 @@ export default async function MagazineVersionsArchivePage({
   const { id: raw } = await params;
   const magazineId = parseMagazineId(raw);
   if (!magazineId) notFound();
+
+  const ctx = await getMagazinePageContext(magazineId);
+  if (!ctx) notFound();
 
   const baseMagazine = await prisma.magazine.findUnique({
     where: { id: magazineId },
@@ -134,17 +139,17 @@ export default async function MagazineVersionsArchivePage({
     versions = legacyVersions.map((v) => ({ ...v, pageCount: null, pdfUrl: null }));
   }
 
+  const { copy } = ctx;
+
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
         <div className={styles.topBar}>
           <Link href={`/magazines/${baseMagazine.id}`} className={styles.backLink}>
-            ← العودة للمجلة
+            {copy.archive.backToMagazine}
           </Link>
           <div className={styles.headerBlock}>
-            <h1 className={styles.pageTitle} dir="rtl" lang="ar">
-              إصدارات المجلة
-            </h1>
+            <h1 className={styles.pageTitle}>{copy.archive.versionsTitle}</h1>
             <p className={styles.subtitle} {...textDirectionAttrs(baseMagazine.title)}>
               {baseMagazine.title}
             </p>
@@ -152,7 +157,7 @@ export default async function MagazineVersionsArchivePage({
         </div>
 
         {versions.length === 0 ? (
-          <div className={styles.empty}>لا توجد إصدارات مسجّلة لهذه المجلة بعد.</div>
+          <div className={styles.empty}>{copy.archive.emptyVersions}</div>
         ) : (
           <div className={styles.grid}>
             {versions.map((v, index) => {
@@ -161,21 +166,29 @@ export default async function MagazineVersionsArchivePage({
                 <article key={v.id} className={styles.card}>
                   <div className={styles.main}>
                     <div className={styles.badgeRow}>
-                      {isLatest ? <span className={styles.latestBadge}>أحدث إصدار</span> : null}
+                      {isLatest ? <span className={styles.latestBadge}>{copy.archive.latestBadge}</span> : null}
                     </div>
                     <h2 className={styles.issueTitle} {...textDirectionAttrs(v.title)}>
                       {v.title}
                     </h2>
-                    <p className={styles.dateLine}>{formatReleaseDate(v.releaseDate)}</p>
+                    <p className={styles.dateLine}>{formatReleaseDate(v.releaseDate, ctx.dateLocale)}</p>
                     {v.notes?.trim() ? <p className={styles.notes}>{v.notes.trim()}</p> : null}
                     <div className={styles.versionResearchRow}>
-                      <Link href={`/magazines/${magazineId}/versions/${v.id}`} className={styles.versionResearchButton}>
-                        بحوث هذا الإصدار
+                      <Link
+                        href={`/magazines/${magazineId}/versions/${v.id}`}
+                        className={styles.versionResearchButton}
+                      >
+                        {copy.archive.researchesCta}
                       </Link>
                     </div>
                   </div>
                   <div className={styles.side}>
-                    <PagesColumn pageCount={v.pageCount} pdfUrl={v.pdfUrl} versionId={v.id} />
+                    <PagesColumn
+                      pageCount={v.pageCount}
+                      pdfUrl={v.pdfUrl}
+                      versionId={v.id}
+                      copy={copy}
+                    />
                   </div>
                 </article>
               );

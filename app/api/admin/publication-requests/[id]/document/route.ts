@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { UserRole } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { fail } from "@/lib/api-response";
 import { requireRole } from "@/lib/rbac";
-import { cloudinaryAttachmentUrl } from "@/lib/cloudinary";
+import { proxyWordDownload, sanitizeWordFilename } from "@/lib/word-download";
 
 function parseId(value: string) {
   const id = Number(value);
@@ -24,7 +24,6 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   });
   if (!row?.documentUrl) return fail("لا يوجد ملف مرفق", 404);
 
-  const filename = row.documentFilename?.trim() || "study.docx";
-  const target = cloudinaryAttachmentUrl(row.documentUrl, filename);
-  return NextResponse.redirect(target, 302);
+  const filename = sanitizeWordFilename(row.documentFilename?.trim() || "", "study.docx");
+  return proxyWordDownload(row.documentUrl, filename);
 }

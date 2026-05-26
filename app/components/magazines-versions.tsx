@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { cloudinaryAttachmentUrl, sanitizePdfDownloadFilename } from "@/lib/cloudinary";
+import { pdfDownloadPath, sanitizePdfFilename } from "@/lib/pdf-download";
+import type { MagazineUiCopy } from "@/lib/magazine-ui-copy";
 import styles from "../magazine-journal.module.css";
 
 export type MagazineVersionItem = {
@@ -14,21 +15,18 @@ type MagazineVersionsProps = {
   magazineId: number;
   versions: MagazineVersionItem[];
   pdfUrl: string | null;
+  copy: MagazineUiCopy;
 };
 
-export default function MagazineVersions({ magazineId, versions, pdfUrl }: MagazineVersionsProps) {
-  const magazinePdfHref = pdfUrl
-    ? cloudinaryAttachmentUrl(
-        pdfUrl,
-        sanitizePdfDownloadFilename(`magazine-${magazineId}`, "magazine.pdf"),
-      )
-    : null;
+export default function MagazineVersions({ magazineId, versions, pdfUrl, copy }: MagazineVersionsProps) {
+  const magazinePdfHref = pdfUrl?.trim() ? pdfDownloadPath("magazine", magazineId) : null;
+  const magazinePdfDownloadName = sanitizePdfFilename(`magazine-${magazineId}`, "magazine.pdf");
 
   return (
     <section className={styles.versionsWrap}>
       <div className={`${styles.inner} ${styles.versionsSection}`}>
         <div className={styles.versionsHeadRow}>
-          <h2 className={styles.versionsTitle}>إصدارات المجلة</h2>
+          <h2 className={styles.versionsTitle}>{copy.versions.title}</h2>
           <div className={styles.versionsHeadActions}>
             <Link
               href={`/magazines/${magazineId}/publishing-conditions`}
@@ -41,9 +39,9 @@ export default function MagazineVersions({ magazineId, versions, pdfUrl }: Magaz
                   <path d="M8 13h8M8 17h6" />
                 </svg>
               </span>
-              <span>شروط النشر</span>
+              <span>{copy.versions.publishingConditions}</span>
               <span className={styles.versionsArchiveChevron} aria-hidden>
-                ‹
+                {copy.versions.chevron}
               </span>
             </Link>
             <Link href={`/magazines/${magazineId}/versions`} className={styles.versionsArchiveLink}>
@@ -55,9 +53,9 @@ export default function MagazineVersions({ magazineId, versions, pdfUrl }: Magaz
                   <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none" />
                 </svg>
               </span>
-              <span>عرض سجل الإصدارات كاملاً</span>
+              <span>{copy.versions.fullArchive}</span>
               <span className={styles.versionsArchiveChevron} aria-hidden>
-                ‹
+                {copy.versions.chevron}
               </span>
             </Link>
           </div>
@@ -65,32 +63,32 @@ export default function MagazineVersions({ magazineId, versions, pdfUrl }: Magaz
 
         {magazinePdfHref ? (
           <p className={styles.versionPdfNote}>
-            <a href={magazinePdfHref} target="_blank" rel="noopener noreferrer">
-              تحميل المجلة (PDF)
+            <a href={magazinePdfHref} download={magazinePdfDownloadName}>
+              {copy.versions.downloadMagazinePdf}
             </a>
           </p>
         ) : versions.length > 0 ? (
-          <p className={styles.versionNoPdf}>لا يتوفر ملف PDF لهذه المجلة حاليًا.</p>
+          <p className={styles.versionNoPdf}>{copy.versions.noMagazinePdf}</p>
         ) : null}
 
         {versions.length === 0 ? (
-          <div className={styles.emptyVersions}>لا توجد إصدارات مسجّلة لهذه المجلة بعد.</div>
+          <div className={styles.emptyVersions}>{copy.versions.emptyVersions}</div>
         ) : (
           <div className={styles.versionsGrid}>
             {versions.map((v) => (
               <article key={v.id} className={styles.versionCard}>
                 <div className={styles.versionCardHeader}>
                   <span>{v.title}</span>
-                  <span className={styles.versionBadge}>إصدار {v.version}</span>
+                  <span className={styles.versionBadge}>{copy.versions.issueBadge(v.version)}</span>
                 </div>
                 <div className={styles.versionCardBody}>
-                  <div className={styles.versionMeta}>تاريخ الإصدار: {v.releaseDateLabel}</div>
+                  <div className={styles.versionMeta}>{copy.versions.releaseDate(v.releaseDateLabel)}</div>
                   {v.notes?.trim() ? <p className={styles.versionNotes}>{v.notes.trim()}</p> : null}
                   <Link
                     href={`/magazines/${magazineId}/versions/${v.id}`}
                     className={styles.versionResearchButton}
                   >
-                    بحوث هذا الإصدار
+                    {copy.versions.researchesCta}
                   </Link>
                 </div>
               </article>

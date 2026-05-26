@@ -87,6 +87,10 @@ export const adminCopy = {
     placeholderTitle: "اسم المجلة",
     placeholderDescription: "الوصف",
     placeholderCategory: "التصنيف",
+    languageLabel: "لغة المجلة",
+    languageAr: "العربية",
+    languageEn: "English",
+    listLanguageLabel: "اللغة:",
     bannerCurrent: "الغلاف الحالي:",
     bannerNoneEdit: "لا يوجد غلاف محفوظ؛ ارفع صورة أدناه.",
     bannerRequiredNew: "رفع غلاف مطلوب للمجلات الجديدة.",
@@ -164,7 +168,7 @@ export const adminCopy = {
   advisorsPage: {
     title: "إدارة المستشارين",
     explainer:
-      "أضف أعضاء اللجان أو المستشارين المعروضين على الموقع، مع الصورة والسيرة؛ ثم اربطهم بالمجلات من صفحة كل مجلة.",
+      "أضف أعضاء اللجان في القائمة أدناه، واختر من يظهر على صفحة اللجنة الاستشارية العامة؛ ثم اربط المستشارين بالمجلات من لوحة المجلات.",
     sectionFormExplainer: "املأ الاسم والمنصب ورفع صورة اختيارية وسيرة مختصرة ثم احفظ.",
     editAdvisor: "تعديل مستشار",
     addAdvisor: "إضافة مستشار",
@@ -177,6 +181,12 @@ export const adminCopy = {
     confirmDelete: "حذف هذا المستشار؟",
     listExplainer: "قائمة جميع المستشارين المتاحين ربطهم بالمجلات.",
     listSectionTitle: "جميع المستشارين",
+    committeeDisplayTitle: "المعروضون على صفحة اللجنة الاستشارية",
+    committeeDisplayExplainer:
+      "حدّد المستشارين الذين يظهرون للزوار في صفحة اللجنة الاستشارية العامة. الترتيب يتبع ترتيب التحديد.",
+    committeeDisplayEmpty: "لا يوجد مستشارون في القائمة بعد. أضف مستشاراً أولاً.",
+    saveCommitteeDisplay: "حفظ العرض على الموقع",
+    featuredBadge: "معروض على الموقع",
   },
 
   approvalsPage: {
@@ -196,6 +206,8 @@ export const adminCopy = {
     submittedAt: "تاريخ الإرسال:",
     abstractLabel: "الملخص:",
     phoneLabel: "الهاتف:",
+    deleteRequest: "حذف الطلب",
+    confirmDeleteRequest: "هل تريد حذف هذا الطلب نهائياً؟ لا يمكن التراجع.",
   },
 
   emailsPage: {

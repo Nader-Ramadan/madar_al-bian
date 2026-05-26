@@ -4,6 +4,7 @@ import styles from "../../page.module.css";
 import MagazineBanner from "../../components/magazine-banner";
 import MagazineContent from "../../components/magazine-content";
 import MagazineVersions from "../../components/magazines-versions";
+import { getMagazinePageContext } from "@/lib/magazine-page-context";
 import { prisma } from "@/lib/prisma";
 import { parseMagazineId } from "@/lib/magazine-id";
 import type { MagazinePublishingAdvisorItem } from "@/app/components/magazine-publishing-advisors";
@@ -18,17 +19,22 @@ export async function generateMetadata({
   const { id: rawId } = await params;
   const id = parseMagazineId(rawId);
   if (!id) return { title: "مجلة" };
+  const ctx = await getMagazinePageContext(id);
   const magazine = await prisma.magazine.findUnique({
     where: { id },
     select: { title: true },
   });
-  return { title: magazine?.title ?? "مجلة" };
+  const fallback = ctx?.copy.meta.magazine ?? "مجلة";
+  return { title: magazine?.title ?? fallback };
 }
 
 export default async function MagazinePage({ params }: { params: Promise<{ id: string }> }) {
   const { id: rawId } = await params;
   const id = parseMagazineId(rawId);
   if (!id) notFound();
+
+  const ctx = await getMagazinePageContext(id);
+  if (!ctx) notFound();
 
   const magazineRecord = await prisma.magazine.findUnique({
     where: { id },
@@ -80,7 +86,9 @@ export default async function MagazinePage({ params }: { params: Promise<{ id: s
     id: v.id,
     version: v.version,
     title: v.title,
-    releaseDateLabel: new Intl.DateTimeFormat("ar-EG", { dateStyle: "medium" }).format(v.releaseDate),
+    releaseDateLabel: new Intl.DateTimeFormat(ctx.dateLocale, { dateStyle: "medium" }).format(
+      v.releaseDate,
+    ),
     notes: v.notes,
   }));
 
@@ -91,8 +99,11 @@ export default async function MagazinePage({ params }: { params: Promise<{ id: s
         magazineId={magazineRecord.id}
         coverImage={magazineRecord.image}
         description={magazineRecord.description}
+        copy={ctx.copy}
       />
       <MagazineContent
+        copy={ctx.copy}
+        dateLocale={ctx.dateLocale}
         title={magazineRecord.title}
         description={magazineRecord.description}
         category={magazineRecord.category}
@@ -116,6 +127,7 @@ export default async function MagazinePage({ params }: { params: Promise<{ id: s
         magazineId={magazineRecord.id}
         versions={versionItems}
         pdfUrl={magazineRecord.pdfUrl}
+        copy={ctx.copy}
       />
     </div>
   );

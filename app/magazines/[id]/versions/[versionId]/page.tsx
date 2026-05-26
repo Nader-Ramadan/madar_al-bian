@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getMagazinePageContext } from "@/lib/magazine-page-context";
 import { prisma } from "@/lib/prisma";
 import { parseMagazineId } from "@/lib/magazine-id";
 import { textDirectionAttrs } from "@/lib/text-direction";
@@ -15,11 +16,13 @@ export async function generateMetadata({
   const magazineId = parseMagazineId(rawMag);
   const versionId = parseMagazineId(rawVer);
   if (!magazineId || !versionId) return { title: "إصدار المجلة" };
+  const ctx = await getMagazinePageContext(magazineId);
   const row = await prisma.magazineVersion.findFirst({
     where: { id: versionId, magazineId },
     select: { title: true, magazine: { select: { title: true } } },
   });
-  if (!row) return { title: "إصدار المجلة" };
+  const fallback = ctx?.copy.meta.magazineIssue ?? "إصدار المجلة";
+  if (!row) return { title: fallback };
   return { title: `${row.magazine.title} | ${row.title}` };
 }
 
@@ -33,6 +36,9 @@ export default async function MagazineVersionHubPage({
   const versionId = parseMagazineId(rawVer);
   if (!magazineId || !versionId) notFound();
 
+  const ctx = await getMagazinePageContext(magazineId);
+  if (!ctx) notFound();
+
   const version = await prisma.magazineVersion.findFirst({
     where: { id: versionId, magazineId },
     include: {
@@ -42,6 +48,7 @@ export default async function MagazineVersionHubPage({
   });
   if (!version) notFound();
 
+  const { copy } = ctx;
   const versionTitleDir = textDirectionAttrs(version.title);
   const magazineTitleDir = textDirectionAttrs(version.magazine.title);
 
@@ -50,10 +57,10 @@ export default async function MagazineVersionHubPage({
       <div className={styles.inner}>
         <div className={styles.topBar}>
           <Link href={`/magazines/${magazineId}`} className={styles.backLink}>
-            ← العودة للمجلة
+            {copy.versionHub.backToMagazine}
           </Link>
           <Link href={`/magazines/${magazineId}/versions`} className={styles.backLink}>
-            سجل الإصدارات
+            {copy.versionHub.versionsArchive}
           </Link>
         </div>
         <div className={styles.headerBlock}>
@@ -61,13 +68,13 @@ export default async function MagazineVersionHubPage({
             {version.title}
           </h1>
           <p className={styles.subtitle}>
-            <span {...magazineTitleDir}>{version.magazine.title}</span> — إصدار{" "}
-            {version.version}
+            <span {...magazineTitleDir}>{version.magazine.title}</span> —{" "}
+            {copy.versionHub.issueLabel(version.version)}
           </p>
         </div>
 
         {version.researches.length === 0 ? (
-          <div className={styles.empty}>لا توجد بحوث مسجّلة لهذا الإصدار بعد.</div>
+          <div className={styles.empty}>{copy.versionHub.emptyResearches}</div>
         ) : (
           <div className={styles.researchList}>
             {version.researches.map((r) => (

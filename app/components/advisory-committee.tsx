@@ -54,7 +54,7 @@ export default function AdvisoryCommittee() {
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const response = await fetch("/api/advisory-members?limit=8");
+        const response = await fetch("/api/advisory-members?featured=1");
         const payload = await response.json();
         setCommitteeMembers(payload?.data?.items ?? []);
       } catch {

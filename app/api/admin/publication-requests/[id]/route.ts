@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { ok, fail } from "@/lib/api-response";
 import { requireRole } from "@/lib/rbac";
 import { publicationStatusSchema } from "@/lib/schemas";
+import { deleteStoredFile } from "@/lib/storage";
 
 function parseId(value: string) {
   const id = Number(value);
@@ -30,4 +31,22 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   });
 
   return ok(updated);
+}
+
+export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const auth = await requireRole([UserRole.ADMIN]);
+  if (auth.error) return auth.error;
+  const { id: rawId } = await params;
+  const id = parseId(rawId);
+  if (!id) return fail("Invalid id", 400);
+
+  const row = await prisma.publicationRequest.findUnique({ where: { id } });
+  if (!row) return fail("Publication request not found", 404);
+
+  if (row.documentUrl) {
+    await deleteStoredFile(row.documentUrl);
+  }
+
+  await prisma.publicationRequest.delete({ where: { id } });
+  return ok({ deleted: true });
 }

@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { resolveMagazineContact } from "@/lib/magazine-contact-defaults";
+import type { MagazineUiCopy } from "@/lib/magazine-ui-copy";
 import MagazinePublishingAdvisors, {
   type MagazinePublishingAdvisorItem,
 } from "./magazine-publishing-advisors";
 import styles from "../magazine-journal.module.css";
 
 export type MagazineJournalContentProps = {
+  copy: MagazineUiCopy;
+  dateLocale: string;
   title: string;
   description: string;
   category: string;
@@ -26,26 +29,26 @@ export type MagazineJournalContentProps = {
   contactAddress?: string | null;
 };
 
-function formatNextRelease(iso: string | null): string {
-  if (!iso) return "—";
+function formatNextRelease(iso: string | null, dateLocale: string, emDash: string): string {
+  if (!iso) return emDash;
   try {
     const d = new Date(iso);
-    if (Number.isNaN(d.getTime())) return "—";
-    return new Intl.DateTimeFormat("ar-EG", {
+    if (Number.isNaN(d.getTime())) return emDash;
+    return new Intl.DateTimeFormat(dateLocale, {
       year: "numeric",
       month: "long",
     }).format(d);
   } catch {
-    return "—";
+    return emDash;
   }
 }
 
-function splitCategories(category: string): string[] {
+function splitCategories(category: string, defaultCategory: string): string[] {
   const parts = category
     .split(/[,،]/)
     .map((s) => s.trim())
     .filter(Boolean);
-  return parts.length > 0 ? parts : [category.trim() || "متعدد التخصصات"];
+  return parts.length > 0 ? parts : [category.trim() || defaultCategory];
 }
 
 function IconBook() {
@@ -145,6 +148,8 @@ function IconBar() {
 
 export default function MagazineContent(props: MagazineJournalContentProps) {
   const {
+    copy,
+    dateLocale,
     title,
     description,
     category,
@@ -172,14 +177,11 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
     contactAddress,
   });
 
-  const vision =
-    publicationPreference?.trim() ||
-    "نسعى إلى الريادة في نشر المعرفة الأكاديمية الرصينة في مجالات تخصص المجلة.";
-  const mission =
-    versionMessage?.trim() ||
-    "دعم الباحثين بعملية تحكيم مهنية وتقديم محتوى مفتوح الوصول يعكس معايير الجودة العالمية.";
+  const vision = publicationPreference?.trim() || copy.content.defaultVision;
+  const mission = versionMessage?.trim() || copy.content.defaultMission;
 
-  const fields = splitCategories(category);
+  const fields = splitCategories(category, copy.content.defaultCategory);
+  const emDash = copy.content.emDash;
 
   return (
     <div className={styles.shell}>
@@ -191,7 +193,7 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
             </div>
             <div>
               <div className={styles.quickLabel}>ISSN</div>
-              <div className={styles.quickValue}>{issn?.trim() || "—"}</div>
+              <div className={styles.quickValue}>{issn?.trim() || emDash}</div>
             </div>
           </div>
           <div className={styles.quickItem}>
@@ -199,8 +201,8 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
               <IconChart />
             </div>
             <div>
-              <div className={styles.quickLabel}>معامل التأثير</div>
-              <div className={styles.quickValue}>{impactFactor?.trim() || "—"}</div>
+              <div className={styles.quickLabel}>{copy.content.impactFactor}</div>
+              <div className={styles.quickValue}>{impactFactor?.trim() || emDash}</div>
             </div>
           </div>
           <div className={styles.quickItem}>
@@ -208,14 +210,16 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
               <IconCalendar />
             </div>
             <div>
-              <div className={styles.quickLabel}>الإصدار القادم</div>
-              <div className={styles.quickValue}>{formatNextRelease(nextVersionRelease)}</div>
+              <div className={styles.quickLabel}>{copy.content.nextRelease}</div>
+              <div className={styles.quickValue}>
+                {formatNextRelease(nextVersionRelease, dateLocale, emDash)}
+              </div>
             </div>
           </div>
           <div className={styles.quickCtaWrap}>
             <Link href="/request-for-publication-of-a-study" className={styles.quickCta}>
               <IconUpload />
-              <span>قدّم بحثك</span>
+              <span>{copy.content.submitResearch}</span>
             </Link>
           </div>
         </div>
@@ -233,13 +237,15 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
               </svg>
             </span>
             <span className={styles.publishingConditionsCtaText}>
-              <span className={styles.publishingConditionsCtaTitle}>شروط النشر</span>
+              <span className={styles.publishingConditionsCtaTitle}>
+                {copy.content.publishingConditionsTitle}
+              </span>
               <span className={styles.publishingConditionsCtaSubtitle}>
-                اطّلع على {publishingConditionsCount} {publishingConditionsCount === 1 ? "قسم" : "أقسام"} من الإرشادات الخاصة بالمجلة قبل التقديم.
+                {copy.content.publishingConditionsSubtitle(publishingConditionsCount)}
               </span>
             </span>
             <span className={styles.publishingConditionsCtaArrow} aria-hidden>
-              ←
+              {copy.content.publishingConditionsArrow}
             </span>
           </Link>
         ) : null}
@@ -250,13 +256,13 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
               <div className={styles.cardHeaderIcon}>
                 <IconInfo />
               </div>
-              <h2 className={styles.cardTitle}>عن المجلة: {title}</h2>
+              <h2 className={styles.cardTitle}>{copy.content.aboutTitle(title)}</h2>
             </div>
             <div className={styles.cardBody}>
               {description.split(/\n\n+/).map((para, i) => (
                 <p key={i}>{para}</p>
               ))}
-              <h3 className={styles.fieldsHeading}>مجالات النشر</h3>
+              <h3 className={styles.fieldsHeading}>{copy.content.fieldsHeading}</h3>
               <ul className={styles.fieldList}>
                 {fields.map((f) => (
                   <li key={f}>
@@ -273,13 +279,13 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
               <div className={styles.cardHeaderIcon}>
                 <IconPhone />
               </div>
-              <h2 className={styles.cardTitle}>معلومات التواصل</h2>
+              <h2 className={styles.cardTitle}>{copy.content.contactTitle}</h2>
             </div>
             <div className={styles.cardBody}>
               <div className={styles.contactRow}>
                 <IconPhone />
                 <div>
-                  <div className={styles.quickLabel}>الهاتف</div>
+                  <div className={styles.quickLabel}>{copy.content.phone}</div>
                   {contact.phoneHref ? (
                     <a href={contact.phoneHref}>{contact.phone}</a>
                   ) : (
@@ -290,14 +296,14 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
               <div className={styles.contactRow}>
                 <IconMail />
                 <div>
-                  <div className={styles.quickLabel}>البريد</div>
+                  <div className={styles.quickLabel}>{copy.content.email}</div>
                   <a href={contact.emailHref}>{contact.email}</a>
                 </div>
               </div>
               <div className={styles.contactRow}>
                 <IconMap />
                 <div>
-                  <div className={styles.quickLabel}>العنوان</div>
+                  <div className={styles.quickLabel}>{copy.content.address}</div>
                   <span>{contact.address}</span>
                 </div>
               </div>
@@ -309,16 +315,16 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
               <div className={styles.cardHeaderIcon}>
                 <IconEye />
               </div>
-              <h2 className={styles.cardTitle}>الرؤية والرسالة</h2>
+              <h2 className={styles.cardTitle}>{copy.content.visionMissionTitle}</h2>
             </div>
             <div className={styles.cardBody}>
               <div className={styles.split}>
                 <div className={styles.splitBlock}>
-                  <h4>الرؤية</h4>
+                  <h4>{copy.content.vision}</h4>
                   <p>{vision}</p>
                 </div>
                 <div className={styles.splitBlock}>
-                  <h4>الرسالة</h4>
+                  <h4>{copy.content.mission}</h4>
                   <p>{mission}</p>
                 </div>
               </div>
@@ -330,21 +336,19 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
               <div className={styles.cardHeaderIcon}>
                 <IconAward />
               </div>
-              <h2 className={styles.cardTitle}>الاعتمادات والفهرسة</h2>
+              <h2 className={styles.cardTitle}>{copy.content.accreditationTitle}</h2>
             </div>
             <div className={styles.cardBody}>
               {certification?.trim() ? (
                 <p className={styles.accreditText}>{certification.trim()}</p>
               ) : (
-                <p className={styles.accreditPlaceholder}>
-                  تفاصيل الاعتمادات والفهرسة تُحدَّث من إدارة المجلة. تواصل معنا للاستفسار.
-                </p>
+                <p className={styles.accreditPlaceholder}>{copy.content.accreditationPlaceholder}</p>
               )}
             </div>
           </article>
 
           <div className={styles.cardSpanAll}>
-            <MagazinePublishingAdvisors advisors={publishingAdvisors} showIntro />
+            <MagazinePublishingAdvisors advisors={publishingAdvisors} showIntro copy={copy} />
           </div>
 
           <article className={styles.card}>
@@ -352,25 +356,27 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
               <div className={styles.cardHeaderIcon}>
                 <IconBar />
               </div>
-              <h2 className={styles.cardTitle}>إحصائيات المجلة</h2>
+              <h2 className={styles.cardTitle}>{copy.content.statsTitle}</h2>
             </div>
             <div className={styles.cardBody}>
               <ul className={styles.statList}>
                 <li>
-                  <span className={styles.statLabel}>إصدارات مسجّلة</span>
+                  <span className={styles.statLabel}>{copy.content.statVersions}</span>
                   <span className={styles.statValue}>{versionCount}</span>
                 </li>
                 <li>
-                  <span className={styles.statLabel}>الإصدار الحالي</span>
-                  <span className={styles.statValue}>{currentVersion?.trim() || "—"}</span>
+                  <span className={styles.statLabel}>{copy.content.statCurrentVersion}</span>
+                  <span className={styles.statValue}>{currentVersion?.trim() || emDash}</span>
                 </li>
                 <li>
-                  <span className={styles.statLabel}>موعد الإصدار القادم</span>
-                  <span className={styles.statValue}>{formatNextRelease(nextVersionRelease)}</span>
+                  <span className={styles.statLabel}>{copy.content.statNextRelease}</span>
+                  <span className={styles.statValue}>
+                    {formatNextRelease(nextVersionRelease, dateLocale, emDash)}
+                  </span>
                 </li>
                 <li>
-                  <span className={styles.statLabel}>معامل التأثير</span>
-                  <span className={styles.statValue}>{impactFactor?.trim() || "—"}</span>
+                  <span className={styles.statLabel}>{copy.content.statImpactFactor}</span>
+                  <span className={styles.statValue}>{impactFactor?.trim() || emDash}</span>
                 </li>
               </ul>
             </div>

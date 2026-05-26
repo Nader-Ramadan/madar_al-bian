@@ -12,7 +12,7 @@
     "dev:clean": "npm run clean:next && npm run dev",
     "clean:next": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\"",
     "db:seed": "prisma db seed",
-    "prebuild": "prisma generate",
+    "prebuild": "node scripts/prisma-predev.mjs",
     "build": "next build",
     "start": "node server.js",
     "lint": "eslint",

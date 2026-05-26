@@ -18,6 +18,7 @@ type Magazine = {
   description: string;
   image: string;
   category: string;
+  language: "AR" | "EN";
   pdfUrl: string | null;
   issn: string | null;
   impactFactor: number | null;
@@ -55,6 +56,7 @@ type MagazineFormState = {
   description: string;
   image: string;
   category: string;
+  language: "AR" | "EN";
   pdfUrl: string;
   issn: string;
   impactFactor: string;
@@ -100,6 +102,7 @@ const emptyMagazineForm: MagazineFormState = {
   description: "",
   image: "",
   category: "",
+  language: "AR",
   pdfUrl: "",
   issn: "",
   impactFactor: "",
@@ -136,6 +139,7 @@ function normalizeMagazinePayload(form: MagazineFormState) {
     description: form.description.trim(),
     image: form.image.trim(),
     category: form.category.trim(),
+    language: form.language,
     pdfUrl: form.pdfUrl.trim() || null,
     issn: form.issn.trim() || null,
     impactFactor: form.impactFactor.trim() ? Number(form.impactFactor) : null,
@@ -383,6 +387,7 @@ export default function AdminMagazinesDashboard() {
       description: magazine.description,
       image: magazine.image,
       category: magazine.category,
+      language: magazine.language === "EN" ? "EN" : "AR",
       pdfUrl: magazine.pdfUrl ?? "",
       issn: magazine.issn ?? "",
       impactFactor: magazine.impactFactor != null ? String(magazine.impactFactor) : "",
@@ -529,6 +534,17 @@ export default function AdminMagazinesDashboard() {
           <input className={styles.adminInput} placeholder={ac.placeholderTitle} value={magForm.title} onChange={(e) => setMagForm((s) => ({ ...s, title: e.target.value }))} required />
           <textarea className={styles.adminTextarea} placeholder={ac.placeholderDescription} value={magForm.description} onChange={(e) => setMagForm((s) => ({ ...s, description: e.target.value }))} required />
           <input className={styles.adminInput} placeholder={ac.placeholderCategory} value={magForm.category} onChange={(e) => setMagForm((s) => ({ ...s, category: e.target.value }))} required />
+          <label className={styles.adminSubtitle}>
+            {ac.languageLabel}
+            <select
+              className={styles.adminInput}
+              value={magForm.language}
+              onChange={(e) => setMagForm((s) => ({ ...s, language: e.target.value as "AR" | "EN" }))}
+            >
+              <option value="AR">{ac.languageAr}</option>
+              <option value="EN">{ac.languageEn}</option>
+            </select>
+          </label>
           <p className={styles.adminSubtitle}>
             {editingId && magForm.image.trim() ? (
               <>
@@ -699,7 +715,8 @@ export default function AdminMagazinesDashboard() {
               <span className={styles.adminListText}>
                 <strong>{item.title}</strong> — {item.category}
                 <br />
-                {ac.issnLabel} {item.issn ?? "-"} | {ac.currentLabel} {item.currentVersion ?? "-"}
+                {ac.listLanguageLabel} {item.language === "EN" ? ac.languageEn : ac.languageAr} | {ac.issnLabel}{" "}
+                {item.issn ?? "-"} | {ac.currentLabel} {item.currentVersion ?? "-"}
                 <br />
                 {ac.approvedCount} {item.approvedAdvisors?.length ?? 0}
               </span>

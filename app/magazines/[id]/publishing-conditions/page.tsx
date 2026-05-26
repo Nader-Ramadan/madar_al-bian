@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getMagazinePageContext } from "@/lib/magazine-page-context";
 import { prisma } from "@/lib/prisma";
 import { parseMagazineId } from "@/lib/magazine-id";
 import {
@@ -20,12 +21,14 @@ export async function generateMetadata({
   const { id: raw } = await params;
   const magazineId = parseMagazineId(raw);
   if (!magazineId) return { title: "شروط النشر" };
+  const ctx = await getMagazinePageContext(magazineId);
   const magazine = await prisma.magazine.findUnique({
     where: { id: magazineId },
     select: { title: true },
   });
-  if (!magazine) return { title: "شروط النشر" };
-  return { title: `شروط النشر | ${magazine.title}` };
+  const fallback = ctx?.copy.meta.publishingConditions ?? "شروط النشر";
+  if (!magazine) return { title: fallback };
+  return { title: `${fallback} | ${magazine.title}` };
 }
 
 export default async function MagazinePublishingConditionsPage({
@@ -36,6 +39,9 @@ export default async function MagazinePublishingConditionsPage({
   const { id: raw } = await params;
   const magazineId = parseMagazineId(raw);
   if (!magazineId) notFound();
+
+  const ctx = await getMagazinePageContext(magazineId);
+  if (!ctx) notFound();
 
   const magazine = await prisma.magazine.findUnique({
     where: { id: magazineId },
@@ -58,12 +64,14 @@ export default async function MagazinePublishingConditionsPage({
       : "clipboard") as PublishingConditionIconKey,
   }));
 
+  const { copy } = ctx;
+
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
         <div className={styles.topBar}>
           <Link href={`/magazines/${magazine.id}`} className={styles.backLink}>
-            ← العودة للمجلة
+            {copy.publishingConditionsPage.backToMagazine}
           </Link>
         </div>
 
@@ -74,15 +82,13 @@ export default async function MagazinePublishingConditionsPage({
             <span>{magazine.title}</span>
           </span>
           <h1 id="publishing-conditions-title" className={styles.heroTitle}>
-            شروط النشر
+            {copy.publishingConditionsPage.title}
           </h1>
-          <p className={styles.heroSubtitle}>
-            تعرّف على المتطلبات والإرشادات التي يجب اتّباعها قبل تقديم بحثك إلى المجلة.
-          </p>
+          <p className={styles.heroSubtitle}>{copy.publishingConditionsPage.subtitle}</p>
           <div className={styles.heroDivider} aria-hidden />
         </section>
 
-        <PublishingConditionsTabs tabs={tabs} />
+        <PublishingConditionsTabs tabs={tabs} copy={copy} />
       </div>
     </div>
   );
