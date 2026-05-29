@@ -5,6 +5,11 @@ import MagazineBanner from "../../components/magazine-banner";
 import MagazineContent from "../../components/magazine-content";
 import MagazineVersions from "../../components/magazines-versions";
 import { getMagazinePageContext } from "@/lib/magazine-page-context";
+import {
+  resolveMagazineBannerCopy,
+  resolveMagazineVersionItems,
+  resolveMagazineVersionsCopy,
+} from "@/lib/magazine-ui-copy-client";
 import { prisma } from "@/lib/prisma";
 import { parseMagazineId } from "@/lib/magazine-id";
 import type { MagazinePublishingAdvisorItem } from "@/app/components/magazine-publishing-advisors";
@@ -82,7 +87,7 @@ export default async function MagazinePage({ params }: { params: Promise<{ id: s
     ? magazineRecord.nextVersionRelease.toISOString()
     : null;
 
-  const versionItems = magazineRecord.versions.map((v) => ({
+  const versionItemsBase = magazineRecord.versions.map((v) => ({
     id: v.id,
     version: v.version,
     title: v.title,
@@ -91,6 +96,7 @@ export default async function MagazinePage({ params }: { params: Promise<{ id: s
     ),
     notes: v.notes,
   }));
+  const versionItems = resolveMagazineVersionItems(ctx.copy, versionItemsBase);
 
   return (
     <div className={styles.page}>
@@ -99,7 +105,7 @@ export default async function MagazinePage({ params }: { params: Promise<{ id: s
         magazineId={magazineRecord.id}
         coverImage={magazineRecord.image}
         description={magazineRecord.description}
-        copy={ctx.copy}
+        copy={resolveMagazineBannerCopy(ctx.copy, magazineRecord.title)}
       />
       <MagazineContent
         copy={ctx.copy}
@@ -127,7 +133,7 @@ export default async function MagazinePage({ params }: { params: Promise<{ id: s
         magazineId={magazineRecord.id}
         versions={versionItems}
         pdfUrl={magazineRecord.pdfUrl}
-        copy={ctx.copy}
+        copy={resolveMagazineVersionsCopy(ctx.copy)}
       />
     </div>
   );

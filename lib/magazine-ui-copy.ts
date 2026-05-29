@@ -96,7 +96,8 @@ export type MagazineUiCopy = {
     tablistLabel: string;
     sectionsHeader: string;
     mobileTablistLabel: string;
-    sectionMeta: (current: string, total: string) => string;
+    /** Placeholders: `{current}`, `{total}` — resolved on the client. */
+    sectionMetaPattern: string;
   };
 };
 
@@ -200,7 +201,7 @@ const ar: MagazineUiCopy = {
     tablistLabel: "أقسام شروط النشر",
     sectionsHeader: "الأقسام",
     mobileTablistLabel: "أقسام شروط النشر (موبايل)",
-    sectionMeta: (current, total) => `القسم ${current} / ${total}`,
+    sectionMetaPattern: "القسم {current} / {total}",
   },
 };
 
@@ -305,7 +306,7 @@ const en: MagazineUiCopy = {
     tablistLabel: "Publishing guideline sections",
     sectionsHeader: "Sections",
     mobileTablistLabel: "Publishing guideline sections (mobile)",
-    sectionMeta: (current, total) => `Section ${current} / ${total}`,
+    sectionMetaPattern: "Section {current} / {total}",
   },
 };
 

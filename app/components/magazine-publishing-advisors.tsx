@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { MagazineUiCopy } from "@/lib/magazine-ui-copy";
+import type { MagazineAdvisorsClientCopy } from "@/lib/magazine-ui-copy-client";
 import styles from "../magazine-journal.module.css";
 
 export type MagazinePublishingAdvisorItem = {
@@ -33,7 +33,7 @@ export default function MagazinePublishingAdvisors({
 }: {
   advisors: MagazinePublishingAdvisorItem[];
   showIntro?: boolean;
-  copy: MagazineUiCopy;
+  copy: MagazineAdvisorsClientCopy;
 }) {
   if (advisors.length === 0) return null;
 
@@ -45,12 +45,12 @@ export default function MagazinePublishingAdvisors({
             <IconEyeHeader />
           </div>
           <h2 id="magazine-advisors-heading" className={styles.advisorsCardTitle}>
-            {copy.advisors.title}
+            {copy.title}
           </h2>
         </div>
         <div className={styles.advisorsCardBody}>
           <div className={styles.advisorsInner}>
-            {showIntro ? <p className={styles.advisorsIntro}>{copy.advisors.intro}</p> : null}
+            {showIntro ? <p className={styles.advisorsIntro}>{copy.intro}</p> : null}
             <ul className={styles.advisorsGrid}>
               {advisors.map((a) => (
                 <li key={a.id} className={styles.advisorCard}>

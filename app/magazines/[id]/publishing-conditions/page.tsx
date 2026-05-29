@@ -11,6 +11,7 @@ import {
 import PublishingConditionsTabs, {
   type PublishingConditionTabItem,
 } from "@/app/components/publishing-conditions-tabs";
+import { resolvePublishingConditionsTabsCopy } from "@/lib/magazine-ui-copy-client";
 import styles from "../../../publishing-conditions.module.css";
 
 export async function generateMetadata({
@@ -88,7 +89,7 @@ export default async function MagazinePublishingConditionsPage({
           <div className={styles.heroDivider} aria-hidden />
         </section>
 
-        <PublishingConditionsTabs tabs={tabs} copy={copy} />
+        <PublishingConditionsTabs tabs={tabs} copy={resolvePublishingConditionsTabsCopy(copy)} />
       </div>
     </div>
   );

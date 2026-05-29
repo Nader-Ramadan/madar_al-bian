@@ -1,21 +1,16 @@
 import Link from "next/link";
 import { pdfDownloadPath, sanitizePdfFilename } from "@/lib/pdf-download";
-import type { MagazineUiCopy } from "@/lib/magazine-ui-copy";
+import type {
+  MagazineVersionItemClient,
+  MagazineVersionsClientCopy,
+} from "@/lib/magazine-ui-copy-client";
 import styles from "../magazine-journal.module.css";
-
-export type MagazineVersionItem = {
-  id: number;
-  version: string;
-  title: string;
-  releaseDateLabel: string;
-  notes: string | null;
-};
 
 type MagazineVersionsProps = {
   magazineId: number;
-  versions: MagazineVersionItem[];
+  versions: MagazineVersionItemClient[];
   pdfUrl: string | null;
-  copy: MagazineUiCopy;
+  copy: MagazineVersionsClientCopy;
 };
 
 export default function MagazineVersions({ magazineId, versions, pdfUrl, copy }: MagazineVersionsProps) {
@@ -26,7 +21,7 @@ export default function MagazineVersions({ magazineId, versions, pdfUrl, copy }:
     <section className={styles.versionsWrap}>
       <div className={`${styles.inner} ${styles.versionsSection}`}>
         <div className={styles.versionsHeadRow}>
-          <h2 className={styles.versionsTitle}>{copy.versions.title}</h2>
+          <h2 className={styles.versionsTitle}>{copy.title}</h2>
           <div className={styles.versionsHeadActions}>
             <Link
               href={`/magazines/${magazineId}/publishing-conditions`}
@@ -39,9 +34,9 @@ export default function MagazineVersions({ magazineId, versions, pdfUrl, copy }:
                   <path d="M8 13h8M8 17h6" />
                 </svg>
               </span>
-              <span>{copy.versions.publishingConditions}</span>
+              <span>{copy.publishingConditions}</span>
               <span className={styles.versionsArchiveChevron} aria-hidden>
-                {copy.versions.chevron}
+                {copy.chevron}
               </span>
             </Link>
             <Link href={`/magazines/${magazineId}/versions`} className={styles.versionsArchiveLink}>
@@ -53,9 +48,9 @@ export default function MagazineVersions({ magazineId, versions, pdfUrl, copy }:
                   <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none" />
                 </svg>
               </span>
-              <span>{copy.versions.fullArchive}</span>
+              <span>{copy.fullArchive}</span>
               <span className={styles.versionsArchiveChevron} aria-hidden>
-                {copy.versions.chevron}
+                {copy.chevron}
               </span>
             </Link>
           </div>
@@ -64,31 +59,31 @@ export default function MagazineVersions({ magazineId, versions, pdfUrl, copy }:
         {magazinePdfHref ? (
           <p className={styles.versionPdfNote}>
             <a href={magazinePdfHref} download={magazinePdfDownloadName}>
-              {copy.versions.downloadMagazinePdf}
+              {copy.downloadMagazinePdf}
             </a>
           </p>
         ) : versions.length > 0 ? (
-          <p className={styles.versionNoPdf}>{copy.versions.noMagazinePdf}</p>
+          <p className={styles.versionNoPdf}>{copy.noMagazinePdf}</p>
         ) : null}
 
         {versions.length === 0 ? (
-          <div className={styles.emptyVersions}>{copy.versions.emptyVersions}</div>
+          <div className={styles.emptyVersions}>{copy.emptyVersions}</div>
         ) : (
           <div className={styles.versionsGrid}>
             {versions.map((v) => (
               <article key={v.id} className={styles.versionCard}>
                 <div className={styles.versionCardHeader}>
                   <span>{v.title}</span>
-                  <span className={styles.versionBadge}>{copy.versions.issueBadge(v.version)}</span>
+                  <span className={styles.versionBadge}>{v.issueBadgeLabel}</span>
                 </div>
                 <div className={styles.versionCardBody}>
-                  <div className={styles.versionMeta}>{copy.versions.releaseDate(v.releaseDateLabel)}</div>
+                  <div className={styles.versionMeta}>{v.releaseDateMeta}</div>
                   {v.notes?.trim() ? <p className={styles.versionNotes}>{v.notes.trim()}</p> : null}
                   <Link
                     href={`/magazines/${magazineId}/versions/${v.id}`}
                     className={styles.versionResearchButton}
                   >
-                    {copy.versions.researchesCta}
+                    {copy.researchesCta}
                   </Link>
                 </div>
               </article>

@@ -6,7 +6,10 @@ import {
   PublishingConditionIcon,
   type PublishingConditionIconKey,
 } from "@/lib/publishing-condition-icons";
-import type { MagazineUiCopy } from "@/lib/magazine-ui-copy";
+import {
+  formatSectionMeta,
+  type PublishingConditionsTabsClientCopy,
+} from "@/lib/magazine-ui-copy-client";
 
 export type PublishingConditionTabItem = {
   id: number;
@@ -17,7 +20,7 @@ export type PublishingConditionTabItem = {
 
 type Props = {
   tabs: PublishingConditionTabItem[];
-  copy: MagazineUiCopy;
+  copy: PublishingConditionsTabsClientCopy;
 };
 
 export default function PublishingConditionsTabs({ tabs, copy }: Props) {
@@ -28,8 +31,8 @@ export default function PublishingConditionsTabs({ tabs, copy }: Props) {
   if (safeTabs.length === 0) {
     return (
       <div className={styles.empty}>
-        <h3 className={styles.emptyTitle}>{copy.publishingConditionsTabs.emptyTitle}</h3>
-        <p className={styles.emptyText}>{copy.publishingConditionsTabs.emptyText}</p>
+        <h3 className={styles.emptyTitle}>{copy.emptyTitle}</h3>
+        <p className={styles.emptyText}>{copy.emptyText}</p>
       </div>
     );
   }
@@ -76,10 +79,10 @@ export default function PublishingConditionsTabs({ tabs, copy }: Props) {
         className={styles.tabList}
         role="tablist"
         aria-orientation="vertical"
-        aria-label={copy.publishingConditionsTabs.tablistLabel}
+        aria-label={copy.tablistLabel}
       >
         <li className={styles.tabListHeader}>
-          <span>{copy.publishingConditionsTabs.sectionsHeader}</span>
+          <span>{copy.sectionsHeader}</span>
           <span className={styles.tabListHeaderCount}>{safeTabs.length}</span>
         </li>
         {safeTabs.map((tab, index) => {
@@ -110,7 +113,7 @@ export default function PublishingConditionsTabs({ tabs, copy }: Props) {
         })}
       </ul>
 
-      <nav className={styles.mobileTabBar} aria-label={copy.publishingConditionsTabs.mobileTablistLabel}>
+      <nav className={styles.mobileTabBar} aria-label={copy.mobileTablistLabel}>
         {safeTabs.map((tab, index) => {
           const isActive = index === activeIndex;
           return (
@@ -144,7 +147,8 @@ export default function PublishingConditionsTabs({ tabs, copy }: Props) {
             <h2 className={styles.panelTitle}>{active.title}</h2>
             <div className={styles.panelMetaRow}>
               <span className={styles.panelMetaPill}>
-                {copy.publishingConditionsTabs.sectionMeta(
+                {formatSectionMeta(
+                  copy.sectionMetaPattern,
                   String(activeIndex + 1).padStart(2, "0"),
                   String(safeTabs.length).padStart(2, "0"),
                 )}

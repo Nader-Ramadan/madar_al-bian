@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { resolveMagazineContact } from "@/lib/magazine-contact-defaults";
 import type { MagazineUiCopy } from "@/lib/magazine-ui-copy";
+import { resolveMagazineAdvisorsCopy } from "@/lib/magazine-ui-copy-client";
 import MagazinePublishingAdvisors, {
   type MagazinePublishingAdvisorItem,
 } from "./magazine-publishing-advisors";
@@ -348,7 +349,11 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
           </article>
 
           <div className={styles.cardSpanAll}>
-            <MagazinePublishingAdvisors advisors={publishingAdvisors} showIntro copy={copy} />
+            <MagazinePublishingAdvisors
+              advisors={publishingAdvisors}
+              showIntro
+              copy={resolveMagazineAdvisorsCopy(copy)}
+            />
           </div>
 
           <article className={styles.card}>
