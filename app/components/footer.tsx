@@ -26,8 +26,8 @@ const SOCIAL_LINKS = {
 const CONTACT = {
   address: "٢٠٣ شارع ماونتن فيو، الجيزة، جمهورية مصر العربية",
   phoneDisplay: "٠٠٢ +١٠٦٦٢٢٣٣٩٩",
-  phoneHref: "tel:+201066223399",
-  emailDisplay: "info@madar-albian.com",
+  phoneHref: "tel:+201037755238",
+  emailDisplay: "info@madaralbayan.com",
   emailHref: "mailto:info@madar-albian.com",
 } as const;
 
