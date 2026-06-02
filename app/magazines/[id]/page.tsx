@@ -94,8 +94,8 @@ export default async function MagazinePage({ params }: { params: Promise<{ id: s
   }).catch(() => {});
   // #endregion
 
-  const publishingAdvisors: MagazinePublishingAdvisorItem[] =
-    magazineRecord.approvedAdvisors.map((row) => {
+  const publishingAdvisors: MagazinePublishingAdvisorItem[] = [
+    ...magazineRecord.approvedAdvisors.map((row) => {
       const m = row.advisoryMember;
       const photo = m.image?.trim();
       return {
@@ -104,7 +104,38 @@ export default async function MagazinePage({ params }: { params: Promise<{ id: s
         jobTitle: m.title,
         photoUrl: photo && photo.length > 0 ? photo : ADVISORY_MEMBER_IMAGE_FALLBACK,
       };
-    });
+    }),
+    ...magazineRecord.advisors.map((advisor) => {
+      const photo = advisor.photoUrl?.trim();
+      return {
+        id: 1_000_000 + advisor.id,
+        name: advisor.name,
+        jobTitle: advisor.jobTitle,
+        photoUrl: photo && photo.length > 0 ? photo : ADVISORY_MEMBER_IMAGE_FALLBACK,
+      };
+    }),
+  ];
+
+  // #region agent log
+  fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" },
+    body: JSON.stringify({
+      sessionId: "51cdae",
+      runId: "post-fix",
+      location: "magazines/[id]/page.tsx",
+      message: "Publishing advisors merged for display",
+      data: {
+        magazineId: id,
+        publishingAdvisorCount: publishingAdvisors.length,
+        fromApproved: magazineRecord.approvedAdvisors.length,
+        fromMagazineAdvisors: magazineRecord.advisors.length,
+      },
+      timestamp: Date.now(),
+      hypothesisId: "A",
+    }),
+  }).catch(() => {});
+  // #endregion
 
   const impactFactorStr =
     magazineRecord.impactFactor != null ? magazineRecord.impactFactor.toString() : null;
