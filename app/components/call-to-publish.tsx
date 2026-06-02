@@ -1,3 +1,4 @@
+import Link from "next/link";
 import styles from "../call-to-publish.module.css";
 
 export default function CallToPublish() {
@@ -8,7 +9,9 @@ export default function CallToPublish() {
         <p className={styles.subtitle}>
           تواصل معنا الآن واستشرنا في اختيار المجلة المناسبة لبحثك
         </p>
-        <button className={styles.button}>ابدأ النشر</button>
+        <Link className={styles.button} href="/request-for-publication-of-a-study">
+          ابدأ النشر
+        </Link>
       </div>
     </section>
   );
