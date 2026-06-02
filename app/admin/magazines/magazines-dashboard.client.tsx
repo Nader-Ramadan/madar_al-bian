@@ -355,6 +355,26 @@ export default function AdminMagazinesDashboard() {
         image: bannerUrl ?? magForm.image,
         pdfUrl: uploadedPdfUrl ?? magForm.pdfUrl,
       });
+      // #region agent log
+      fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" },
+        body: JSON.stringify({
+          sessionId: "51cdae",
+          location: "magazines-dashboard.client.tsx:submitMagazine",
+          message: "Saving magazine with approved advisors",
+          data: {
+            editingId,
+            approvedAdvisorIds: payload.approvedAdvisorIds,
+            advisorSource,
+            attachedAdvisorIds: attachedAdvisors.map((a) => a.id),
+            globalAdvisorIds: globalAdvisors.map((a) => a.id),
+          },
+          timestamp: Date.now(),
+          hypothesisId: "D",
+        }),
+      }).catch(() => {});
+      // #endregion
       const method = editingId ? "PUT" : "POST";
       const url = editingId ? `/api/magazines/${editingId}` : "/api/magazines";
       const response = await fetch(url, {

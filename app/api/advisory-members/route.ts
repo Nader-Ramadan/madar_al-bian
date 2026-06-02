@@ -11,16 +11,30 @@ export async function GET(request: NextRequest) {
     searchParams.get("featured") === "1" || searchParams.get("committee") === "1";
 
   if (featuredOnly) {
-    const items = await prisma.advisoryMember.findMany({
-      where: { featuredOnCommittee: true },
-      orderBy: [{ committeeSortOrder: "asc" }, { id: "asc" }],
-      take: 100,
-    });
-    const total = items.length;
-    return ok({
-      items,
-      pagination: { page: 1, limit: total, total, totalPages: total > 0 ? 1 : 0 },
-    });
+    try {
+      const items = await prisma.advisoryMember.findMany({
+        where: { featuredOnCommittee: true },
+        orderBy: [{ committeeSortOrder: "asc" }, { id: "asc" }],
+        take: 100,
+      });
+      const total = items.length;
+      return ok({
+        items,
+        pagination: { page: 1, limit: total, total, totalPages: total > 0 ? 1 : 0 },
+      });
+    } catch (error) {
+      const code =
+        typeof error === "object" && error !== null && "code" in error
+          ? String((error as { code: unknown }).code)
+          : "";
+      if (code === "P2022") {
+        return fail(
+          "قاعدة البيانات غير محدّثة (أعمدة اللجنة الاستشارية). شغّل: npx prisma migrate deploy ثم أعد تشغيل الخادم.",
+          500,
+        );
+      }
+      throw error;
+    }
   }
 
   const parsedQuery = paginationSchema.safeParse({
@@ -35,11 +49,25 @@ export async function GET(request: NextRequest) {
         OR: [{ name: { contains: search } }, { title: { contains: search } }, { bio: { contains: search } }],
       }
     : {};
-  const [items, total] = await Promise.all([
-    prisma.advisoryMember.findMany({ where, skip: (page - 1) * limit, take: limit, orderBy: { id: "desc" } }),
-    prisma.advisoryMember.count({ where }),
-  ]);
-  return ok({ items, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } });
+  try {
+    const [items, total] = await Promise.all([
+      prisma.advisoryMember.findMany({ where, skip: (page - 1) * limit, take: limit, orderBy: { id: "desc" } }),
+      prisma.advisoryMember.count({ where }),
+    ]);
+    return ok({ items, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } });
+  } catch (error) {
+    const code =
+      typeof error === "object" && error !== null && "code" in error
+        ? String((error as { code: unknown }).code)
+        : "";
+    if (code === "P2022") {
+      return fail(
+        "قاعدة البيانات غير محدّثة (أعمدة اللجنة الاستشارية). شغّل: npx prisma migrate deploy ثم أعد تشغيل الخادم.",
+        500,
+      );
+    }
+    throw error;
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -51,7 +79,17 @@ export async function POST(request: NextRequest) {
     const created = await prisma.advisoryMember.create({ data: parsed.data });
     return ok(created, { status: 201 });
   } catch (error) {
+    const code =
+      typeof error === "object" && error !== null && "code" in error
+        ? String((error as { code: unknown }).code)
+        : "";
     console.error("Failed to create advisory member", error);
-    return fail("Failed to create advisor", 500);
+    if (code === "P2022") {
+      return fail(
+        "قاعدة البيانات غير محدّثة. شغّل: npx prisma migrate deploy ثم أعد المحاولة.",
+        500,
+      );
+    }
+    return fail("تعذر إنشاء المستشار. تحقق من البيانات وحاول مرة أخرى.", 500);
   }
 }

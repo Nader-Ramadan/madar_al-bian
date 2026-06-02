@@ -62,12 +62,37 @@ export default async function MagazinePage({ params }: { params: Promise<{ id: s
           },
         },
       },
+      advisors: {
+        orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
+        select: { id: true, name: true, jobTitle: true, photoUrl: true },
+      },
       _count: {
         select: { publishingConditionTabs: true },
       },
     },
   });
   if (!magazineRecord) notFound();
+
+  // #region agent log
+  fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" },
+    body: JSON.stringify({
+      sessionId: "51cdae",
+      location: "magazines/[id]/page.tsx",
+      message: "Public magazine advisor counts",
+      data: {
+        magazineId: id,
+        approvedAdvisorCount: magazineRecord.approvedAdvisors.length,
+        magazineAdvisorCount: magazineRecord.advisors.length,
+        approvedIds: magazineRecord.approvedAdvisors.map((r) => r.advisoryMember.id),
+        magazineAdvisorIds: magazineRecord.advisors.map((a) => a.id),
+      },
+      timestamp: Date.now(),
+      hypothesisId: "C",
+    }),
+  }).catch(() => {});
+  // #endregion
 
   const publishingAdvisors: MagazinePublishingAdvisorItem[] =
     magazineRecord.approvedAdvisors.map((row) => {

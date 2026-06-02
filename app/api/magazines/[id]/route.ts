@@ -70,6 +70,25 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         skipDuplicates: true,
       });
     }
+    const attachedCount = await tx.magazineAdvisor.count({ where: { magazineId: id } });
+    // #region agent log
+    fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" },
+      body: JSON.stringify({
+        sessionId: "51cdae",
+        location: "api/magazines/[id]/route.ts:PUT",
+        message: "Magazine approved advisors saved",
+        data: {
+          magazineId: id,
+          approvedAdvisorIds,
+          attachedMagazineAdvisorCount: attachedCount,
+        },
+        timestamp: Date.now(),
+        hypothesisId: "B",
+      }),
+    }).catch(() => {});
+    // #endregion
     return tx.magazine.findUnique({
       where: { id },
       include: {

@@ -63,5 +63,24 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       sortOrder,
     },
   });
+  // #region agent log
+  fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" },
+    body: JSON.stringify({
+      sessionId: "51cdae",
+      location: "api/admin/magazines/[id]/advisors/route.ts:POST",
+      message: "MagazineAdvisor created",
+      data: {
+        magazineId,
+        advisorId: created.id,
+        name: created.name,
+        jobTitle: created.jobTitle.slice(0, 80),
+      },
+      timestamp: Date.now(),
+      hypothesisId: "A",
+    }),
+  }).catch(() => {});
+  // #endregion
   return ok(created, { status: 201 });
 }

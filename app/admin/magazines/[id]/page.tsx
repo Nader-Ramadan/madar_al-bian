@@ -174,6 +174,24 @@ export default function AdminMagazinePublishingAdvisorsPage() {
         setSubmitError(translateAdminApiMessage(payload?.error ?? "Could not add selected advisor"));
         return;
       }
+      // #region agent log
+      fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "51cdae" },
+        body: JSON.stringify({
+          sessionId: "51cdae",
+          location: "admin/magazines/[id]/page.tsx:addFromAdvisoryList",
+          message: "Added advisor from advisory list",
+          data: {
+            magazineId,
+            selectedMemberId: selectedMember.id,
+            createdAdvisorId: payload.data?.id,
+          },
+          timestamp: Date.now(),
+          hypothesisId: "A",
+        }),
+      }).catch(() => {});
+      // #endregion
       setSelectedMemberId("");
       await loadAdvisors();
     } finally {
