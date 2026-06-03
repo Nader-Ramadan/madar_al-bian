@@ -24,11 +24,11 @@ const SOCIAL_LINKS = {
 } as const;
 
 const CONTACT = {
-  address: "٢٠٣ شارع ماونتن فيو، الجيزة، جمهورية مصر العربية",
+  address: "القاهرة - مصر",
   phoneDisplay: "+201037755238",
   phoneHref: "tel:+201037755238",
-  emailDisplay: "infoinfo@madaralbian.com",
-  emailHref: "mailto:info@madaralbian.com",
+  emailDisplay: "info@madaralbayan.com",
+  emailHref: "mailto:info@madaralbayan.com",
 } as const;
 
 const SOCIAL_ITEMS = [
