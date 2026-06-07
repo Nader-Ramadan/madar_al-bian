@@ -9,7 +9,7 @@ function Hero() {
     <section className={styles.hero} aria-labelledby="hero-heading">
       <div className={styles.heroMedia} aria-hidden>
         <Image
-          src="/images/Img-20260604-wa0009.jpg"
+          src="/images/IMG-20260604-WA0009.jpg"
           alt=""
           fill
           priority
