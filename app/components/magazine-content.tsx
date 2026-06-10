@@ -351,7 +351,6 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
           <div className={styles.cardSpanAll}>
             <MagazinePublishingAdvisors
               advisors={publishingAdvisors}
-              showIntro
               copy={resolveMagazineAdvisorsCopy(copy)}
             />
           </div>

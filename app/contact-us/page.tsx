@@ -40,12 +40,12 @@ export default function ContactUsPage() {
           </form>
           <div className={staticStyles.infoCard}>
             <h3>معلومات التواصل</h3>
-            <p>العنوان: ٢٠٣ شارع ماونتن فيو، الجيزة</p>
+            <p>القاهرة - مصر</p>
             <p>
-              الهاتف: <a href="tel:+201066223399">٠٠٢ +١٠٦٦٢٢٣٣٩٩</a>
+              الهاتف: <a href="tel:+201066223399">+201037755238</a>
             </p>
             <p>
-              البريد: <a href="mailto:info@madar-albian.com">info@madar-albian.com</a>
+              البريد: <a href="mailto:info@madaralbayan.com">info@madaralbayan.com</a>
             </p>
           </div>
         </section>

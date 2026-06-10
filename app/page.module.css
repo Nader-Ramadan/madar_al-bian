@@ -26,6 +26,7 @@
   --hero-min-h: clamp(280px, 32vw, 520px);
   --hero-max-h: 640px;
   --hero-object-position: center center;
+  display: block;
   position: relative;
   width: 100%;
   aspect-ratio: var(--hero-aspect);
@@ -34,6 +35,14 @@
   background-color: var(--secondary-color, #0a3f62);
   padding: var(--hero-pad-block) var(--hero-pad-inline);
   overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.hero:focus-visible {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 3px;
 }
 
 .hero::after {

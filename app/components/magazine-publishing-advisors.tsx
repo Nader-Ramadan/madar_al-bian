@@ -28,11 +28,9 @@ function IconEyeHeader() {
 
 export default function MagazinePublishingAdvisors({
   advisors,
-  showIntro = false,
   copy,
 }: {
   advisors: MagazinePublishingAdvisorItem[];
-  showIntro?: boolean;
   copy: MagazineAdvisorsClientCopy;
 }) {
   if (advisors.length === 0) return null;
@@ -50,7 +48,6 @@ export default function MagazinePublishingAdvisors({
         </div>
         <div className={styles.advisorsCardBody}>
           <div className={styles.advisorsInner}>
-            {showIntro ? <p className={styles.advisorsIntro}>{copy.intro}</p> : null}
             <ul className={styles.advisorsGrid}>
               {advisors.map((a) => (
                 <li key={a.id} className={styles.advisorCard}>
