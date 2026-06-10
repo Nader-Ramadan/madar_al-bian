@@ -1847,13 +1847,13 @@
 }
 
 /* ===================================================
-   WIDE DESKTOP — cap hero height on ultra-wide viewports
+   WIDE DESKTOP — match banner image aspect, grow with viewport
    =================================================== */
-@media (min-width: 1400px) {
+@media (min-width: 1440px) {
   .hero {
-    --hero-aspect: 21 / 8;
-    --hero-min-h: clamp(300px, 28vw, 520px);
-    --hero-max-h: 580px;
+    --hero-aspect: var(--hero-banner-aspect);
+    --hero-min-h: auto;
+    --hero-max-h: none;
     --hero-object-position: center center;
   }
 }
