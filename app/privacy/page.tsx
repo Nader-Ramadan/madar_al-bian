@@ -13,10 +13,19 @@ export default function PrivacyPage() {
       <main className={layout.main}>
         <section className={staticStyles.shell}>
           <h1 className={staticStyles.title}>سياسة الخصوصية</h1>
-          <p className={staticStyles.prose}>
-            يتم تحديث هذه الصفحة. للاستفسارات العاجلة يرجى{" "}
-            <Link href="/contact-us">الاتصال بنا</Link>.
-          </p>
+          <div className={staticStyles.prose}>
+            <h2>بيانات الدفع</h2>
+            <p>
+              تتم معالجة مدفوعات رسوم النشر عبر PayPal. لا نخزّن بيانات بطاقات الائتمان على
+              خوادمنا؛ نحتفظ بمعرّفات المعاملات والمبلغ والبريد الإلكتروني للمُدفع لأغراض
+              المراجعة والاسترداد.
+            </p>
+            <h2>التواصل</h2>
+            <p>
+              للاستفسارات العاجلة يرجى{" "}
+              <Link href="/contact-us">الاتصال بنا</Link>.
+            </p>
+          </div>
         </section>
       </main>
     </div>

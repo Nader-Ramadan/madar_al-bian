@@ -10,6 +10,21 @@ export async function GET() {
   if (auth.error) return auth.error;
   const items = await prisma.publicationRequest.findMany({
     orderBy: { createdAt: "desc" },
+    include: {
+      payment: {
+        select: {
+          id: true,
+          status: true,
+          amount: true,
+          currency: true,
+          paypalCaptureId: true,
+          paypalRefundId: true,
+          payerEmail: true,
+          payerName: true,
+          refundError: true,
+        },
+      },
+    },
   });
   const magazineIds = [
     ...new Set(
@@ -27,6 +42,12 @@ export async function GET() {
   const withMagazine = items.map((row) => ({
     ...row,
     magazine: row.magazineId != null ? magazineById.get(row.magazineId) ?? null : null,
+    payment: row.payment
+      ? {
+          ...row.payment,
+          amount: row.payment.amount.toString(),
+        }
+      : null,
   }));
   return ok(withMagazine);
 }

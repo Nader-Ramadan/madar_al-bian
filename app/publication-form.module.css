@@ -43,6 +43,54 @@
   flex: 1 1 100%;
 }
 
+.feeNotice {
+  margin: 0 0 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: rgba(201, 162, 39, 0.12);
+  border: 1px solid rgba(201, 162, 39, 0.35);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.summaryList {
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.summaryList div {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.summaryList dt {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted, #666);
+}
+
+.summaryList dd {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.paypalWrap {
+  margin-top: 0.5rem;
+  max-width: 400px;
+}
+
+.confirmCard {
+  margin-bottom: 2rem;
+}
+
+.stepIndicator {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: var(--text-muted, #666);
+}
+
 @media (max-width: 480px) {
   .submitRow {
     flex-direction: column;

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { SITE_PHONE_DISPLAY, SITE_WHATSAPP_URL } from "@/lib/site-contact";
 import {
   IconContact,
   IconFacebook,
@@ -25,8 +26,8 @@ const SOCIAL_LINKS = {
 
 const CONTACT = {
   address: "القاهرة - مصر",
-  phoneDisplay: "+201037755238",
-  phoneHref: "tel:+201037755238",
+  phoneDisplay: SITE_PHONE_DISPLAY,
+  phoneHref: SITE_WHATSAPP_URL,
   emailDisplay: "info@madaralbayan.com",
   emailHref: "mailto:info@madaralbayan.com",
 } as const;
@@ -119,7 +120,9 @@ export default function Footer() {
               <span className="footerContactIcon" aria-hidden="true">
                 <IconPhone />
               </span>
-              <a href={CONTACT.phoneHref}>{CONTACT.phoneDisplay}</a>
+              <a href={CONTACT.phoneHref} target="_blank" rel="noopener noreferrer">
+                {CONTACT.phoneDisplay}
+              </a>
             </li>
             <li className="footerContactItem">
               <span className="footerContactIcon" aria-hidden="true">

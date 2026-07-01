@@ -21,9 +21,18 @@ enum UserRole {
 }
 
 enum PublicationStatus {
+  AWAITING_PAYMENT
   PENDING
   APPROVED
   REJECTED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  CANCELLED
 }
 
 enum EmailStatus {
@@ -191,27 +200,63 @@ model MagazineVersionResearch {
 }
 
 model PublicationRequest {
-  id             Int               @id @default(autoincrement())
-  authorName     String            @db.VarChar(255)
-  authorEmail    String            @db.VarChar(255)
-  authorPhone    String?           @db.VarChar(32) @map("author_phone")
-  title          String            @db.VarChar(255)
-  abstract       String            @db.Text
-  field          String?           @db.VarChar(255)
-  magazineId         Int?
-  documentUrl        String?           @db.VarChar(2048)
-  documentFilename   String?           @db.VarChar(255)
-  documentSize       Int?
-  status             PublicationStatus @default(PENDING)
-  reviewNotes    String?           @db.Text
-  reviewedById   Int?
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
-  magazine       Magazine?         @relation(fields: [magazineId], references: [id], onDelete: SetNull)
+  id                   Int               @id @default(autoincrement())
+  authorName           String            @db.VarChar(255)
+  authorEmail          String            @db.VarChar(255)
+  authorPhone          String?           @db.VarChar(32) @map("author_phone")
+  title                String            @db.VarChar(255)
+  abstract             String            @db.Text
+  field                String?           @db.VarChar(255)
+  magazineId           Int?
+  documentUrl          String?           @db.VarChar(2048)
+  documentFilename     String?           @db.VarChar(255)
+  documentSize         Int?
+  status               PublicationStatus @default(PENDING)
+  paymentAccessToken   String?           @unique @db.VarChar(64) @map("payment_access_token")
+  paymentTokenExpiresAt DateTime?        @map("payment_token_expires_at")
+  reviewNotes          String?           @db.Text
+  reviewedById         Int?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  magazine             Magazine?         @relation(fields: [magazineId], references: [id], onDelete: SetNull)
+  payment              Payment?
 
   @@index([status])
   @@index([magazineId])
   @@map("publication_requests")
+}
+
+model Payment {
+  id                   Int            @id @default(autoincrement())
+  publicationRequestId Int            @unique @map("publication_request_id")
+  paypalOrderId        String         @unique @db.VarChar(64) @map("paypal_order_id")
+  paypalCaptureId      String?        @unique @db.VarChar(64) @map("paypal_capture_id")
+  paypalRefundId       String?        @unique @db.VarChar(64) @map("paypal_refund_id")
+  amount               Decimal        @db.Decimal(10, 2)
+  currency             String         @db.VarChar(3)
+  status               PaymentStatus  @default(PENDING)
+  payerEmail           String?        @db.VarChar(255) @map("payer_email")
+  payerName            String?        @db.VarChar(255) @map("payer_name")
+  refundError          String?        @db.Text @map("refund_error")
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  publicationRequest   PublicationRequest @relation(fields: [publicationRequestId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("payments")
+}
+
+model PublicationFeeSetting {
+  id        Int      @id @default(1)
+  amount    Decimal  @default(0) @db.Decimal(10, 2)
+  currency  String   @default("USD") @db.VarChar(3)
+  enabled   Boolean  @default(false)
+  labelAr   String?  @db.VarChar(255) @map("label_ar")
+  labelEn   String?  @db.VarChar(255) @map("label_en")
+  updatedAt DateTime @updatedAt
+
+  @@map("publication_fee_settings")
 }
 
 model EmailLog {

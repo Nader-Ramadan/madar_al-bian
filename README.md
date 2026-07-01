@@ -12,6 +12,7 @@ Next.js + Prisma/MySQL website for magazine publishing, conferences, blogs, advi
    - Google sign-in (optional): `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `AUTH_GOOGLE_REDIRECT_URI` (must match the authorized redirect URI in Google Cloud Console, e.g. `https://yourdomain.com/api/auth/google/callback`). Only Google accounts whose email matches an existing active `ADMIN` user in the database receive a session for the workspace.
    - Storage (Cloudinary): `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`; optional `CLOUDINARY_UPLOAD_FOLDER`. Admin uploads send `multipart/form-data` with field `file` to the upload API routes; the server stores files in Cloudinary and saves `https://res.cloudinary.com/...` URLs in the database.
    - SMTP (Email Center): `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`
+   - PayPal (publication fee): `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_MODE` (`sandbox` or `live`), `PAYPAL_WEBHOOK_ID`, `PUBLIC_SITE_URL`; optional `PUBLICATION_FEE_AMOUNT`, `PUBLICATION_FEE_CURRENCY`
 3. Apply database schema (choose one):
    - **Migrate (recommended for production):** `npx prisma migrate deploy` (or `npx prisma migrate dev` in development) so migrations such as `add_magazine_metadata` run against your MySQL database.
    - **Push (dev only):** `npx prisma db push` if you are not using migration history yet.
@@ -80,6 +81,13 @@ Admin uploads use `multipart/form-data` with field `file` on routes such as `POS
 - `GET /api/admin/publication-requests`
 - `PUT /api/admin/publication-requests/:id`
 - `POST /api/publication-requests` (public submission intake)
+- `GET /api/publication-fee` public fee settings for the form
+- `GET /api/publication-requests/payment-status?token=` resume payment / confirmation
+- `POST /api/payments/create-order`, `POST /api/payments/capture` PayPal checkout
+- `POST /api/webhooks/paypal` PayPal webhooks
+- `GET/PUT /api/admin/publication-fee` admin fee settings
+- `GET /api/admin/transactions`, `POST /api/admin/transactions/:id/email`, `PUT /api/admin/transactions/:id` (retry refund)
+- `POST /api/admin/publication-requests/:id/email` quick email from approvals
 - `GET /api/admin/emails`
 - `POST /api/admin/emails/send`
 
@@ -90,6 +98,8 @@ Admin uploads use `multipart/form-data` with field `file` on routes such as `POS
 - `/admin/magazines`
 - `/admin/advisors`
 - `/admin/approvals`
+- `/admin/publication-fee` research publication fee settings
+- `/admin/transactions` PayPal transaction history
 - `/admin/emails`
 - `/admin/content`
 - `/admin/traffic` for traffic analytics dashboard

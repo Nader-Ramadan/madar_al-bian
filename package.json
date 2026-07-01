@@ -22,6 +22,7 @@
     "verify:site": "node scripts/verify-site-deployment.mjs"
   },
   "dependencies": {
+    "@paypal/react-paypal-js": "^10.1.1",
     "@prisma/adapter-mariadb": "^7.8.0",
     "@prisma/client": "^6.19.3",
     "@types/node": "^20",

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SITE_PHONE_DISPLAY, SITE_WHATSAPP_URL } from "@/lib/site-contact";
 import layout from "../page.module.css";
 import staticStyles from "../static-page.module.css";
 
@@ -42,7 +43,10 @@ export default function ContactUsPage() {
             <h3>معلومات التواصل</h3>
             <p>القاهرة - مصر</p>
             <p>
-              الهاتف: <a href="tel:+201066223399">+201037755238</a>
+              الهاتف:{" "}
+              <a href={SITE_WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+                {SITE_PHONE_DISPLAY}
+              </a>
             </p>
             <p>
               البريد: <a href="mailto:info@madaralbayan.com">info@madaralbayan.com</a>

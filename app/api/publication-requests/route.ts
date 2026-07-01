@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { PublicationStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { ok, fail } from "@/lib/api-response";
 import {
@@ -9,6 +10,12 @@ import {
   uploadMultipartFileToCloudinary,
 } from "@/lib/multipart-upload";
 import { publicationRequestFormSchema } from "@/lib/schemas";
+import { formatFeeDisplay, getPublicationFee } from "@/lib/publication-fee";
+import {
+  createPaymentAccessToken,
+  paymentTokenExpiresAt,
+  serializePublicationRequestSummary,
+} from "@/lib/publication-payment";
 
 function parseMagazineId(raw: FormDataEntryValue | null): number | null {
   if (raw == null) return null;
@@ -91,6 +98,10 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    const fee = await getPublicationFee();
+    const feeEnabled = fee.enabled && Number.parseFloat(fee.amount) > 0;
+    const paymentAccessToken = feeEnabled ? createPaymentAccessToken() : null;
+
     const created = await prisma.publicationRequest.create({
       data: {
         authorName: data.authorName,
@@ -102,9 +113,29 @@ export async function POST(request: NextRequest) {
         documentUrl,
         documentFilename: file.name,
         documentSize: file.size,
+        status: feeEnabled ? PublicationStatus.AWAITING_PAYMENT : PublicationStatus.PENDING,
+        paymentAccessToken,
+        paymentTokenExpiresAt: feeEnabled ? paymentTokenExpiresAt() : null,
       },
+      include: { magazine: { select: { title: true } } },
     });
-    return ok(created, { status: 201 });
+
+    const feePayload = feeEnabled
+      ? {
+          enabled: fee.enabled,
+          amount: fee.amount,
+          currency: fee.currency,
+          label: formatFeeDisplay(fee),
+        }
+      : null;
+
+    return ok(
+      {
+        summary: serializePublicationRequestSummary(created, feePayload),
+        needsPayment: feeEnabled,
+      },
+      { status: 201 },
+    );
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     if (msg.includes("Unknown argument `authorPhone`")) {

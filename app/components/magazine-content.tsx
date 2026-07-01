@@ -288,7 +288,9 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
                 <div>
                   <div className={styles.quickLabel}>{copy.content.phone}</div>
                   {contact.phoneHref ? (
-                    <a href={contact.phoneHref}>{contact.phone}</a>
+                    <a href={contact.phoneHref} target="_blank" rel="noopener noreferrer">
+                      {contact.phone}
+                    </a>
                   ) : (
                     <span>{contact.phone}</span>
                   )}

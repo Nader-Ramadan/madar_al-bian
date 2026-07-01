@@ -11,6 +11,8 @@ const links = [
   { href: "/admin/researches", labelKey: "researches" as const, icon: "research" },
   { href: "/admin/advisors", labelKey: "advisors" as const, icon: "users" },
   { href: "/admin/approvals", labelKey: "approvals" as const, icon: "check" },
+  { href: "/admin/publication-fee", labelKey: "publicationFee" as const, icon: "fee" },
+  { href: "/admin/transactions", labelKey: "transactions" as const, icon: "fee" },
   { href: "/admin/emails", labelKey: "emails" as const, icon: "mail" },
   { href: "/admin/content", labelKey: "content" as const, icon: "layers" },
   { href: "/admin/traffic", labelKey: "traffic" as const, icon: "chart", badgeKey: "badgeLive" as const },
@@ -30,6 +32,7 @@ function NavIcon({ name }: { name: (typeof links)[number]["icon"] }) {
     );
   if (name === "users") return <svg {...common}><circle cx="9" cy="9" r="3" stroke="currentColor" strokeWidth="1.8" /><path d="M3.8 19a5.2 5.2 0 0 1 10.4 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /><path d="M15 8.5a2.5 2.5 0 1 1 0 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /><path d="M18.5 18.5a4 4 0 0 0-2.8-3.8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>;
   if (name === "check") return <svg {...common}><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" /><path d="m8.5 12 2.2 2.2L15.8 9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+  if (name === "fee") return <svg {...common}><rect x="4" y="6" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="1.8" /><path d="M8 10h8M8 14h5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>;
   if (name === "mail") return <svg {...common}><rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="currentColor" strokeWidth="1.8" /><path d="m4.4 7 7.6 5.7L19.6 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
   if (name === "layers") return <svg {...common}><path d="m12 4.5 8 4.2-8 4.3-8-4.3z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /><path d="m4 12.7 8 4.3 8-4.3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
   if (name === "chart") return <svg {...common}><path d="M5 19V9.5M12 19V5M19 19v-7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /><path d="M4 19h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>;

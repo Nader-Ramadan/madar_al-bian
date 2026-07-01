@@ -1,3 +1,5 @@
+import { SITE_WHATSAPP_URL } from "@/lib/site-contact";
+
 export const MAGAZINE_CONTACT_DEFAULTS = {
   phone: "٠٠٢ +١٠٦٦٢٢٣٣٩٩",
   phoneTel: "+201066223399",
@@ -46,7 +48,7 @@ export function resolveMagazineContact(magazine: MagazineContactSource): Resolve
 
   return {
     phone,
-    phoneHref: phoneTel ? `tel:${phoneTel}` : null,
+    phoneHref: phoneTel ? SITE_WHATSAPP_URL : null,
     email,
     emailHref: `mailto:${email}`,
     address,

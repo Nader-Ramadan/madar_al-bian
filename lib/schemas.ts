@@ -203,8 +203,40 @@ export const publicationRequestFormSchema = z
   });
 
 export const publicationStatusSchema = z.object({
-  status: z.enum(["PENDING", "APPROVED", "REJECTED"]),
+  status: z.enum(["AWAITING_PAYMENT", "PENDING", "APPROVED", "REJECTED"]),
   reviewNotes: z.string().optional().nullable(),
+});
+
+export const publicationFeeSettingSchema = z.object({
+  amount: z.coerce.number().min(0).max(1_000_000),
+  currency: z.enum(["USD", "EUR", "SAR", "EGP"]),
+  enabled: z.boolean(),
+  labelAr: z.string().max(255).optional().nullable(),
+  labelEn: z.string().max(255).optional().nullable(),
+});
+
+export const paymentCreateOrderSchema = z.object({
+  publicationRequestId: z.number().int().positive(),
+  paymentAccessToken: z.string().min(16).max(64),
+});
+
+export const paymentCaptureSchema = z.object({
+  orderId: z.string().min(4).max(64),
+  publicationRequestId: z.number().int().positive(),
+  paymentAccessToken: z.string().min(16).max(64),
+});
+
+export const transactionEmailSchema = z.object({
+  subject: z.string().min(2).max(255),
+  body: z.string().min(2),
+  to: z.string().email().optional(),
+});
+
+export const transactionsQuerySchema = z.object({
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(100).default(20),
+  status: z.enum(["PENDING", "COMPLETED", "FAILED", "REFUNDED", "CANCELLED"]).optional(),
+  search: z.string().optional(),
 });
 
 export const sendEmailSchema = z.object({
