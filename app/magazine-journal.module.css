@@ -327,6 +327,14 @@
   color: var(--primary-color-dark);
 }
 
+.addressLine {
+  display: block;
+}
+
+.addressLine + .addressLine {
+  margin-top: 0.25rem;
+}
+
 /* Vision / mission split */
 .split {
   display: grid;

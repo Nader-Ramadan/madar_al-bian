@@ -307,7 +307,11 @@ export default function MagazineContent(props: MagazineJournalContentProps) {
                 <IconMap />
                 <div>
                   <div className={styles.quickLabel}>{copy.content.address}</div>
-                  <span>{contact.address}</span>
+                  {contact.addresses.map((line) => (
+                    <span key={line} className={styles.addressLine}>
+                      {line}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
