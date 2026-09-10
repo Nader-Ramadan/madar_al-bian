@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { SITE_ADDRESSES, SITE_PHONE_DISPLAY, SITE_WHATSAPP_URL } from "@/lib/site-contact";
+import { SITE_ADDRESS, SITE_PHONE_DISPLAY, SITE_WHATSAPP_URL } from "@/lib/site-contact";
 import {
   IconContact,
   IconFacebook,
@@ -25,6 +25,7 @@ const SOCIAL_LINKS = {
 } as const;
 
 const CONTACT = {
+  address: SITE_ADDRESS,
   phoneDisplay: SITE_PHONE_DISPLAY,
   phoneHref: SITE_WHATSAPP_URL,
   emailDisplay: "info@madaralbayan.com",
@@ -109,14 +110,12 @@ export default function Footer() {
             <span>تواصل معنا</span>
           </h4>
           <ul className="footerContactList">
-            {SITE_ADDRESSES.map((address) => (
-              <li key={address.label} className="footerContactItem">
-                <span className="footerContactIcon" aria-hidden="true">
-                  <IconMapPin />
-                </span>
-                <span>{address.label}</span>
-              </li>
-            ))}
+            <li className="footerContactItem">
+              <span className="footerContactIcon" aria-hidden="true">
+                <IconMapPin />
+              </span>
+              <span>{CONTACT.address}</span>
+            </li>
             <li className="footerContactItem">
               <span className="footerContactIcon" aria-hidden="true">
                 <IconPhone />

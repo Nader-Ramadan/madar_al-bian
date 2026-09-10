@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SITE_ADDRESSES, SITE_PHONE_DISPLAY, SITE_WHATSAPP_URL } from "@/lib/site-contact";
+import { SITE_ADDRESS, SITE_PHONE_DISPLAY, SITE_WHATSAPP_URL } from "@/lib/site-contact";
 import layout from "../page.module.css";
 import staticStyles from "../static-page.module.css";
 
@@ -41,9 +41,7 @@ export default function ContactUsPage() {
           </form>
           <div className={staticStyles.infoCard}>
             <h3>معلومات التواصل</h3>
-            {SITE_ADDRESSES.map((address) => (
-              <p key={address.label}>{address.label}</p>
-            ))}
+            <p>{SITE_ADDRESS}</p>
             <p>
               الهاتف:{" "}
               <a href={SITE_WHATSAPP_URL} target="_blank" rel="noopener noreferrer">

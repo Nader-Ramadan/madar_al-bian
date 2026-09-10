@@ -1,10 +1,10 @@
-import { SITE_ADDRESSES, SITE_WHATSAPP_URL } from "@/lib/site-contact";
+import { SITE_ADDRESS, SITE_WHATSAPP_URL } from "@/lib/site-contact";
 
 export const MAGAZINE_CONTACT_DEFAULTS = {
   phone: "٠٠٢ +١٠٦٦٢٢٣٣٩٩",
   phoneTel: "+201066223399",
   email: "info@madar-albian.com",
-  addresses: SITE_ADDRESSES.map((a) => a.label),
+  address: SITE_ADDRESS,
 } as const;
 
 export type MagazineContactSource = {
@@ -19,8 +19,7 @@ export type ResolvedMagazineContact = {
   phoneHref: string | null;
   email: string;
   emailHref: string;
-  /** One or more address lines (defaults = both publishers; custom override = single line). */
-  addresses: string[];
+  address: string;
 };
 
 function nonEmpty(value: string | null | undefined): string | null {
@@ -45,13 +44,13 @@ export function resolveMagazineContact(magazine: MagazineContactSource): Resolve
   const phoneTel =
     customTel ?? (customPhone ? deriveTelFromPhone(customPhone) : null) ?? MAGAZINE_CONTACT_DEFAULTS.phoneTel;
   const email = customEmail ?? MAGAZINE_CONTACT_DEFAULTS.email;
-  const addresses = customAddress ? [customAddress] : [...MAGAZINE_CONTACT_DEFAULTS.addresses];
+  const address = customAddress ?? MAGAZINE_CONTACT_DEFAULTS.address;
 
   return {
     phone,
     phoneHref: phoneTel ? SITE_WHATSAPP_URL : null,
     email,
     emailHref: `mailto:${email}`,
-    addresses,
+    address,
   };
 }
