@@ -11,8 +11,8 @@ import { fileURLToPath } from "node:url";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const require = createRequire(path.join(root, "package.json"));
-const SESSION = "97c3e9";
-const ENDPOINT = "http://127.0.0.1:7871/ingest/fe4f3de0-a016-4b14-85da-27f37bdc9363";
+const SESSION = "34450b";
+const ENDPOINT = "http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3";
 
 function dbg(hypothesisId, location, message, data) {
   const payload = {
@@ -76,7 +76,7 @@ dbg("A", "scripts/debug-build.mjs:start", "build wrapper start", {
   swcLoad: probeSwcLoad(),
 });
 
-const child = spawn("npx", ["next", "build"], {
+const child = spawn("npx", ["next", "build", "--webpack"], {
   cwd: root,
   stdio: "inherit",
   shell: true,

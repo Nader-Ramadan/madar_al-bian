@@ -30,11 +30,11 @@ function createPrismaClient(url: string): PrismaClient {
 
 function getPrisma(): PrismaClient {
   // #region agent log
-  fetch("http://127.0.0.1:7871/ingest/fe4f3de0-a016-4b14-85da-27f37bdc9363", {
+  fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
     method: "POST",
-    headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "97c3e9" },
+    headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "34450b" },
     body: JSON.stringify({
-      sessionId: "97c3e9",
+      sessionId: "34450b",
       runId: "pre-fix",
       hypothesisId: "D",
       location: "lib/prisma.ts:getPrisma",
