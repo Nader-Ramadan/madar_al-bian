@@ -13,12 +13,48 @@ type BlogPost = {
 };
 
 async function getBlogPosts(): Promise<BlogPost[]> {
+  const started = Date.now();
   try {
-    return await prisma.blogPost.findMany({
+    const rows = await prisma.blogPost.findMany({
       orderBy: { id: "desc" },
       take: 6,
     });
-  } catch {
+    // #region agent log
+    fetch("http://127.0.0.1:7871/ingest/fe4f3de0-a016-4b14-85da-27f37bdc9363", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "97c3e9" },
+      body: JSON.stringify({
+        sessionId: "97c3e9",
+        runId: "pre-fix",
+        hypothesisId: "D",
+        location: "app/components/blog.tsx:getBlogPosts",
+        message: "blog prerender query ok",
+        data: { elapsedMs: Date.now() - started, count: rows.length },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+    return rows;
+  } catch (err) {
+    // #region agent log
+    fetch("http://127.0.0.1:7871/ingest/fe4f3de0-a016-4b14-85da-27f37bdc9363", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "97c3e9" },
+      body: JSON.stringify({
+        sessionId: "97c3e9",
+        runId: "pre-fix",
+        hypothesisId: "D",
+        location: "app/components/blog.tsx:getBlogPosts",
+        message: "blog prerender query failed",
+        data: {
+          elapsedMs: Date.now() - started,
+          errorName: err instanceof Error ? err.name : "unknown",
+          errorMessage: err instanceof Error ? err.message.slice(0, 180) : String(err).slice(0, 180),
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
     return [];
   }
 }

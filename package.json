@@ -13,7 +13,7 @@
     "clean:next": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\"",
     "db:seed": "prisma db seed",
     "prebuild": "node scripts/prisma-predev.mjs",
-    "build": "next build",
+    "build": "node scripts/debug-build.mjs",
     "start": "node server.js",
     "lint": "eslint",
     "check:db-env": "node scripts/check-db-env.mjs",
