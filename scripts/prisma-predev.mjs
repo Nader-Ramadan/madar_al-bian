@@ -20,8 +20,10 @@ function read(p) {
 
 const project = read(path.join(root, "prisma", "schema.prisma"));
 const client = read(clientSchema);
+const engineTypeOf = (schema) => schema.match(/engineType\s*=\s*"(\w+)"/)?.[1] ?? null;
 const clientStale =
-  project.includes("authorPhone") && !client.includes("authorPhone");
+  (project.includes("authorPhone") && !client.includes("authorPhone")) ||
+  engineTypeOf(project) !== engineTypeOf(client);
 
 // #region agent log
 const dbgStart = Date.now();
