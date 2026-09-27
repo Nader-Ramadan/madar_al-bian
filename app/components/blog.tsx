@@ -17,50 +17,12 @@ async function getBlogPosts(): Promise<BlogPost[]> {
   // Hostinger builds may not reach MySQL; a hung query exceeds Next's 60s prerender limit.
   // Posts are filled in at runtime via the pages' `revalidate`.
   if (process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) return [];
-  const started = Date.now();
   try {
-    const rows = await prisma.blogPost.findMany({
+    return await prisma.blogPost.findMany({
       orderBy: { id: "desc" },
       take: 6,
     });
-    // #region agent log
-    console.log(`[debug-blog] query ok ${JSON.stringify({ hypothesisId: "H1", elapsedMs: Date.now() - started, phase: process.env.NEXT_PHASE ?? null })}`);
-    fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "34450b" },
-      body: JSON.stringify({
-        sessionId: "34450b",
-        runId: "pre-fix",
-        hypothesisId: "D",
-        location: "app/components/blog.tsx:getBlogPosts",
-        message: "blog prerender query ok",
-        data: { elapsedMs: Date.now() - started, count: rows.length },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
-    return rows;
-  } catch (err) {
-    // #region agent log
-    console.log(`[debug-blog] query failed ${JSON.stringify({ hypothesisId: "H1", elapsedMs: Date.now() - started, phase: process.env.NEXT_PHASE ?? null, error: err instanceof Error ? err.message.slice(0, 160) : String(err).slice(0, 160) })}`);
-    fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "34450b" },
-      body: JSON.stringify({
-        sessionId: "34450b",
-        runId: "pre-fix",
-        hypothesisId: "D",
-        location: "app/components/blog.tsx:getBlogPosts",
-        message: "blog prerender query failed",
-        data: {
-          elapsedMs: Date.now() - started,
-          errorName: err instanceof Error ? err.name : "unknown",
-          errorMessage: err instanceof Error ? err.message.slice(0, 180) : String(err).slice(0, 180),
-        },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
+  } catch {
     return [];
   }
 }

@@ -14,29 +14,7 @@ function imageRemotePatterns(): NonNullable<NonNullable<NextConfig["images"]>["r
 
 function ensurePrismaClientGenerated() {
   const generatedClient = path.join(process.cwd(), "node_modules", ".prisma", "client", "index.d.ts");
-  const alreadyGenerated = existsSync(generatedClient);
-  // #region agent log
-  fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "34450b" },
-    body: JSON.stringify({
-      sessionId: "34450b",
-      runId: "pre-fix",
-      hypothesisId: "C",
-      location: "next.config.ts:ensurePrismaClientGenerated",
-      message: "next.config production load",
-      data: {
-        nodeEnv: process.env.NODE_ENV ?? null,
-        alreadyGenerated,
-        babelCompiler: existsSync(
-          path.join(process.cwd(), "node_modules", "babel-plugin-react-compiler"),
-        ),
-      },
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
-  if (alreadyGenerated) return;
+  if (existsSync(generatedClient)) return;
   try {
     execSync("npx prisma generate", { stdio: "inherit" });
   } catch (err) {

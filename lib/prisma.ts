@@ -29,26 +29,6 @@ function createPrismaClient(url: string): PrismaClient {
 }
 
 function getPrisma(): PrismaClient {
-  // #region agent log
-  fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "34450b" },
-    body: JSON.stringify({
-      sessionId: "34450b",
-      runId: "pre-fix",
-      hypothesisId: "D",
-      location: "lib/prisma.ts:getPrisma",
-      message: "Prisma client accessed",
-      data: {
-        nodeEnv: process.env.NODE_ENV ?? null,
-        nextPhase: process.env.NEXT_PHASE ?? null,
-        hasDatabaseUrl: Boolean(process.env.DATABASE_URL?.trim()),
-        hasDbHost: Boolean(process.env.DB_HOST?.trim()),
-      },
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
   const url = resolveDatabaseUrl();
   const genId = prismaClientGenerationId();
   const staleUrl =
