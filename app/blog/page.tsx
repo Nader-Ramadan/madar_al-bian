@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import styles from "../page.module.css";
 import Blog from "../components/blog";
 
+export const revalidate = 300;
+
 export const metadata: Metadata = {
   title: "Blog",
 };

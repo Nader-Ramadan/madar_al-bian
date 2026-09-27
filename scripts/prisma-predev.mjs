@@ -23,7 +23,14 @@ const client = read(clientSchema);
 const clientStale =
   project.includes("authorPhone") && !client.includes("authorPhone");
 
+// #region agent log
+const dbgStart = Date.now();
+console.log(`[debug-prebuild] start ${JSON.stringify({ hypothesisId: "H6", clientStale, clientHasModel: client.includes("model PublicationRequest"), t: new Date().toISOString() })}`);
+// #endregion
 if (!clientStale && client.includes("model PublicationRequest")) {
+  // #region agent log
+  console.log(`[debug-prebuild] skip generate (client up to date)`);
+  // #endregion
   process.exit(0);
 }
 
@@ -32,6 +39,9 @@ const result = spawnSync("npx", ["prisma", "generate"], {
   stdio: "inherit",
   shell: true,
 });
+// #region agent log
+console.log(`[debug-prebuild] prisma generate done ${JSON.stringify({ hypothesisId: "H6", status: result.status, elapsedSec: Math.round((Date.now() - dbgStart) / 1000) })}`);
+// #endregion
 
 if (result.status === 0) process.exit(0);
 

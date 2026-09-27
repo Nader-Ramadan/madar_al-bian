@@ -62,7 +62,70 @@ function probeSwcLoad() {
   }
 }
 
+function cgroupMemory() {
+  const read = (p) => {
+    try {
+      return fs.readFileSync(p, "utf8").trim();
+    } catch {
+      return null;
+    }
+  };
+  return {
+    max: read("/sys/fs/cgroup/memory.max") ?? read("/sys/fs/cgroup/memory/memory.limit_in_bytes"),
+    current: read("/sys/fs/cgroup/memory.current") ?? read("/sys/fs/cgroup/memory/memory.usage_in_bytes"),
+    cpuMax: read("/sys/fs/cgroup/cpu.max"),
+  };
+}
+
+// #region agent log
+async function probeDb() {
+  const explicit = process.env.DATABASE_URL?.trim();
+  let host = process.env.DB_HOST?.trim() || null;
+  let port = Number(process.env.DB_PORT?.trim() || 3306);
+  if (explicit) {
+    try {
+      const u = new URL(explicit);
+      host = u.hostname;
+      port = Number(u.port || 3306);
+    } catch {
+      host = "unparseable";
+    }
+  }
+  const info = {
+    source: explicit ? "DATABASE_URL" : host ? "DB_*" : "none",
+    bothSet: Boolean(explicit && process.env.DB_HOST?.trim()),
+    dbHostVar: process.env.DB_HOST?.trim() || null,
+    host,
+    port,
+  };
+  if (!host || host === "unparseable") return info;
+  const net = await import("node:net");
+  const t0 = Date.now();
+  info.tcp = await new Promise((resolve) => {
+    const sock = net.connect({ host, port });
+    const done = (result) => {
+      sock.destroy();
+      resolve({ ...result, ms: Date.now() - t0 });
+    };
+    sock.setTimeout(10000, () => done({ ok: false, error: "TIMEOUT_10s" }));
+    sock.once("connect", () => done({ ok: true }));
+    sock.once("error", (e) => done({ ok: false, error: e.code || e.message }));
+  });
+  return info;
+}
+dbg("H1/H10-H14", "scripts/debug-build.mjs:probeDb", "db reachability from build env", await probeDb());
+// #endregion
+
 const start = Date.now();
+// #region agent log
+dbg("H7", "scripts/debug-build.mjs:limits", "container limits", {
+  cgroup: cgroupMemory(),
+  nodeOptions: process.env.NODE_OPTIONS ?? null,
+  heapLimitMb: Math.round(
+    (await import("node:v8")).default.getHeapStatistics().heap_size_limit / 1024 / 1024,
+  ),
+});
+// #endregion
 dbg("A", "scripts/debug-build.mjs:start", "build wrapper start", {
   node: process.version,
   platform: `${os.platform()}-${os.arch()}`,
@@ -86,6 +149,8 @@ const child = spawn("npx", ["next", "build", "--webpack"], {
 const heartbeat = setInterval(() => {
   dbg("B", "scripts/debug-build.mjs:heartbeat", "build still running", {
     elapsedSec: Math.round((Date.now() - start) / 1000),
+    freeMemMb: Math.round(os.freemem() / 1024 / 1024),
+    cgroup: cgroupMemory(),
   });
 }, 30000);
 

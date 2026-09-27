@@ -6,6 +6,8 @@ import PublishAResearch from "./components/publish-a-research";
 import FAQ from "./components/faq";
 import Blog from "./components/blog";
 
+export const revalidate = 300;
+
 function Home() {
   return (
     <div className={styles.page}>

@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { PHASE_PRODUCTION_BUILD } from 'next/constants';
 import styles from '../page.module.css';
 import { prisma } from "@/lib/prisma";
 
@@ -13,6 +14,9 @@ type BlogPost = {
 };
 
 async function getBlogPosts(): Promise<BlogPost[]> {
+  // Hostinger builds may not reach MySQL; a hung query exceeds Next's 60s prerender limit.
+  // Posts are filled in at runtime via the pages' `revalidate`.
+  if (process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) return [];
   const started = Date.now();
   try {
     const rows = await prisma.blogPost.findMany({
@@ -20,6 +24,7 @@ async function getBlogPosts(): Promise<BlogPost[]> {
       take: 6,
     });
     // #region agent log
+    console.log(`[debug-blog] query ok ${JSON.stringify({ hypothesisId: "H1", elapsedMs: Date.now() - started, phase: process.env.NEXT_PHASE ?? null })}`);
     fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "34450b" },
@@ -37,6 +42,7 @@ async function getBlogPosts(): Promise<BlogPost[]> {
     return rows;
   } catch (err) {
     // #region agent log
+    console.log(`[debug-blog] query failed ${JSON.stringify({ hypothesisId: "H1", elapsedMs: Date.now() - started, phase: process.env.NEXT_PHASE ?? null, error: err instanceof Error ? err.message.slice(0, 160) : String(err).slice(0, 160) })}`);
     fetch("http://127.0.0.1:7406/ingest/1076ec58-3026-4361-bd36-5095553884e3", {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "34450b" },
